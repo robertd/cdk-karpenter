@@ -20,7 +20,6 @@ pids
 *.seed
 *.pid.lock
 lib-cov
-coverage
 *.lcov
 .nyc_output
 build/Release
@@ -50,4 +49,16 @@ junit.xml
 .jsii
 tsconfig.json
 !/API.md
+cdk.out
+cdk.context.json
+yarn-error.log
+coverage
+venv
+src/integ.custom-resource.ts
+src/integ.karpenter-eks-ephemeral.ts
+src/integ.karpenter-eks-extended.ts
+src/integ.karpenter-eks.ts
+src/integ.karpenter-fargate-extended.ts
+src/integ.karpenter-fargate.ts
+src/integ.karpenter.ts
 !/.github/workflows/upgrade-main.yml
