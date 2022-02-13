@@ -15,7 +15,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   compat: true,
   stability: 'experimental',
   cdkVersion: '2.12.0',
-  workflowNodeVersion: '^16.14.0',
+  workflowNodeVersion: '16.14.0',
   // deps: [],                /* Runtime dependencies of this module. */
   // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
   // devDeps: [],             /* Build dependencies for this module. */
@@ -34,7 +34,7 @@ const common_exclude = [
   'src/integ.karpenter-eks.ts',
   'src/integ.karpenter-fargate-extended.ts',
   'src/integ.karpenter-fargate.ts',
-  'src/integ.karpenter.ts'
+  'src/integ.karpenter.ts',
 ];
 project.gitignore.exclude(...common_exclude);
 

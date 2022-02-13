@@ -1,15 +1,15 @@
+import * as path from 'path';
+import * as fs from 'fs';
 import { CustomResource, Duration, Stack } from 'aws-cdk-lib';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Runtime, Function, InlineCode } from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Provider } from 'aws-cdk-lib/custom-resources';
 import { Construct } from 'constructs';
-import * as path from 'path';
-import * as fs from 'fs';
 
 export interface CustomResourceProps {
   /**
-   * Subnets 
+   * Subnets
    */
   subnets: string[];
 
@@ -24,7 +24,7 @@ export class TagSubnetsCustomResource extends Construct {
     super(scope, id);
 
     props.subnets.filter((subnetId) => {
-      if (!subnetId || subnetId === "") {
+      if (!subnetId || subnetId === '') {
         throw new Error('Subnet cannot be empty or undefined.');
       }
     });

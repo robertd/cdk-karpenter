@@ -19,12 +19,12 @@ test('integ snapshot validation', () => {
 test('has controller policy', () => {
   Template.fromStack(stack).hasResourceProperties('AWS::IAM::ManagedPolicy', {
     ManagedPolicyName: {
-      "Fn::Join": [
-        "",
+      'Fn::Join': [
+        '',
         [
-          "KarpenterControllerPolicy-",
+          'KarpenterControllerPolicy-',
           {
-            "Ref": "Cluster9EE0221C",
+            Ref: 'Cluster9EE0221C',
           },
         ],
       ],
@@ -60,12 +60,12 @@ test('has controller policy', () => {
 // test('has controller role', () => {
 //   Template.fromStack(stack).hasResourceProperties('AWS::IAM::Role', {
 //     RoleName: {
-//       "Fn::Join": [
-//         "",
+//       'Fn::Join': [
+//         '',
 //         [
-//           "KarpenterNodeRole-",
+//           'KarpenterNodeRole-',
 //           {
-//             "Ref": "Cluster9EE0221C",
+//             Ref: 'Cluster9EE0221C',
 //           },
 //         ],
 //       ],
@@ -93,12 +93,12 @@ test('has controller policy', () => {
 //       Version: '2012-10-17',
 //     },
 //     Description: {
-//       "Fn::Join": [
-//         "",
+//       'Fn::Join': [
+//         '',
 //         [
-//           "This is the IAM role Karpenter uses to give compute permissions for ",
+//           'This is the IAM role Karpenter uses to give compute permissions for ',
 //           {
-//             "Ref": "Cluster9EE0221C",
+//             Ref: 'Cluster9EE0221C',
 //           },
 //         ],
 //       ],
@@ -137,25 +137,25 @@ test('has controller policy', () => {
 //       'Fn::Join': [
 //         '',
 //         [
-//           '{"controller":{"clusterName":"',
+//           '{'controller':{'clusterName':'',
 //           {
 //             Ref: 'Cluster9EE0221C',
 //           },
-//           '","clusterEndpoint":"',
+//           '','clusterEndpoint':'',
 //           {
 //             'Fn::GetAtt': [
 //               'Cluster9EE0221C',
 //               'Endpoint',
 //             ],
 //           },
-//           '"},"serviceAccount":{"annotations":{"ecs.amazonaws.com/role-arn":"',
+//           ''},'serviceAccount':{'annotations':{'ecs.amazonaws.com/role-arn':'',
 //           {
 //             'Fn::GetAtt': [
 //               'karpenterControllerRole06530798',
 //               'Arn',
 //             ],
 //           },
-//           '"}}}',
+//           ''}}}',
 //         ],
 //       ],
 //     },
@@ -225,25 +225,25 @@ test('has controller policy', () => {
 //           'Fn::Join': [
 //             '',
 //             [
-//               '\n[settings.kubernetes]\napi-server="',
+//               '\n[settings.kubernetes]\napi-server='',
 //               {
 //                 'Fn::GetAtt': [
 //                   'Cluster9EE0221C',
 //                   'Endpoint',
 //                 ],
 //               },
-//               '"\ncluster-certificate="',
+//               ''\ncluster-certificate='',
 //               {
 //                 'Fn::GetAtt': [
 //                   'Cluster9EE0221C',
 //                   'CertificateAuthorityData',
 //                 ],
 //               },
-//               '"\ncluster-name="',
+//               ''\ncluster-name='',
 //               {
 //                 Ref: 'Cluster9EE0221C',
 //               },
-//               '"',
+//               ''',
 //             ],
 //           ],
 //         },

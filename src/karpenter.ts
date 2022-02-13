@@ -14,7 +14,7 @@ export interface IKarpenterProps {
   /**
    * VPC
    */
-   readonly vpc: IVpc;
+  readonly vpc: IVpc;
 
   /**
    * The VPC subnets which need to be tagged for Karpenter to find them
@@ -43,7 +43,7 @@ export class Karpenter extends Construct {
 
     const subnets = props.subnets ? props.subnets : props.vpc.privateSubnets;
 
-    // Custom resource to tag vpc subnets with 
+    // Custom resource to tag vpc subnets with
     new TagSubnetsCustomResource(this, 'TagSubnets', {
       subnets: subnets.map((subnet) => { return subnet.subnetId; }),
       clusterTag: `karpenter.sh/discovery/${props.cluster.clusterName}`,
@@ -98,8 +98,8 @@ export class Karpenter extends Construct {
     });
 
     // props.cluster.addServiceAccount('karpenter', {
-    //   name: "karpenter",
-    //   namespace: "karpenter",
+    //   name: 'karpenter',
+    //   namespace: 'karpenter',
     // });
 
     props.cluster.awsAuth.addRoleMapping(this.karpenterNodeRole, {
@@ -148,7 +148,7 @@ export class Karpenter extends Construct {
     // // We set the userdata to begin with a custom empty string, since Bottlerocket just takes in configuration
     // const userData = UserData.custom('');
     // userData.addCommands(...renderBottlerocketUserData(props.cluster));
-    // const template = 
+    // const template =
     // new LaunchTemplate(this, 'defaultKarpenterLaunchTemplate', {
     //   launchTemplateName: `defaultKarpenterLaunchTemplate-${props.cluster.clusterName}`,
     //   machineImage: new BottleRocketImage({
@@ -170,7 +170,7 @@ export class Karpenter extends Construct {
     //   // blockDevices: [blockDeviceOS, blockDeviceImages],
     //   // securityGroup: props.cluster.clusterSecurityGroup,
     //   // role: this.karpenterNodeRole,
-      
+
     // });
 
     this.karpenterHelmChart = new HelmChart(this, 'HelmChart', {
@@ -224,7 +224,7 @@ export class Karpenter extends Construct {
           {
             key: 'node.kubernetes.io/instance-type',
             operator: 'In',
-            values: ["t3a.small"],
+            values: ['t3a.small'],
           },
           {
             key: 'topology.kubernetes.io/zone',
@@ -252,7 +252,7 @@ export class Karpenter extends Construct {
 
     // new CfnOutput(this, 'karpenterControllerRole', { value: this.karpenterControllerRole.roleName });
     new CfnOutput(this, 'karpenterNodeRole', { value: this.karpenterNodeRole.roleName });
-    new CfnOutput(this, 'instanceProfileName', { value: instanceProfile.instanceProfileName || "" });
+    new CfnOutput(this, 'instanceProfileName', { value: instanceProfile.instanceProfileName || '' });
     new CfnOutput(this, 'clusterName', { value: props.cluster.clusterName });
     new CfnOutput(this, 'karpenterControllerPolicy', { value: karpenterControllerPolicy.managedPolicyName });
   }
@@ -261,8 +261,8 @@ export class Karpenter extends Construct {
 export function renderBottlerocketUserData(cluster: ICluster): string[] {
   return [
     '[settings.kubernetes]',
-    `api-server="${cluster.clusterEndpoint}"`,
-    `cluster-certificate="${cluster.clusterCertificateAuthorityData}"`,
-    `cluster-name="${cluster.clusterName}"`,
+    `api-server='${cluster.clusterEndpoint}'`,
+    `cluster-certificate='${cluster.clusterCertificateAuthorityData}'`,
+    `cluster-name='${cluster.clusterName}'`,
   ];
 }

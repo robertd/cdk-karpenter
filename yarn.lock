@@ -4140,7 +4140,14 @@ min-indent@^1.0.0:
   resolved "https://registry.yarnpkg.com/min-indent/-/min-indent-1.0.1.tgz#a63f681673b30571fbe8bc25686ae746eefa9869"
   integrity sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==
 
-minimatch@^3.0.4, minimatch@^3.0.5:
+minimatch@^3.0.4:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.1.1.tgz#879ad447200773912898b46cd516a7abbb5e50b0"
+  integrity sha512-reLxBcKUPNBnc/sVtAbxgRVFSegoGeLaSjmphNhcwcolhYLRgtJscn5mRl6YRZNQv40Y7P6JM2YhSIsbL9OB5A==
+  dependencies:
+    brace-expansion "^1.1.7"
+
+minimatch@^3.0.5:
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.0.5.tgz#4da8f1290ee0f0f8e83d60ca69f8f134068604a3"
   integrity sha512-tUpxzX0VAzJHjLu0xUfFv1gwVp9ba3IOuRAVH2EGuRW8a5emA2FlACLqiT/lDVtS1W+TGNwqz3sWaNyLgDJWuw==
@@ -4772,10 +4779,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.52.26:
-  version "0.52.26"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.52.26.tgz#34f5707d1988053ca6889a4b281e54abd03827f1"
-  integrity sha512-u43wq3+do+VRryNnV0CviTzHQH73HI1rSeSwlITpRmXN3qVJRgZW43cuYRixzMYBaHcAhdkbmrjFFrTxommhxA==
+projen@^0.52.28:
+  version "0.52.28"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.52.28.tgz#248555419ba06883dfbe7b667c8007985140182e"
+  integrity sha512-8stlV43nwZAO752CRDHgxwqjFzF8R4w3QJYzFSxh7nckqnhGTfFyo38hoYZp1+UntuTTmIlibBQUfcfYwMhJ7w==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
