@@ -49,8 +49,7 @@ export class Karpenter extends Construct {
       clusterTag: `karpenter.sh/discovery/${props.cluster.clusterName}`,
     });
 
-    const karpenterControllerPolicy = 
-    new ManagedPolicy(this, 'ControllerPolicy', {
+    const karpenterControllerPolicy = new ManagedPolicy(this, 'ControllerPolicy', {
       managedPolicyName: `KarpenterControllerPolicy-${props.cluster.clusterName}`,
       statements: [
         new PolicyStatement({
@@ -77,8 +76,7 @@ export class Karpenter extends Construct {
       ],
     });
 
-    this.karpenterNodeRole = 
-    new Role(this, 'NodeRole', {
+    this.karpenterNodeRole = new Role(this, 'NodeRole', {
       roleName: `KarpenterNodeRole-${props.cluster.clusterName}`,
       assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
       description: `This is the IAM role Karpenter uses to give compute permissions for ${props.cluster.clusterName}`,
@@ -93,8 +91,7 @@ export class Karpenter extends Construct {
       this.karpenterNodeRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName(policyName));
     });
 
-    const instanceProfile = 
-    new CfnInstanceProfile(this, 'InstanceProfile', {
+    const instanceProfile = new CfnInstanceProfile(this, 'InstanceProfile', {
       roles: [this.karpenterNodeRole.roleName],
       instanceProfileName: `KarpenterNodeInstanceProfile-${props.cluster.clusterName}`,
       path: '/',
@@ -120,15 +117,13 @@ export class Karpenter extends Construct {
       },
     });
 
-    const principal = 
-    new OpenIdConnectPrincipal(
+    const principal = new OpenIdConnectPrincipal(
       props.cluster.openIdConnectProvider,
     ).withConditions({
       StringEquals: conditions,
     });
 
-    this.karpenterControllerRole =
-    new Role(this, 'ControllerRole', {
+    this.karpenterControllerRole = new Role(this, 'ControllerRole', {
       assumedBy: principal,
       description: `This is the IAM role Karpenter uses to allocate compute for ${props.cluster.clusterName}`,
     });
