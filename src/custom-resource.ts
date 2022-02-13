@@ -23,8 +23,8 @@ export class TagSubnetsCustomResource extends Construct {
   constructor(scope: Construct, id: string, props: CustomResourceProps) {
     super(scope, id);
 
-    props.subnets.filter((id) => {
-      if (!id || id === "") {
+    props.subnets.filter((subnetId) => {
+      if (!subnetId || subnetId === "") {
         throw new Error('Subnet cannot be empty or undefined.');
       }
     });
