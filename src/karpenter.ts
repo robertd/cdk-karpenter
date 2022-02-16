@@ -60,6 +60,7 @@ export class Karpenter extends Construct {
             'ec2:CreateTags',
             'iam:PassRole',
             'ec2:TerminateInstances',
+            'ec2:DeleteLaunchTemplate',
             // Read Operations
             'ec2:DescribeLaunchTemplates',
             'ec2:DescribeInstances',
@@ -130,7 +131,7 @@ export class Karpenter extends Construct {
     this.karpenterHelmChart = new HelmChart(this, 'HelmChart', {
       chart: 'karpenter',
       createNamespace: true,
-      version: '0.6.1',
+      version: '0.6.3',
       cluster: props.cluster,
       namespace: 'karpenter',
       release: 'karpenter',
@@ -138,12 +139,9 @@ export class Karpenter extends Construct {
       timeout: Duration.minutes(15),
       wait: true,
       values: {
-        controller: {
-          clusterName: props.cluster.clusterName,
-          clusterEndpoint: props.cluster.clusterEndpoint,
-        },
+        clusterName: props.cluster.clusterName,
+        clusterEndpoint: props.cluster.clusterEndpoint,
         serviceAccount: {
-          create: 'false',
           annotations: {
             'eks.amazonaws.com/role-arn': this.karpenterControllerRole.roleArn,
           },
@@ -155,7 +153,7 @@ export class Karpenter extends Construct {
     });
 
     // default Provisioner
-    const karpenterGlobalProvider = props.cluster.addManifest('karpenterGlobalProvider', {
+    const karpenterDefaultProvisioner = props.cluster.addManifest('karpenterDefaultProvisioner', {
       apiVersion: 'karpenter.sh/v1alpha5',
       kind: 'Provisioner',
       metadata: {
@@ -168,12 +166,12 @@ export class Karpenter extends Construct {
           {
             key: 'karpenter.sh/capacity-type',
             operator: 'In',
-            values: ['spot'],
+            values: ['spot', 'on-demand'],
           },
           {
             key: 'kubernetes.io/arch',
             operator: 'In',
-            values: ['amd64'],
+            values: ['amd64', 'arm64'],
           },
           // {
           //   key: 'node.kubernetes.io/instance-type',
@@ -201,7 +199,7 @@ export class Karpenter extends Construct {
       },
     });
 
-    karpenterGlobalProvider.node.addDependency(this.karpenterHelmChart);
+    karpenterDefaultProvisioner.node.addDependency(this.karpenterHelmChart);
 
     new CfnOutput(this, 'karpenterControllerRole', { value: this.karpenterControllerRole.roleName });
     new CfnOutput(this, 'karpenterNodeRole', { value: this.karpenterNodeRole.roleName });
