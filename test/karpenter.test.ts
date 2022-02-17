@@ -13,7 +13,7 @@ test('integ snapshot validation', () => {
   expect(template).toMatchSnapshot();
 });
 
-test('has controller policy', () => {
+test('has karpenter controller policy', () => {
   Template.fromStack(stack).hasResourceProperties('AWS::IAM::ManagedPolicy', {
     PolicyDocument: {
       Statement: [
@@ -44,7 +44,7 @@ test('has controller policy', () => {
   });
 });
 
-test('has controller role', () => {
+test('has karpenter node role', () => {
   Template.fromStack(stack).hasResourceProperties('AWS::IAM::Role', {
     AssumeRolePolicyDocument: {
       Statement: [
@@ -72,7 +72,50 @@ test('has controller role', () => {
   });
 });
 
-test('has instance profile', () => {
+test('has karpenter controller role', () => {
+  Template.fromStack(stack).hasResourceProperties('AWS::IAM::Role', {
+    AssumeRolePolicyDocument: {
+      Statement: [
+       {
+          Action: 'sts:AssumeRoleWithWebIdentity',
+          Condition: {
+            StringEquals: {
+              'Fn::GetAtt': [
+                'karpenterConditionPlainJsonC2FAD26E',
+                'Value',
+              ],
+            },
+          },
+          Effect: 'Allow',
+          Principal: {
+            Federated: {
+              Ref: 'ClusterOpenIdConnectProviderE7EB0530',
+            },
+          },
+        },
+      ],
+      Version: '2012-10-17',
+    },
+    ManagedPolicyArns: [
+      {
+        'Ref': "karpenterControllerPolicyA6C7C5DE",
+      },
+    ],
+    Description: {
+      'Fn::Join': [
+        '',
+        [
+          'This is the IAM role Karpenter uses to allocate compute for ',
+          {
+            Ref: 'Cluster9EE0221C',
+          },
+        ],
+      ],
+    },
+  });
+});
+
+test('has an instance profile', () => {
   Template.fromStack(stack).hasResourceProperties('AWS::IAM::InstanceProfile', {
     Roles: [
       {
