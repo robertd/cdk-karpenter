@@ -31,7 +31,7 @@ new Karpenter(stack, 'karpenter', {
 
 ```
 
-## Customized default Karpenter provisioner
+## Customize default Karpenter provisioner
 
 ```ts
 new Karpenter(stack, 'karpenter', {
@@ -59,3 +59,7 @@ new Karpenter(stack, 'karpenter', {
   },
 });
 ```
+
+## Docs
+
+[API.md](./API.md)
