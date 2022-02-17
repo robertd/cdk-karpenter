@@ -657,7 +657,7 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ClustermanifestkarpenterGlobalProvider06DEF0B3": Object {
+    "ClustermanifestkarpenterDefaultProvisionerEDF9B25D": Object {
       "DeletionPolicy": "Delete",
       "DependsOn": Array [
         "ClusterKubectlReadyBarrier200052AF",
@@ -671,7 +671,7 @@ Object {
           "Fn::Join": Array [
             "",
             Array [
-              "[{\\"apiVersion\\":\\"karpenter.sh/v1alpha5\\",\\"kind\\":\\"Provisioner\\",\\"metadata\\":{\\"name\\":\\"default\\"},\\"spec\\":{\\"ttlSecondsUntilExpired\\":600,\\"ttlSecondsAfterEmpty\\":30,\\"requirements\\":[{\\"key\\":\\"karpenter.sh/capacity-type\\",\\"operator\\":\\"In\\",\\"values\\":[\\"spot\\"]},{\\"key\\":\\"kubernetes.io/arch\\",\\"operator\\":\\"In\\",\\"values\\":[\\"amd64\\"]},{\\"key\\":\\"topology.kubernetes.io/zone\\",\\"operator\\":\\"In\\",\\"values\\":[\\"",
+              "[{\\"apiVersion\\":\\"karpenter.sh/v1alpha5\\",\\"kind\\":\\"Provisioner\\",\\"metadata\\":{\\"name\\":\\"default\\"},\\"spec\\":{\\"ttlSecondsUntilExpired\\":600,\\"ttlSecondsAfterEmpty\\":30,\\"requirements\\":[{\\"key\\":\\"karpenter.sh/capacity-type\\",\\"operator\\":\\"In\\",\\"values\\":[\\"spot\\",\\"on-demand\\"]},{\\"key\\":\\"kubernetes.io/arch\\",\\"operator\\":\\"In\\",\\"values\\":[\\"amd64\\",\\"arm64\\"]},{\\"key\\":\\"topology.kubernetes.io/zone\\",\\"operator\\":\\"In\\",\\"values\\":[\\"",
               Object {
                 "Fn::Select": Array [
                   0,
@@ -1444,6 +1444,7 @@ Object {
                 "ec2:CreateTags",
                 "iam:PassRole",
                 "ec2:TerminateInstances",
+                "ec2:DeleteLaunchTemplate",
                 "ec2:DescribeLaunchTemplates",
                 "ec2:DescribeInstances",
                 "ec2:DescribeSecurityGroups",
@@ -1536,7 +1537,7 @@ Object {
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"controller\\":{\\"clusterName\\":\\"",
+              "{\\"clusterName\\":\\"",
               Object {
                 "Ref": "Cluster9EE0221C",
               },
@@ -1547,7 +1548,7 @@ Object {
                   "Endpoint",
                 ],
               },
-              "\\"},\\"serviceAccount\\":{\\"create\\":\\"false\\",\\"annotations\\":{\\"eks.amazonaws.com/role-arn\\":\\"",
+              "\\",\\"serviceAccount\\":{\\"annotations\\":{\\"eks.amazonaws.com/role-arn\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
                   "karpenterControllerRole06530798",
@@ -1562,7 +1563,7 @@ Object {
             ],
           ],
         },
-        "Version": "0.6.1",
+        "Version": "0.6.3",
         "Wait": true,
       },
       "Type": "Custom::AWSCDK-EKS-HelmChart",

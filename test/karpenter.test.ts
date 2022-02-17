@@ -1,13 +1,10 @@
 import { Template } from 'aws-cdk-lib/assertions';
-import * as eks from 'aws-cdk-lib/aws-eks';
 import { Karpenter } from '../src/index';
 import { testFixtureCluster } from './util';
 
-const CLUSTER_VERSION = eks.KubernetesVersion.V1_21;
 const { stack, vpc, cluster } = testFixtureCluster();
 new Karpenter(stack, 'karpenter', {
   cluster,
-  k8sVersion: CLUSTER_VERSION,
   vpc,
 });
 
@@ -28,6 +25,7 @@ test('has controller policy', () => {
             'ec2:CreateTags',
             'iam:PassRole',
             'ec2:TerminateInstances',
+            'ec2:DeleteLaunchTemplate',
             'ec2:DescribeLaunchTemplates',
             'ec2:DescribeInstances',
             'ec2:DescribeSecurityGroups',
