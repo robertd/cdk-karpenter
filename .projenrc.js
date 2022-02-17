@@ -20,6 +20,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
     allowedUsernames: ['cdk-karpenter-automation'],
     secret: 'GITHUB_TOKEN',
   },
+  codeCov: true,
   dependabot: true,
   autoApproveUpgrades: true,
   deps: ['aws-cdk-lib'],
