@@ -76,7 +76,7 @@ test('has karpenter controller role', () => {
   Template.fromStack(stack).hasResourceProperties('AWS::IAM::Role', {
     AssumeRolePolicyDocument: {
       Statement: [
-       {
+        {
           Action: 'sts:AssumeRoleWithWebIdentity',
           Condition: {
             StringEquals: {
@@ -98,7 +98,7 @@ test('has karpenter controller role', () => {
     },
     ManagedPolicyArns: [
       {
-        'Ref': "karpenterControllerPolicyA6C7C5DE",
+        Ref: 'karpenterControllerPolicyA6C7C5DE',
       },
     ],
     Description: {

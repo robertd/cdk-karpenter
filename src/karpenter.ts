@@ -18,7 +18,7 @@ export interface KarpenterProps {
 
   /**
    * The VPC subnets which need to be tagged for Karpenter to find them.
-   * If left blank it will private VPC subnets will be selected by default. 
+   * If left blank it will private VPC subnets will be selected by default.
    */
   readonly subnets?: ISubnet[];
 
@@ -114,7 +114,7 @@ export class Karpenter extends Construct {
       tags: {
         ...props.tags,
       },
-    } : undefined; 
+    } : undefined;
 
     // Custom resource to tag vpc subnets with
     new TagSubnetsCustomResource(this, 'TagSubnets', {
