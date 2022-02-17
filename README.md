@@ -1,14 +1,26 @@
 [![NPM version](https://badge.fury.io/js/cdk-karpenter.svg)](https://badge.fury.io/js/cdk-karpenter)
 
-![Release](https://github.com/robertd/cdk-karpenter/workflows/Release/badge.svg)
+## cdk-karpenter
 
-![Downloads](https://img.shields.io/badge/-DOWNLOADS:-brightgreen?color=gray)
+```ts
+import { InstanceClass, InstanceSize, InstanceType, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { Cluster, KubernetesVersion, Nodegroup } from 'aws-cdk-lib/aws-eks';
+import { Karpenter } from "cdk-karpenter";
 
-![npm](https://img.shields.io/npm/dt/cdk-karpenter?label=npm&color=orange)
+...
 
-## CDK-KARPENTER
+const vpc = new Vpc(stack, 'Vpc', { natGateways: 1 });
 
+const cluster = new Cluster(stack, 'eks', {
+  vpc,
+  version: KubernetesVersion.V1_21,
+  defaultCapacity: 1,
+  defaultCapacityInstance: InstanceType.of(InstanceClass.T3A, InstanceSize.MEDIUM),
+});
 
+new Karpenter(stack, 'karpenter', {
+  cluster,
+  vpc,
+});
 
-## :clap:  Supporters
-[![Stargazers repo roster for @robertd/cdk-karpenter](https://reporoster.com/stars/robertd/cdk-karpenter)](https://github.com/robertd/cdk-karpenter/stargazers)
+```
