@@ -1,6 +1,12 @@
 [![NPM version](https://badge.fury.io/js/cdk-karpenter.svg)](https://badge.fury.io/js/cdk-karpenter)
 
-## cdk-karpenter
+# cdk-karpenter
+
+Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time. It automatically launches just the right compute resources to handle your cluster's applications. It is designed to let you take full advantage of the cloud with fast and simple compute provisioning for Kubernetes clusters.
+
+More info about Karpenter at: https://karpenter.sh
+
+## Basic use
 
 ```ts
 import { InstanceClass, InstanceSize, InstanceType, Vpc } from 'aws-cdk-lib/aws-ec2';
@@ -23,4 +29,33 @@ new Karpenter(stack, 'karpenter', {
   vpc,
 });
 
+```
+
+## Customized default Karpenter provisioner
+
+```ts
+new Karpenter(stack, 'karpenter', {
+  cluster,
+  vpc,
+  tags: {
+    Foo: 'bar',
+  },
+  provisionerConfig: {
+    instanceTypes: [
+      InstanceType.of(InstanceClass.M5, InstanceSize.LARGE),
+      InstanceType.of(InstanceClass.M5A, InstanceSize.LARGE),
+      InstanceType.of(InstanceClass.M6G, InstanceSize.LARGE),
+    ],
+    archTypes: [
+      ArchType.AMD64,
+      ArchType.AMD64,
+    ],
+    capacityTypes: [
+      CapacityType.SPOT,
+      CapacityType.ON_DEMAND,
+    ],
+    ttlSecondsUntilExpired: Duration.days(30),
+    ttlSecondsAfterEmpty: Duration.minutes(5),
+  },
+});
 ```
