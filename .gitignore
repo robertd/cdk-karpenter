@@ -40,6 +40,7 @@ junit.xml
 /dist/version.txt
 !/.github/workflows/release.yml
 !/.mergify.yml
+!/.github/dependabot.yml
 !/.github/pull_request_template.md
 !/test/
 !/tsconfig.dev.json
@@ -63,4 +64,3 @@ src/integ.karpenter-eks.ts
 src/integ.karpenter-fargate-extended.ts
 src/integ.karpenter-fargate.ts
 src/integ.karpenter.ts
-!/.github/workflows/upgrade-main.yml
