@@ -18,12 +18,14 @@ const project = new awscdk.AwsCdkConstructLibrary({
   workflowNodeVersion: '16.14.0',
   autoApproveOptions: {
     allowedUsernames: ['cdk-karpenter-automation'],
-    secret: 'GITHUB_TOKEN',
+    secret: 'PROJEN_GITHUB_TOKEN',
   },
+  projenTokenSecret: 'PROJEN_GITHUB_TOKEN',
+  codeCov: true,
+  dependabot: true,
   autoApproveUpgrades: true,
   deps: ['aws-cdk-lib'],
   // deps: [],                /* Runtime dependencies of this module. */
-  // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
   // devDeps: [],             /* Build dependencies for this module. */
   // packageName: undefined,  /* The "name" in package.json. */
 });

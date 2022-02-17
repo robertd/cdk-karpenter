@@ -1,11 +1,11 @@
 import { CfnJson, CfnOutput, Duration } from 'aws-cdk-lib';
-import { ISubnet, IVpc } from 'aws-cdk-lib/aws-ec2';
+import { ISubnet, IVpc, InstanceType } from 'aws-cdk-lib/aws-ec2';
 import { Cluster, HelmChart } from 'aws-cdk-lib/aws-eks';
 import { CfnInstanceProfile, ManagedPolicy, OpenIdConnectPrincipal, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import { TagSubnetsCustomResource } from './custom-resource';
 
-export interface IKarpenterProps {
+export interface KarpenterProps {
   /**
    * The Cluster on which Karpenter needs to be added
    */
@@ -18,14 +18,77 @@ export interface IKarpenterProps {
 
   /**
    * The VPC subnets which need to be tagged for Karpenter to find them.
-   * If left blank it will private VPC subnets will be selected by default. 
+   * If left blank it will private VPC subnets will be selected by default.
    */
   readonly subnets?: ISubnet[];
 
   /**
+   * Default provisioner customization
+   */
+  readonly provisionerConfig?: ProvisionerProps;
+
+  /**
    * Tags will be added to every EC2 instance launched by the default provisioner
    */
-  tags?: {[key: string]: string};
+  readonly tags?: {[key: string]: string};
+}
+
+export interface ProvisionerProps {
+  /**
+   * Time in seconds in which ndoes will expire and get replaced
+   * i.e. Duration.hours(12)
+   * @default 2592000
+   */
+  readonly ttlSecondsUntilExpired?: Duration;
+
+  /**
+   * Time in seconds in which nodes will scale down due to low utilization
+   * i.e. Duration.minutes(30)
+   * @default 30
+   */
+  readonly ttlSecondsAfterEmpty?: Duration;
+
+  /**
+   * The instance types to use in the default Karpenter provider.
+   * @default t3.medium
+   */
+  readonly instanceTypes?: InstanceType[];
+
+  /**
+   * Capacity type of the node instances
+   * @default spot
+   */
+  readonly capacityTypes?: CapacityType[];
+
+  /**
+   * Architecture type of the node instances
+   * @default amd64
+   */
+  readonly archTypes?: ArchType[];
+}
+
+export enum CapacityType {
+  /**
+   * Spot capacity
+   */
+  SPOT='spot',
+
+  /**
+   * On demand capacity
+   */
+  ON_DEMAND='on-demand',
+}
+
+export enum ArchType {
+  /**
+   * ARM based instances
+   */
+  ARM64='arm64',
+
+  /**
+   * x86 based instances
+   */
+  AMD64='amd64',
 }
 
 /**
@@ -38,10 +101,20 @@ export class Karpenter extends Construct {
   public readonly karpenterControllerRole: Role;
   public readonly karpenterHelmChart: HelmChart;
 
-  constructor(scope: Construct, id: string, props: IKarpenterProps) {
+  constructor(scope: Construct, id: string, props: KarpenterProps) {
     super(scope, id);
 
+    const ttlSecondsUntilExpired = props.provisionerConfig?.ttlSecondsUntilExpired?.toSeconds() ?? Duration.days(30).toSeconds();
+    const ttlSecondsAfterEmpty = props.provisionerConfig?.ttlSecondsAfterEmpty?.toSeconds() ?? Duration.seconds(30).toSeconds();
+    const archTypes = props.provisionerConfig?.archTypes ?? [ArchType.AMD64];
+    const capacityTypes = props.provisionerConfig?.capacityTypes ?? [CapacityType.SPOT];
+    const instanceTypes = props.provisionerConfig?.instanceTypes?.map((i)=> { return i.toString(); }) ?? ['t3a.medium'];
     const subnets = props.subnets ? props.subnets : props.vpc.privateSubnets;
+    const customTags = props.tags ? {
+      tags: {
+        ...props.tags,
+      },
+    } : undefined;
 
     // Custom resource to tag vpc subnets with
     new TagSubnetsCustomResource(this, 'TagSubnets', {
@@ -147,13 +220,6 @@ export class Karpenter extends Construct {
       },
     });
 
-    // Custom Tags
-    const customTags = props.tags ? {
-      tags: {
-        ...props.tags,
-      },
-    } : undefined;
-
     // default Provisioner
     const karpenterDefaultProvisioner = props.cluster.addManifest('karpenterDefaultProvisioner', {
       apiVersion: 'karpenter.sh/v1alpha5',
@@ -162,24 +228,24 @@ export class Karpenter extends Construct {
         name: 'default',
       },
       spec: {
-        ttlSecondsUntilExpired: Duration.minutes(10).toSeconds(),
-        ttlSecondsAfterEmpty: Duration.seconds(30).toSeconds(),
+        ttlSecondsUntilExpired,
+        ttlSecondsAfterEmpty,
         requirements: [
           {
             key: 'karpenter.sh/capacity-type',
             operator: 'In',
-            values: ['spot', 'on-demand'],
+            values: capacityTypes,
           },
           {
             key: 'kubernetes.io/arch',
             operator: 'In',
-            values: ['amd64', 'arm64'],
+            values: archTypes,
           },
-          // {
-          //   key: 'node.kubernetes.io/instance-type',
-          //   operator: 'In',
-          //   values: ['t3a.small'],
-          // },
+          {
+            key: 'node.kubernetes.io/instance-type',
+            operator: 'In',
+            values: instanceTypes,
+          },
           {
             key: 'topology.kubernetes.io/zone',
             operator: 'In',
@@ -204,10 +270,10 @@ export class Karpenter extends Construct {
 
     karpenterDefaultProvisioner.node.addDependency(this.karpenterHelmChart);
 
+    new CfnOutput(this, 'clusterName', { value: props.cluster.clusterName });
     new CfnOutput(this, 'karpenterControllerRole', { value: this.karpenterControllerRole.roleName });
     new CfnOutput(this, 'karpenterNodeRole', { value: this.karpenterNodeRole.roleName });
     new CfnOutput(this, 'instanceProfileName', { value: instanceProfile.instanceProfileName || '' });
-    new CfnOutput(this, 'clusterName', { value: props.cluster.clusterName });
     new CfnOutput(this, 'karpenterControllerPolicy', { value: karpenterControllerPolicy.managedPolicyName });
   }
 }

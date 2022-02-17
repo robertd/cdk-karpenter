@@ -671,7 +671,7 @@ Object {
           "Fn::Join": Array [
             "",
             Array [
-              "[{\\"apiVersion\\":\\"karpenter.sh/v1alpha5\\",\\"kind\\":\\"Provisioner\\",\\"metadata\\":{\\"name\\":\\"default\\"},\\"spec\\":{\\"ttlSecondsUntilExpired\\":600,\\"ttlSecondsAfterEmpty\\":30,\\"requirements\\":[{\\"key\\":\\"karpenter.sh/capacity-type\\",\\"operator\\":\\"In\\",\\"values\\":[\\"spot\\",\\"on-demand\\"]},{\\"key\\":\\"kubernetes.io/arch\\",\\"operator\\":\\"In\\",\\"values\\":[\\"amd64\\",\\"arm64\\"]},{\\"key\\":\\"topology.kubernetes.io/zone\\",\\"operator\\":\\"In\\",\\"values\\":[\\"",
+              "[{\\"apiVersion\\":\\"karpenter.sh/v1alpha5\\",\\"kind\\":\\"Provisioner\\",\\"metadata\\":{\\"name\\":\\"default\\"},\\"spec\\":{\\"ttlSecondsUntilExpired\\":2592000,\\"ttlSecondsAfterEmpty\\":30,\\"requirements\\":[{\\"key\\":\\"karpenter.sh/capacity-type\\",\\"operator\\":\\"In\\",\\"values\\":[\\"spot\\"]},{\\"key\\":\\"kubernetes.io/arch\\",\\"operator\\":\\"In\\",\\"values\\":[\\"amd64\\"]},{\\"key\\":\\"node.kubernetes.io/instance-type\\",\\"operator\\":\\"In\\",\\"values\\":[\\"t3a.medium\\"]},{\\"key\\":\\"topology.kubernetes.io/zone\\",\\"operator\\":\\"In\\",\\"values\\":[\\"",
               Object {
                 "Fn::Select": Array [
                   0,
