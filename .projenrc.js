@@ -1,4 +1,4 @@
-const { awscdk } = require('projen');
+const { awscdk, TaskRuntime } = require('projen');
 const project = new awscdk.AwsCdkConstructLibrary({
   name: 'cdk-karpenter',
   description: 'Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time.\
@@ -22,11 +22,11 @@ const project = new awscdk.AwsCdkConstructLibrary({
     allowedUsernames: ['cdk-karpenter-automation'],
     secret: 'PROJEN_GITHUB_TOKEN',
   },
+  autoApproveProjenUpgrades: true,
   projenTokenSecret: 'PROJEN_GITHUB_TOKEN',
-  codeCov: true,
-  dependabot: true,
   autoApproveUpgrades: true,
   deps: ['aws-cdk-lib'],
+  devDeps: ['aws-cdk-lib'],
   // deps: [],                /* Runtime dependencies of this module. */
   // devDeps: [],             /* Build dependencies for this module. */
   // packageName: undefined,  /* The "name" in package.json. */
