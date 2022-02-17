@@ -1,6 +1,6 @@
 import { CfnJson, CfnOutput, Duration } from 'aws-cdk-lib';
 import { ISubnet, IVpc } from 'aws-cdk-lib/aws-ec2';
-import { Cluster, HelmChart, KubernetesVersion } from 'aws-cdk-lib/aws-eks';
+import { Cluster, HelmChart } from 'aws-cdk-lib/aws-eks';
 import { CfnInstanceProfile, ManagedPolicy, OpenIdConnectPrincipal, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import { TagSubnetsCustomResource } from './custom-resource';
@@ -17,21 +17,21 @@ export interface IKarpenterProps {
   readonly vpc: IVpc;
 
   /**
-   * The VPC subnets which need to be tagged for Karpenter to find them
+   * The VPC subnets which need to be tagged for Karpenter to find them.
+   * If left blank it will private VPC subnets will be selected by default. 
    */
   readonly subnets?: ISubnet[];
 
   /**
-   * The Kubernetes version for the Bottlerocket AMI that Karpenter is going to use
+   * Tags will be added to every EC2 instance launched by the default provisioner
    */
-  readonly k8sVersion: KubernetesVersion;
+  tags?: {[key: string]: string};
 }
 
 /**
- * This construct adds Karpenter on a clusterrole level to an eks.FargateCluster
- * following the guide: https://karpenter.sh/docs/getting-started/
- * It creates 2 IAM roles, one for the Nodes and one for the Controller.
- * It then adds and configures Karpenter on the cluster
+ * This construct adds Karpenter to an existing EKS cluster following the guide: https://karpenter.sh/docs/getting-started/
+ * It creates two IAM roles and then adds and configures Karpenter on the cluster with a default provisioner. Additionally,
+ * it tags subnets with custom tags that is used for instructing Karpenter where to place the nodes.
  */
 export class Karpenter extends Construct {
   public readonly karpenterNodeRole: Role;
@@ -96,11 +96,6 @@ export class Karpenter extends Construct {
       path: '/',
     });
 
-    // props.cluster.addServiceAccount('karpenter', {
-    //   name: 'karpenter',
-    //   namespace: 'karpenter',
-    // });
-
     props.cluster.awsAuth.addRoleMapping(this.karpenterNodeRole, {
       groups: [
         'system:bootstrappers',
@@ -152,6 +147,13 @@ export class Karpenter extends Construct {
       },
     });
 
+    // Custom Tags
+    const customTags = props.tags ? {
+      tags: {
+        ...props.tags,
+      },
+    } : undefined;
+
     // default Provisioner
     const karpenterDefaultProvisioner = props.cluster.addManifest('karpenterDefaultProvisioner', {
       apiVersion: 'karpenter.sh/v1alpha5',
@@ -195,6 +197,7 @@ export class Karpenter extends Construct {
             [`kubernetes.io/cluster/${props.cluster.clusterName}`]: 'owned',
           },
           instanceProfile: instanceProfile.instanceProfileName,
+          ...customTags,
         },
       },
     });
