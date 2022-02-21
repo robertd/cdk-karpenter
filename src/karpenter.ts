@@ -104,12 +104,12 @@ export class Karpenter extends Construct {
   constructor(scope: Construct, id: string, props: KarpenterProps) {
     super(scope, id);
 
+    const subnets = props.subnets ? props.subnets : props.vpc.privateSubnets;
     const ttlSecondsUntilExpired = props.provisionerConfig?.ttlSecondsUntilExpired?.toSeconds() ?? Duration.days(30).toSeconds();
     const ttlSecondsAfterEmpty = props.provisionerConfig?.ttlSecondsAfterEmpty?.toSeconds() ?? Duration.seconds(30).toSeconds();
     const archTypes = props.provisionerConfig?.archTypes ?? [ArchType.AMD64];
     const capacityTypes = props.provisionerConfig?.capacityTypes ?? [CapacityType.SPOT];
     const instanceTypes = props.provisionerConfig?.instanceTypes?.map((i)=> { return i.toString(); }) ?? ['t3a.medium'];
-    const subnets = props.subnets ? props.subnets : props.vpc.privateSubnets;
     const customTags = props.tags ? {
       tags: {
         ...props.tags,

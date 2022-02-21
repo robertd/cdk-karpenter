@@ -16,7 +16,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
   compat: true,
   stability: 'experimental',
-  cdkVersion: '2.12.0',
+  cdkVersion: '2.13.0',
   workflowNodeVersion: '16.14.0',
   autoApproveOptions: {
     allowedUsernames: ['cdk-karpenter-automation'],
@@ -44,6 +44,7 @@ const common_exclude = [
   'src/integ.karpenter-eks-extended.ts',
   'src/integ.karpenter-eks.ts',
   'src/integ.karpenter-fargate-extended.ts',
+  'src/integ.karpenter-fargate-ephemeral.ts',
   'src/integ.karpenter-fargate.ts',
   'src/integ.karpenter.ts',
 ];
