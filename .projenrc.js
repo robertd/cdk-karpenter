@@ -16,7 +16,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
   compat: true,
   stability: 'experimental',
-  cdkVersion: '2.14.0',
+  cdkVersion: '2.4.0',
   workflowNodeVersion: '16.14.0',
   autoApproveOptions: {
     allowedUsernames: ['robertd'],
