@@ -1324,7 +1324,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/64a840759e770f932579d69d07d0f8f7d690bf8f19ff219a3d39c14808949b93.json",
+              "/2757f54d18d6dc3907b375897624d4057d5c6f1dd1320f5ce274c79381fdc0c3.json",
             ],
           ],
         },
@@ -1373,7 +1373,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/6d347d8a23b84f2b7555baddf0db13e87d1f4515053fe72a2b46d2f464bf2de0.json",
+              "/5c25fc26546f19c6927a788c7d61e1345d6490fca68a82b9407c38c9c21195a4.json",
             ],
           ],
         },
@@ -1887,7 +1887,7 @@ def on_delete(event):
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "598fb6cff8e638be6d00a6a4d728d795cc8f563ff24122bb1ab518c1530e24d8.zip",
+          "S3Key": "8673bd36bbfce694fb944a5bd855eac5d342df85f1f9a67cb19fa5fbf3d5bde3.zip",
         },
         "Description": "AWS CDK resource provider framework - onEvent (Stack/karpenter/TagSubnets/Provider)",
         "Environment": Object {
