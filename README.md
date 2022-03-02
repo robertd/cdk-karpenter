@@ -56,6 +56,10 @@ new Karpenter(stack, 'karpenter', {
     ],
     ttlSecondsUntilExpired: Duration.days(30),
     ttlSecondsAfterEmpty: Duration.minutes(5),
+    limits: {
+      cpu: "1",
+      mem: "1000Gi",
+    }
   },
 });
 ```

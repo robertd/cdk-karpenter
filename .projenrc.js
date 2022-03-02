@@ -20,7 +20,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   workflowNodeVersion: '16.14.0',
   autoApproveOptions: {
     allowedUsernames: ['robertd'],
-    secret: 'PROJEN_GITHUB_TOKEN',
+    secret: 'GITHUB_TOKEN',
   },
   autoApproveProjenUpgrades: true,
   projenTokenSecret: 'PROJEN_GITHUB_TOKEN',

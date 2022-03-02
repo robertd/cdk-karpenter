@@ -65,6 +65,23 @@ export interface ProvisionerProps {
    * @default amd64
    */
   readonly archTypes?: ArchType[];
+
+  /**
+   * CPU and Memory Limits
+   */
+  readonly limits?: Limits;
+}
+
+export interface Limits {
+  /**
+   * Memory limits (i.e. 1000Gi)
+   */
+  readonly mem?: string,
+
+  /**
+   * CPU limits (i.e. 256)
+   */
+  readonly cpu?: string,
 }
 
 export enum CapacityType {
@@ -113,6 +130,14 @@ export class Karpenter extends Construct {
     const customTags = props.tags ? {
       tags: {
         ...props.tags,
+      },
+    } : undefined;
+    const limits = props.provisionerConfig?.limits ? {
+      limits: {
+        resources: {
+          ...(props.provisionerConfig!.limits.mem && {mem: props.provisionerConfig!.limits.mem}),
+          ...(props.provisionerConfig!.limits.cpu && {cpu: props.provisionerConfig!.limits.cpu}),
+        },
       },
     } : undefined;
 
@@ -199,7 +224,7 @@ export class Karpenter extends Construct {
     this.karpenterHelmChart = new HelmChart(this, 'HelmChart', {
       chart: 'karpenter',
       createNamespace: true,
-      version: '0.6.3',
+      version: '0.6.4',
       cluster: props.cluster,
       namespace: 'karpenter',
       release: 'karpenter',
@@ -228,6 +253,7 @@ export class Karpenter extends Construct {
         name: 'default',
       },
       spec: {
+        ...limits,
         ttlSecondsUntilExpired,
         ttlSecondsAfterEmpty,
         requirements: [
