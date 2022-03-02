@@ -48,7 +48,7 @@ new Karpenter(stack, 'karpenter', {
     ],
     archTypes: [
       ArchType.AMD64,
-      ArchType.AMD64,
+      ArchType.ARM64,
     ],
     capacityTypes: [
       CapacityType.SPOT,
@@ -59,7 +59,7 @@ new Karpenter(stack, 'karpenter', {
     limits: {
       cpu: "1",
       mem: "1000Gi",
-    }
+    },
   },
 });
 ```
