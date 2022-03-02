@@ -76,12 +76,12 @@ export interface Limits {
   /**
    * Memory limits (i.e. 1000Gi)
    */
-  readonly mem?: string,
+  readonly mem?: string;
 
   /**
    * CPU limits (i.e. 256)
    */
-  readonly cpu?: string,
+  readonly cpu?: string;
 }
 
 export enum CapacityType {
@@ -135,8 +135,8 @@ export class Karpenter extends Construct {
     const limits = props.provisionerConfig?.limits ? {
       limits: {
         resources: {
-          ...(props.provisionerConfig!.limits.mem && {mem: props.provisionerConfig!.limits.mem}),
-          ...(props.provisionerConfig!.limits.cpu && {cpu: props.provisionerConfig!.limits.cpu}),
+          ...(props.provisionerConfig!.limits.mem && { mem: props.provisionerConfig!.limits.mem }),
+          ...(props.provisionerConfig!.limits.cpu && { cpu: props.provisionerConfig!.limits.cpu }),
         },
       },
     } : undefined;
