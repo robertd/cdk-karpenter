@@ -224,7 +224,7 @@ export class Karpenter extends Construct {
     this.karpenterHelmChart = new HelmChart(this, 'HelmChart', {
       chart: 'karpenter',
       createNamespace: true,
-      version: '0.6.4',
+      version: '0.6.5',
       cluster: props.cluster,
       namespace: 'karpenter',
       release: 'karpenter',
