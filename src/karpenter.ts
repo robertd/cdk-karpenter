@@ -7,7 +7,7 @@ import { TagSubnetsCustomResource } from './custom-resource';
 
 export interface KarpenterProps {
   /**
-   * The Cluster on which Karpenter needs to be added
+   * The EKS cluster on which Karpenter is going to be installed on.
    */
   readonly cluster: Cluster;
 
@@ -17,59 +17,75 @@ export interface KarpenterProps {
   readonly vpc: IVpc;
 
   /**
-   * The VPC subnets which need to be tagged for Karpenter to find them.
-   * If left blank it will private VPC subnets will be selected by default.
+   * VPC subnets which need to be tagged for Karpenter to find them.
+   * If left blank, private VPC subnets will be used and tagged by default.
    */
   readonly subnets?: ISubnet[];
-
-  /**
-   * Default provisioner customization
-   */
-  readonly provisionerConfig?: ProvisionerProps;
-
-  /**
-   * Tags will be added to every EC2 instance launched by the default provisioner
-   */
-  readonly tags?: {[key: string]: string};
 }
 
-export interface ProvisionerProps {
+export interface ProvisionerSpecs {
   /**
-   * Time in seconds in which ndoes will expire and get replaced
+   * Time in seconds in which ndoes will expire and get replaced.
    * i.e. Duration.hours(12)
    * @default 2592000
    */
   readonly ttlSecondsUntilExpired?: Duration;
 
   /**
-   * Time in seconds in which nodes will scale down due to low utilization
+   * Time in seconds in which nodes will scale down due to low utilization.
    * i.e. Duration.minutes(30)
    * @default 30
    */
   readonly ttlSecondsAfterEmpty?: Duration;
 
   /**
-   * The instance types to use in the default Karpenter provider.
-   * @default t3.medium
+   * CPU and Memory Limits. Resource limits constrain the total size of the cluster.
+   * Limits prevent Karpenter from creating new instances once the limit is exceeded.
+   */
+  readonly limits?: Limits;
+
+  /**
+   * Tags will be added to every EC2 instance launched by the provisioner.
+   */
+  readonly tags?: {[key: string]: string};
+
+  /**
+   * Labels are arbitrary key-values that are applied to all nodes
+   */
+  readonly labels?: {[key: string]: string};
+
+  /**
+   * Requirements that constrain the parameters of provisioned nodes.
+   * These requirements are combined with pod.spec.affinity.nodeAffinity rules.
+   */
+  readonly requirements: ProvisionerReqs;
+
+  /**
+   * Provisioned nodes will have these taints. Taints may prevent pods from scheduling if they are not tolerated.
+   */
+  readonly taints?: Taints[];
+}
+
+export interface ProvisionerReqs {
+  /**
+   * Instance types to be used by the Karpenter Provider.
    */
   readonly instanceTypes?: InstanceType[];
 
   /**
-   * Capacity type of the node instances
-   * @default spot
+   * Instance types to be rejected by the Karpenter Provider.
+   */
+  readonly rejectInstanceTypes?: InstanceType[];
+
+  /**
+   * Capacity type of the node instances.
    */
   readonly capacityTypes?: CapacityType[];
 
   /**
-   * Architecture type of the node instances
-   * @default amd64
+   * Architecture type of the node instances.
    */
-  readonly archTypes?: ArchType[];
-
-  /**
-   * CPU and Memory Limits
-   */
-  readonly limits?: Limits;
+  readonly archTypes: ArchType[];
 }
 
 export interface Limits {
@@ -82,6 +98,28 @@ export interface Limits {
    * CPU limits (i.e. 256)
    */
   readonly cpu?: string;
+}
+
+export interface Taints {
+  /**
+   * Key
+   */
+  readonly key: string;
+  
+  /**
+   * Effect
+   */
+  readonly effect: string; 
+  
+  /**
+   * Operator
+   */
+  readonly operator?: string;
+
+  /**
+   * Value
+   */
+   readonly value?: string;
 }
 
 export enum CapacityType {
@@ -109,42 +147,29 @@ export enum ArchType {
 }
 
 /**
- * This construct adds Karpenter to an existing EKS cluster following the guide: https://karpenter.sh/docs/getting-started/
- * It creates two IAM roles and then adds and configures Karpenter on the cluster with a default provisioner. Additionally,
- * it tags subnets with custom tags that is used for instructing Karpenter where to place the nodes.
+ * This construct adds Karpenter to an existing EKS cluster following the guide located at: https://karpenter.sh/docs/getting-started/.
+ * It creates two IAM roles and then adds and installes Karpenter on the EKS cluster. Additionally,
+ * it tags subnets with custom tags that are used for instructing Karpenter where to place the nodes.
  */
 export class Karpenter extends Construct {
-  public readonly karpenterNodeRole: Role;
-  public readonly karpenterControllerRole: Role;
-  public readonly karpenterHelmChart: HelmChart;
-
+  private readonly availabilityZones: string[];
+  private readonly cluster: Cluster;
+  private readonly instanceProfile: CfnInstanceProfile;
+  private readonly karpenterNodeRole: Role;
+  private readonly karpenterControllerRole: Role;
+  private readonly karpenterHelmChart: HelmChart;
+  
   constructor(scope: Construct, id: string, props: KarpenterProps) {
     super(scope, id);
 
+    this.cluster = props.cluster;
+    this.availabilityZones = props.vpc.availabilityZones;
     const subnets = props.subnets ? props.subnets : props.vpc.privateSubnets;
-    const ttlSecondsUntilExpired = props.provisionerConfig?.ttlSecondsUntilExpired?.toSeconds() ?? Duration.days(30).toSeconds();
-    const ttlSecondsAfterEmpty = props.provisionerConfig?.ttlSecondsAfterEmpty?.toSeconds() ?? Duration.seconds(30).toSeconds();
-    const archTypes = props.provisionerConfig?.archTypes ?? [ArchType.AMD64];
-    const capacityTypes = props.provisionerConfig?.capacityTypes ?? [CapacityType.SPOT];
-    const instanceTypes = props.provisionerConfig?.instanceTypes?.map((i)=> { return i.toString(); }) ?? ['t3a.medium'];
-    const customTags = props.tags ? {
-      tags: {
-        ...props.tags,
-      },
-    } : undefined;
-    const limits = props.provisionerConfig?.limits ? {
-      limits: {
-        resources: {
-          ...(props.provisionerConfig!.limits.mem && { mem: props.provisionerConfig!.limits.mem }),
-          ...(props.provisionerConfig!.limits.cpu && { cpu: props.provisionerConfig!.limits.cpu }),
-        },
-      },
-    } : undefined;
 
-    // Custom resource to tag vpc subnets with
+    // Custom resource that will tag VPC subnets
     new TagSubnetsCustomResource(this, 'TagSubnets', {
       subnets: subnets.map((subnet) => { return subnet.subnetId; }),
-      clusterTag: `karpenter.sh/discovery/${props.cluster.clusterName}`,
+      clusterTag: `karpenter.sh/discovery/${this.cluster.clusterName}`,
     });
 
     const karpenterControllerPolicy = new ManagedPolicy(this, 'ControllerPolicy', {
@@ -176,7 +201,7 @@ export class Karpenter extends Construct {
 
     this.karpenterNodeRole = new Role(this, 'NodeRole', {
       assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
-      description: `This is the IAM role Karpenter uses to give compute permissions for ${props.cluster.clusterName}`,
+      description: `This is the IAM role Karpenter uses to give compute permissions for ${this.cluster.clusterName}`,
     });
 
     [
@@ -188,13 +213,13 @@ export class Karpenter extends Construct {
       this.karpenterNodeRole.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName(policyName));
     });
 
-    const instanceProfile = new CfnInstanceProfile(this, 'InstanceProfile', {
+    this.instanceProfile = new CfnInstanceProfile(this, 'InstanceProfile', {
       roles: [this.karpenterNodeRole.roleName],
-      instanceProfileName: `KarpenterNodeInstanceProfile-${props.cluster.clusterName}`,
+      instanceProfileName: `KarpenterNodeInstanceProfile-${this.cluster.clusterName}`,
       path: '/',
     });
 
-    props.cluster.awsAuth.addRoleMapping(this.karpenterNodeRole, {
+    this.cluster.awsAuth.addRoleMapping(this.karpenterNodeRole, {
       groups: [
         'system:bootstrappers',
         'system:nodes',
@@ -204,20 +229,20 @@ export class Karpenter extends Construct {
 
     const conditions = new CfnJson(this, 'ConditionPlainJson', {
       value: {
-        [`${props.cluster.openIdConnectProvider.openIdConnectProviderIssuer}:aud`]: 'sts.amazonaws.com',
-        [`${props.cluster.openIdConnectProvider.openIdConnectProviderIssuer}:sub`]: 'system:serviceaccount:karpenter:karpenter',
+        [`${this.cluster.openIdConnectProvider.openIdConnectProviderIssuer}:aud`]: 'sts.amazonaws.com',
+        [`${this.cluster.openIdConnectProvider.openIdConnectProviderIssuer}:sub`]: 'system:serviceaccount:karpenter:karpenter',
       },
     });
 
     const principal = new OpenIdConnectPrincipal(
-      props.cluster.openIdConnectProvider,
+      this.cluster.openIdConnectProvider,
     ).withConditions({
       StringEquals: conditions,
     });
 
     this.karpenterControllerRole = new Role(this, 'ControllerRole', {
       assumedBy: principal,
-      description: `This is the IAM role Karpenter uses to allocate compute for ${props.cluster.clusterName}`,
+      description: `This is the IAM role Karpenter uses to allocate compute for ${this.cluster.clusterName}`,
     });
     this.karpenterControllerRole.addManagedPolicy(karpenterControllerPolicy);
 
@@ -225,81 +250,114 @@ export class Karpenter extends Construct {
       chart: 'karpenter',
       createNamespace: true,
       version: '0.6.5',
-      cluster: props.cluster,
+      cluster: this.cluster,
       namespace: 'karpenter',
       release: 'karpenter',
       repository: 'https://charts.karpenter.sh',
       timeout: Duration.minutes(15),
       wait: true,
       values: {
-        clusterName: props.cluster.clusterName,
-        clusterEndpoint: props.cluster.clusterEndpoint,
+        clusterName: this.cluster.clusterName,
+        clusterEndpoint: this.cluster.clusterEndpoint,
         serviceAccount: {
           annotations: {
             'eks.amazonaws.com/role-arn': this.karpenterControllerRole.roleArn,
           },
         },
         aws: {
-          defaultInstanceProfile: instanceProfile.instanceProfileName,
+          defaultInstanceProfile: this.instanceProfile.instanceProfileName,
         },
       },
     });
 
-    // default Provisioner
-    const karpenterDefaultProvisioner = props.cluster.addManifest('karpenterDefaultProvisioner', {
+    new CfnOutput(this, 'clusterName', { value: this.cluster.clusterName });
+    // new CfnOutput(this, 'karpenterControllerRole', { value: this.karpenterControllerRole.roleName });
+    // new CfnOutput(this, 'karpenterNodeRole', { value: this.karpenterNodeRole.roleName });
+    // new CfnOutput(this, 'instanceProfileName', { value: this.instanceProfile.instanceProfileName || '' });
+    // new CfnOutput(this, 'karpenterControllerPolicy', { value: karpenterControllerPolicy.managedPolicyName });
+  }
+
+  /**
+   * addProvisioner adds a provisioner manifest to the cluster.
+   *
+   * @param id - must consist of lower case alphanumeric characters, \'-\' or \'.\', and must start and end with an alphanumeric character
+   * @param provisionerSpecs - spec for the Karpenter Provisioner.
+   */
+  public addProvisioner(id: string, provisionerSpecs?: ProvisionerSpecs): void {
+    const requirements = this.setRequirements(provisionerSpecs?.requirements);
+    const provisioner = this.cluster.addManifest(id, {
       apiVersion: 'karpenter.sh/v1alpha5',
       kind: 'Provisioner',
       metadata: {
-        name: 'default',
+        name: id,
       },
       spec: {
-        ...limits,
-        ttlSecondsUntilExpired,
-        ttlSecondsAfterEmpty,
+        ...provisionerSpecs?.limits && { 
+          limits: {
+            resources: {
+              ...(provisionerSpecs.limits.mem && { mem: provisionerSpecs!.limits.mem }),
+              ...(provisionerSpecs.limits.cpu && { cpu: provisionerSpecs!.limits.cpu }),
+            },
+          },
+        },
+        ttlSecondsUntilExpired: provisionerSpecs?.ttlSecondsUntilExpired?.toSeconds() ?? Duration.days(30).toSeconds(),
+        ttlSecondsAfterEmpty: provisionerSpecs?.ttlSecondsAfterEmpty?.toSeconds() ?? Duration.seconds(30).toSeconds(),
         requirements: [
-          {
-            key: 'karpenter.sh/capacity-type',
-            operator: 'In',
-            values: capacityTypes,
-          },
-          {
-            key: 'kubernetes.io/arch',
-            operator: 'In',
-            values: archTypes,
-          },
-          {
-            key: 'node.kubernetes.io/instance-type',
-            operator: 'In',
-            values: instanceTypes,
-          },
-          {
-            key: 'topology.kubernetes.io/zone',
-            operator: 'In',
-            values: props.vpc.availabilityZones,
-          },
+          ...requirements,
         ],
         labels: {
-          'cluster-name': props.cluster.clusterName,
+          'cluster-name': this.cluster.clusterName,
         },
         provider: {
           subnetSelector: {
-            [`karpenter.sh/discovery/${props.cluster.clusterName}`]: '*',
+            [`karpenter.sh/discovery/${this.cluster.clusterName}`]: '*',
           },
           securityGroupSelector: {
-            [`kubernetes.io/cluster/${props.cluster.clusterName}`]: 'owned',
+            [`kubernetes.io/cluster/${this.cluster.clusterName}`]: 'owned',
           },
-          instanceProfile: instanceProfile.instanceProfileName,
-          ...customTags,
+          instanceProfile: this.instanceProfile.instanceProfileName,
+          ...provisionerSpecs?.tags && { tags: { ...provisionerSpecs!.tags }},
         },
       },
     });
+    provisioner.node.addDependency(this.karpenterHelmChart);
+  }
 
-    karpenterDefaultProvisioner.node.addDependency(this.karpenterHelmChart);
+  private setRequirements(reqs?: ProvisionerReqs): any[] {
+    let requirements: any[] = [
+      {
+        key: 'karpenter.sh/capacity-type',
+        operator: 'In',
+        values: reqs?.capacityTypes ?? [CapacityType.SPOT],
+      },
+      {
+        key: 'kubernetes.io/arch',
+        operator: 'In',
+        values: reqs?.archTypes ?? [ArchType.AMD64],
+      },
+      {
+        key: 'topology.kubernetes.io/zone',
+        operator: 'In',
+        values: this.availabilityZones,
+      },
+    ];
 
-    new CfnOutput(this, 'clusterName', { value: props.cluster.clusterName });
-    new CfnOutput(this, 'karpenterControllerRole', { value: this.karpenterControllerRole.roleName });
-    new CfnOutput(this, 'karpenterNodeRole', { value: this.karpenterNodeRole.roleName });
-    new CfnOutput(this, 'instanceProfileName', { value: instanceProfile.instanceProfileName || '' });
-    new CfnOutput(this, 'karpenterControllerPolicy', { value: karpenterControllerPolicy.managedPolicyName });
+    if(reqs?.instanceTypes) {
+      requirements.push({
+        key: 'node.kubernetes.io/instance-type',
+        operator: 'In',
+        values: reqs!.instanceTypes!.map((i)=> { return i.toString(); }),
+      });
+    }
+
+    if(reqs?.rejectInstanceTypes) {
+      requirements.push({
+        key: 'node.kubernetes.io/instance-type',
+        operator: 'NotIn',
+        values: reqs!.rejectInstanceTypes!.map((i)=> { return i.toString(); }),
+      });
+    }
+
+    return requirements;
   }
 }

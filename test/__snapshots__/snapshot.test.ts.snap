@@ -48,54 +48,6 @@ Object {
         "Ref": "Cluster9EE0221C",
       },
     },
-    "karpenterinstanceProfileName9420D046": Object {
-      "Value": Object {
-        "Fn::Join": Array [
-          "",
-          Array [
-            "KarpenterNodeInstanceProfile-",
-            Object {
-              "Ref": "Cluster9EE0221C",
-            },
-          ],
-        ],
-      },
-    },
-    "karpenterkarpenterControllerPolicy61619F9F": Object {
-      "Value": Object {
-        "Fn::Select": Array [
-          1,
-          Object {
-            "Fn::Split": Array [
-              "/",
-              Object {
-                "Fn::Select": Array [
-                  5,
-                  Object {
-                    "Fn::Split": Array [
-                      ":",
-                      Object {
-                        "Ref": "karpenterControllerPolicyA6C7C5DE",
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    },
-    "karpenterkarpenterControllerRoleFD47C5E3": Object {
-      "Value": Object {
-        "Ref": "karpenterControllerRole06530798",
-      },
-    },
-    "karpenterkarpenterNodeRole0AE6A605": Object {
-      "Value": Object {
-        "Ref": "karpenterNodeRole086B4B2F",
-      },
-    },
   },
   "Parameters": Object {
     "BootstrapVersion": Object {
@@ -657,7 +609,7 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ClustermanifestkarpenterDefaultProvisionerEDF9B25D": Object {
+    "Clustermanifestcustom7D91FEAB": Object {
       "DeletionPolicy": "Delete",
       "DependsOn": Array [
         "ClusterKubectlReadyBarrier200052AF",
@@ -671,7 +623,75 @@ Object {
           "Fn::Join": Array [
             "",
             Array [
-              "[{\\"apiVersion\\":\\"karpenter.sh/v1alpha5\\",\\"kind\\":\\"Provisioner\\",\\"metadata\\":{\\"name\\":\\"default\\"},\\"spec\\":{\\"ttlSecondsUntilExpired\\":2592000,\\"ttlSecondsAfterEmpty\\":30,\\"requirements\\":[{\\"key\\":\\"karpenter.sh/capacity-type\\",\\"operator\\":\\"In\\",\\"values\\":[\\"spot\\"]},{\\"key\\":\\"kubernetes.io/arch\\",\\"operator\\":\\"In\\",\\"values\\":[\\"amd64\\"]},{\\"key\\":\\"node.kubernetes.io/instance-type\\",\\"operator\\":\\"In\\",\\"values\\":[\\"t3a.medium\\"]},{\\"key\\":\\"topology.kubernetes.io/zone\\",\\"operator\\":\\"In\\",\\"values\\":[\\"",
+              "[{\\"apiVersion\\":\\"karpenter.sh/v1alpha5\\",\\"kind\\":\\"Provisioner\\",\\"metadata\\":{\\"name\\":\\"custom\\"},\\"spec\\":{\\"limits\\":{\\"resources\\":{\\"mem\\":\\"1000Gi\\",\\"cpu\\":\\"1\\"}},\\"ttlSecondsUntilExpired\\":7776000,\\"ttlSecondsAfterEmpty\\":7200,\\"requirements\\":[{\\"key\\":\\"karpenter.sh/capacity-type\\",\\"operator\\":\\"In\\",\\"values\\":[\\"spot\\"]},{\\"key\\":\\"kubernetes.io/arch\\",\\"operator\\":\\"In\\",\\"values\\":[\\"amd64\\",\\"arm64\\"]},{\\"key\\":\\"topology.kubernetes.io/zone\\",\\"operator\\":\\"In\\",\\"values\\":[\\"",
+              Object {
+                "Fn::Select": Array [
+                  0,
+                  Object {
+                    "Fn::GetAZs": "",
+                  },
+                ],
+              },
+              "\\",\\"",
+              Object {
+                "Fn::Select": Array [
+                  1,
+                  Object {
+                    "Fn::GetAZs": "",
+                  },
+                ],
+              },
+              "\\"]},{\\"key\\":\\"node.kubernetes.io/instance-type\\",\\"operator\\":\\"In\\",\\"values\\":[\\"m5.large\\",\\"m5a.large\\",\\"m6g.large\\"]},{\\"key\\":\\"node.kubernetes.io/instance-type\\",\\"operator\\":\\"NotIn\\",\\"values\\":[\\"g5.large\\"]}],\\"labels\\":{\\"cluster-name\\":\\"",
+              Object {
+                "Ref": "Cluster9EE0221C",
+              },
+              "\\"},\\"provider\\":{\\"subnetSelector\\":{\\"karpenter.sh/discovery/",
+              Object {
+                "Ref": "Cluster9EE0221C",
+              },
+              "\\":\\"*\\"},\\"securityGroupSelector\\":{\\"kubernetes.io/cluster/",
+              Object {
+                "Ref": "Cluster9EE0221C",
+              },
+              "\\":\\"owned\\"},\\"instanceProfile\\":\\"KarpenterNodeInstanceProfile-",
+              Object {
+                "Ref": "Cluster9EE0221C",
+              },
+              "\\",\\"tags\\":{\\"Foo\\":\\"Bar\\"}}}}]",
+            ],
+          ],
+        },
+        "RoleArn": Object {
+          "Fn::GetAtt": Array [
+            "ClusterCreationRole360249B6",
+            "Arn",
+          ],
+        },
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "awscdkawseksKubectlProviderNestedStackawscdkawseksKubectlProviderNestedStackResourceA7AEBA6B",
+            "Outputs.StackawscdkawseksKubectlProviderframeworkonEvent8897FD9BArn",
+          ],
+        },
+      },
+      "Type": "Custom::AWSCDK-EKS-KubernetesResource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ClustermanifestdefaultC118B552": Object {
+      "DeletionPolicy": "Delete",
+      "DependsOn": Array [
+        "ClusterKubectlReadyBarrier200052AF",
+        "karpenterHelmChart85F67B30",
+      ],
+      "Properties": Object {
+        "ClusterName": Object {
+          "Ref": "Cluster9EE0221C",
+        },
+        "Manifest": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "[{\\"apiVersion\\":\\"karpenter.sh/v1alpha5\\",\\"kind\\":\\"Provisioner\\",\\"metadata\\":{\\"name\\":\\"default\\"},\\"spec\\":{\\"ttlSecondsUntilExpired\\":2592000,\\"ttlSecondsAfterEmpty\\":30,\\"requirements\\":[{\\"key\\":\\"karpenter.sh/capacity-type\\",\\"operator\\":\\"In\\",\\"values\\":[\\"spot\\"]},{\\"key\\":\\"kubernetes.io/arch\\",\\"operator\\":\\"In\\",\\"values\\":[\\"amd64\\"]},{\\"key\\":\\"topology.kubernetes.io/zone\\",\\"operator\\":\\"In\\",\\"values\\":[\\"",
               Object {
                 "Fn::Select": Array [
                   0,

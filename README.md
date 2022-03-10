@@ -6,7 +6,7 @@ Karpenter simplifies Kubernetes infrastructure with the right nodes at the right
 
 More info about Karpenter at: https://karpenter.sh
 
-## Basic use
+## Showcase
 
 ```ts
 import { InstanceClass, InstanceSize, InstanceType, Vpc } from 'aws-cdk-lib/aws-ec2';
@@ -24,42 +24,44 @@ const cluster = new Cluster(stack, 'eks', {
   defaultCapacityInstance: InstanceType.of(InstanceClass.T3A, InstanceSize.MEDIUM),
 });
 
-new Karpenter(stack, 'karpenter', {
+const karpenter = new Karpenter(stack, 'karpenter', {
   cluster,
   vpc,
 });
 
-```
+// default provisioner
+karpenter.addProvisioner('default');
 
-## Customize default Karpenter provisioner
-
-```ts
-new Karpenter(stack, 'karpenter', {
-  cluster,
-  vpc,
-  tags: {
-    Foo: 'bar',
-  },
-  provisionerConfig: {
+// customized provisoner
+karpenter.addProvisioner('custom', {
+  requirements: {
+    archTypes: [ArchType.AMD64, ArchType.ARM64],
     instanceTypes: [
       InstanceType.of(InstanceClass.M5, InstanceSize.LARGE),
       InstanceType.of(InstanceClass.M5A, InstanceSize.LARGE),
       InstanceType.of(InstanceClass.M6G, InstanceSize.LARGE),
     ],
-    archTypes: [
-      ArchType.AMD64,
-      ArchType.ARM64,
+    rejectInstanceTypes: [
+      InstanceType.of(InstanceClass.G5, InstanceSize.LARGE),
     ],
-    capacityTypes: [
-      CapacityType.SPOT,
-      CapacityType.ON_DEMAND,
-    ],
-    ttlSecondsUntilExpired: Duration.days(30),
-    ttlSecondsAfterEmpty: Duration.minutes(5),
-    limits: {
-      cpu: "1",
-      mem: "1000Gi",
-    },
+  },
+  ttlSecondsAfterEmpty: Duration.hours(2),
+  ttlSecondsUntilExpired: Duration.days(90),
+  labels: {
+    billing: 'my-team'
+  },
+  taints: [
+    {
+      key: 'example.com/special-taint',
+      effect: 'NoSchedule',
+    }
+  ],
+  limits: {
+    cpu: '1',
+    mem: '1000Gi',
+  },
+  tags: {
+    Foo: 'Bar',
   },
 });
 ```
