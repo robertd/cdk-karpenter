@@ -105,12 +105,12 @@ export interface Taints {
    * Key
    */
   readonly key: string;
-  
+
   /**
    * Effect
    */
-  readonly effect: string; 
-  
+  readonly effect: string;
+
   /**
    * Operator
    */
@@ -119,7 +119,7 @@ export interface Taints {
   /**
    * Value
    */
-   readonly value?: string;
+  readonly value?: string;
 }
 
 export enum CapacityType {
@@ -158,7 +158,7 @@ export class Karpenter extends Construct {
   private readonly karpenterNodeRole: Role;
   private readonly karpenterControllerRole: Role;
   private readonly karpenterHelmChart: HelmChart;
-  
+
   constructor(scope: Construct, id: string, props: KarpenterProps) {
     super(scope, id);
 
@@ -292,7 +292,7 @@ export class Karpenter extends Construct {
         name: id,
       },
       spec: {
-        ...provisionerSpecs?.limits && { 
+        ...provisionerSpecs?.limits && {
           limits: {
             resources: {
               ...(provisionerSpecs.limits.mem && { mem: provisionerSpecs!.limits.mem }),
@@ -316,7 +316,7 @@ export class Karpenter extends Construct {
             [`kubernetes.io/cluster/${this.cluster.clusterName}`]: 'owned',
           },
           instanceProfile: this.instanceProfile.instanceProfileName,
-          ...provisionerSpecs?.tags && { tags: { ...provisionerSpecs!.tags }},
+          ...provisionerSpecs?.tags && { tags: { ...provisionerSpecs!.tags } },
         },
       },
     });
@@ -342,7 +342,7 @@ export class Karpenter extends Construct {
       },
     ];
 
-    if(reqs?.instanceTypes) {
+    if (reqs?.instanceTypes) {
       requirements.push({
         key: 'node.kubernetes.io/instance-type',
         operator: 'In',
@@ -350,7 +350,7 @@ export class Karpenter extends Construct {
       });
     }
 
-    if(reqs?.rejectInstanceTypes) {
+    if (reqs?.rejectInstanceTypes) {
       requirements.push({
         key: 'node.kubernetes.io/instance-type',
         operator: 'NotIn',
