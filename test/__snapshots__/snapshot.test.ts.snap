@@ -623,7 +623,7 @@ Object {
           "Fn::Join": Array [
             "",
             Array [
-              "[{\\"apiVersion\\":\\"karpenter.sh/v1alpha5\\",\\"kind\\":\\"Provisioner\\",\\"metadata\\":{\\"name\\":\\"custom\\"},\\"spec\\":{\\"limits\\":{\\"resources\\":{\\"mem\\":\\"1000Gi\\",\\"cpu\\":\\"1\\"}},\\"ttlSecondsUntilExpired\\":7776000,\\"ttlSecondsAfterEmpty\\":7200,\\"requirements\\":[{\\"key\\":\\"karpenter.sh/capacity-type\\",\\"operator\\":\\"In\\",\\"values\\":[\\"spot\\"]},{\\"key\\":\\"kubernetes.io/arch\\",\\"operator\\":\\"In\\",\\"values\\":[\\"amd64\\",\\"arm64\\"]},{\\"key\\":\\"topology.kubernetes.io/zone\\",\\"operator\\":\\"In\\",\\"values\\":[\\"",
+              "[{\\"apiVersion\\":\\"karpenter.sh/v1alpha5\\",\\"kind\\":\\"Provisioner\\",\\"metadata\\":{\\"name\\":\\"custom\\"},\\"spec\\":{\\"limits\\":{\\"resources\\":{\\"mem\\":\\"1000Gi\\",\\"cpu\\":\\"1\\"}},\\"ttlSecondsAfterEmpty\\":7200,\\"ttlSecondsUntilExpired\\":7776000,\\"requirements\\":[{\\"key\\":\\"karpenter.sh/capacity-type\\",\\"operator\\":\\"In\\",\\"values\\":[\\"spot\\"]},{\\"key\\":\\"kubernetes.io/arch\\",\\"operator\\":\\"In\\",\\"values\\":[\\"amd64\\",\\"arm64\\"]},{\\"key\\":\\"topology.kubernetes.io/zone\\",\\"operator\\":\\"In\\",\\"values\\":[\\"",
               Object {
                 "Fn::Select": Array [
                   0,
@@ -691,7 +691,7 @@ Object {
           "Fn::Join": Array [
             "",
             Array [
-              "[{\\"apiVersion\\":\\"karpenter.sh/v1alpha5\\",\\"kind\\":\\"Provisioner\\",\\"metadata\\":{\\"name\\":\\"default\\"},\\"spec\\":{\\"ttlSecondsUntilExpired\\":2592000,\\"ttlSecondsAfterEmpty\\":30,\\"requirements\\":[{\\"key\\":\\"karpenter.sh/capacity-type\\",\\"operator\\":\\"In\\",\\"values\\":[\\"spot\\"]},{\\"key\\":\\"kubernetes.io/arch\\",\\"operator\\":\\"In\\",\\"values\\":[\\"amd64\\"]},{\\"key\\":\\"topology.kubernetes.io/zone\\",\\"operator\\":\\"In\\",\\"values\\":[\\"",
+              "[{\\"apiVersion\\":\\"karpenter.sh/v1alpha5\\",\\"kind\\":\\"Provisioner\\",\\"metadata\\":{\\"name\\":\\"default\\"},\\"spec\\":{\\"requirements\\":[{\\"key\\":\\"karpenter.sh/capacity-type\\",\\"operator\\":\\"In\\",\\"values\\":[\\"spot\\"]},{\\"key\\":\\"kubernetes.io/arch\\",\\"operator\\":\\"In\\",\\"values\\":[\\"amd64\\"]},{\\"key\\":\\"topology.kubernetes.io/zone\\",\\"operator\\":\\"In\\",\\"values\\":[\\"",
               Object {
                 "Fn::Select": Array [
                   0,

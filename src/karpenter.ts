@@ -25,16 +25,15 @@ export interface KarpenterProps {
 
 export interface ProvisionerSpecs {
   /**
-   * Time in seconds in which ndoes will expire and get replaced.
-   * i.e. Duration.hours(12)
-   * @default 2592000
+   * Time in seconds in which nodes will expire and get replaced.
+   * If omitted, the feature is disabled and nodes will never expire.
+   * i.e. Duration.days(7)
    */
   readonly ttlSecondsUntilExpired?: Duration;
 
   /**
    * Time in seconds in which nodes will scale down due to low utilization.
-   * i.e. Duration.minutes(30)
-   * @default 30
+   * If omitted, the feature is disabled, nodes will never scale down due to low utilization
    */
   readonly ttlSecondsAfterEmpty?: Duration;
 
@@ -300,8 +299,8 @@ export class Karpenter extends Construct {
             },
           },
         },
-        ttlSecondsUntilExpired: provisionerSpecs?.ttlSecondsUntilExpired?.toSeconds() ?? Duration.days(30).toSeconds(),
-        ttlSecondsAfterEmpty: provisionerSpecs?.ttlSecondsAfterEmpty?.toSeconds() ?? Duration.seconds(30).toSeconds(),
+        ...provisionerSpecs?.ttlSecondsAfterEmpty && { ttlSecondsAfterEmpty: provisionerSpecs?.ttlSecondsAfterEmpty?.toSeconds() },
+        ...provisionerSpecs?.ttlSecondsUntilExpired && { ttlSecondsUntilExpired: provisionerSpecs!.ttlSecondsUntilExpired!.toSeconds() },
         requirements: [
           ...requirements,
         ],
