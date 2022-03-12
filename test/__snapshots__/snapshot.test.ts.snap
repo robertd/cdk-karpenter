@@ -657,7 +657,7 @@ Object {
               Object {
                 "Ref": "Cluster9EE0221C",
               },
-              "\\",\\"tags\\":{\\"Foo\\":\\"Bar\\"}}}}]",
+              "\\",\\"tags\\":{\\"Foo\\":\\"Bar\\"},\\"amiFamily\\":\\"AL2\\"}}}]",
             ],
           ],
         },
@@ -1393,7 +1393,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/5c25fc26546f19c6927a788c7d61e1345d6490fca68a82b9407c38c9c21195a4.json",
+              "/5b3cfdfb5bc19273e96868187b267d2dbb6238428401510cabde4737039a827c.json",
             ],
           ],
         },

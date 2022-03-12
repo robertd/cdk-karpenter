@@ -44,14 +44,14 @@ export interface ProvisionerSpecs {
   readonly limits?: Limits;
 
   /**
-   * Tags will be added to every EC2 instance launched by the provisioner.
-   */
-  readonly tags?: {[key: string]: string};
-
-  /**
    * Labels are arbitrary key-values that are applied to all nodes
    */
   readonly labels?: {[key: string]: string};
+
+  /**
+   * Provisioned nodes will have these taints. Taints may prevent pods from scheduling if they are not tolerated.
+   */
+  readonly taints?: Taints[];
 
   /**
    * Requirements that constrain the parameters of provisioned nodes.
@@ -60,9 +60,9 @@ export interface ProvisionerSpecs {
   readonly requirements: ProvisionerReqs;
 
   /**
-   * Provisioned nodes will have these taints. Taints may prevent pods from scheduling if they are not tolerated.
+   * AWS cloud provider configuration
    */
-  readonly taints?: Taints[];
+  readonly provider?: ProviderConfig;
 }
 
 export interface ProvisionerReqs {
@@ -85,6 +85,20 @@ export interface ProvisionerReqs {
    * Architecture type of the node instances.
    */
   readonly archTypes: ArchType[];
+}
+
+export interface ProviderConfig {
+  /**
+   * The AMI used when provisioning nodes.
+   * Based on the value set for amiFamily, Karpenter will automatically 
+   * query for the appropriate EKS optimized AMI via AWS Systems Manager (SSM).
+   */
+  readonly amiFamily?: AMIFamily;
+
+  /**
+   * Tags will be added to every EC2 instance launched by the provisioner.
+   */
+  readonly tags?: {[key: string]: string};
 }
 
 export interface Limits {
@@ -145,6 +159,25 @@ export enum ArchType {
   AMD64='amd64',
 }
 
+export enum AMIFamily {
+  /**
+   * Amazon Linux 2 AMI family
+   * Note: If a custom launch template is specified, then the AMI value 
+   * in the launch template is used rather than the amiFamily value.
+   */
+  AL2='AL2',
+
+  /**
+   * Bottlerocket AMI family
+   */
+  BOTTLEROCKET='Bottlerocket',
+
+  /**
+   * Ubuntu AMI family
+   */
+  UBUNTU='Ubuntu',
+}
+
 /**
  * This construct adds Karpenter to an existing EKS cluster following the guide located at: https://karpenter.sh/docs/getting-started/.
  * It creates two IAM roles and then adds and installes Karpenter on the EKS cluster. Additionally,
@@ -163,7 +196,7 @@ export class Karpenter extends Construct {
 
     this.cluster = props.cluster;
     this.availabilityZones = props.vpc.availabilityZones;
-    const subnets = props.subnets ? props.subnets : props.vpc.privateSubnets;
+    const subnets = props.subnets ?? props.vpc.privateSubnets;
 
     // Custom resource that will tag VPC subnets
     new TagSubnetsCustomResource(this, 'TagSubnets', {
@@ -315,7 +348,8 @@ export class Karpenter extends Construct {
             [`kubernetes.io/cluster/${this.cluster.clusterName}`]: 'owned',
           },
           instanceProfile: this.instanceProfile.instanceProfileName,
-          ...provisionerSpecs?.tags && { tags: { ...provisionerSpecs!.tags } },
+          ...provisionerSpecs?.provider?.tags && { tags: { ...provisionerSpecs!.provider!.tags! } },
+          ...provisionerSpecs?.provider?.amiFamily && { amiFamily: provisionerSpecs!.provider!.amiFamily! },
         },
       },
     });

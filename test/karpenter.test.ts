@@ -1,7 +1,7 @@
 import { Duration } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
-import { ArchType, Karpenter } from '../src/index';
+import { AMIFamily, ArchType, Karpenter } from '../src/index';
 import { testFixtureCluster } from './util';
 
 const { stack, vpc, cluster } = testFixtureCluster();
@@ -38,8 +38,11 @@ karpenter.addProvisioner('custom', {
     cpu: '1',
     mem: '1000Gi',
   },
-  tags: {
-    Foo: 'Bar',
+  provider: {
+    amiFamily: AMIFamily.AL2,
+    tags: {
+      Foo: 'Bar',
+    },
   },
 });
 
@@ -164,5 +167,99 @@ test('has an instance profile', () => {
       ],
     },
     Path: '/',
+  });
+});
+
+test('has default provider', () => {
+  Template.fromStack(stack).hasResourceProperties('Custom::AWSCDK-EKS-KubernetesResource', {
+    Manifest: {
+      'Fn::Join': [
+        '',
+        [
+          "[{\"apiVersion\":\"karpenter.sh/v1alpha5\",\"kind\":\"Provisioner\",\"metadata\":{\"name\":\"default\"},\"spec\":{\"requirements\":[{\"key\":\"karpenter.sh/capacity-type\",\"operator\":\"In\",\"values\":[\"spot\"]},{\"key\":\"kubernetes.io/arch\",\"operator\":\"In\",\"values\":[\"amd64\"]},{\"key\":\"topology.kubernetes.io/zone\",\"operator\":\"In\",\"values\":[\"",
+          {
+            "Fn::Select": [
+              0,
+              {
+                "Fn::GetAZs": ""
+              }
+            ]
+          },
+          "\",\"",
+          {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::GetAZs": ""
+              }
+            ]
+          },
+          "\"]}],\"labels\":{\"cluster-name\":\"",
+          {
+            "Ref": "Cluster9EE0221C"
+          },
+          "\"},\"provider\":{\"subnetSelector\":{\"karpenter.sh/discovery/",
+          {
+            "Ref": "Cluster9EE0221C"
+          },
+          "\":\"*\"},\"securityGroupSelector\":{\"kubernetes.io/cluster/",
+          {
+            "Ref": "Cluster9EE0221C"
+          },
+          "\":\"owned\"},\"instanceProfile\":\"KarpenterNodeInstanceProfile-",
+          {
+            "Ref": "Cluster9EE0221C"
+          },
+          "\"}}}]"
+        ],
+      ],
+    },
+  });
+});
+
+test('has custom provider', () => {
+  Template.fromStack(stack).hasResourceProperties('Custom::AWSCDK-EKS-KubernetesResource', {
+    Manifest: {
+      'Fn::Join': [
+        '',
+        [
+          "[{\"apiVersion\":\"karpenter.sh/v1alpha5\",\"kind\":\"Provisioner\",\"metadata\":{\"name\":\"custom\"},\"spec\":{\"limits\":{\"resources\":{\"mem\":\"1000Gi\",\"cpu\":\"1\"}},\"ttlSecondsAfterEmpty\":7200,\"ttlSecondsUntilExpired\":7776000,\"requirements\":[{\"key\":\"karpenter.sh/capacity-type\",\"operator\":\"In\",\"values\":[\"spot\"]},{\"key\":\"kubernetes.io/arch\",\"operator\":\"In\",\"values\":[\"amd64\",\"arm64\"]},{\"key\":\"topology.kubernetes.io/zone\",\"operator\":\"In\",\"values\":[\"",
+          {
+            "Fn::Select": [
+              0,
+              {
+                "Fn::GetAZs": ""
+              }
+            ]
+          },
+          "\",\"",
+          {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::GetAZs": ""
+              }
+            ]
+          },
+          "\"]},{\"key\":\"node.kubernetes.io/instance-type\",\"operator\":\"In\",\"values\":[\"m5.large\",\"m5a.large\",\"m6g.large\"]},{\"key\":\"node.kubernetes.io/instance-type\",\"operator\":\"NotIn\",\"values\":[\"g5.large\"]}],\"labels\":{\"cluster-name\":\"",
+          {
+            "Ref": "Cluster9EE0221C"
+          },
+          "\"},\"provider\":{\"subnetSelector\":{\"karpenter.sh/discovery/",
+          {
+            "Ref": "Cluster9EE0221C"
+          },
+          "\":\"*\"},\"securityGroupSelector\":{\"kubernetes.io/cluster/",
+          {
+            "Ref": "Cluster9EE0221C"
+          },
+          "\":\"owned\"},\"instanceProfile\":\"KarpenterNodeInstanceProfile-",
+          {
+            "Ref": "Cluster9EE0221C"
+          },
+          "\",\"tags\":{\"Foo\":\"Bar\"},\"amiFamily\":\"AL2\"}}}]"
+        ]
+      ],
+    },
   });
 });

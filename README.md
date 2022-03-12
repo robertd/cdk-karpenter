@@ -11,7 +11,7 @@ More info about Karpenter at: https://karpenter.sh
 ```ts
 import { InstanceClass, InstanceSize, InstanceType, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Cluster, KubernetesVersion, Nodegroup } from 'aws-cdk-lib/aws-eks';
-import { Karpenter } from "cdk-karpenter";
+import { Karpenter, AMIFamily } from "cdk-karpenter";
 
 ...
 
@@ -60,8 +60,11 @@ karpenter.addProvisioner('custom', {
     cpu: '1',
     mem: '1000Gi',
   },
-  tags: {
-    Foo: 'Bar',
+  provider: {
+    amiFamily: AMIFamily.AL2,
+    tags: {
+      Foo: 'Bar',
+    },
   },
 });
 ```

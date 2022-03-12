@@ -231,6 +231,51 @@ Memory limits (i.e. 1000Gi).
 
 ---
 
+### ProviderConfig <a name="ProviderConfig" id="cdk-karpenter.ProviderConfig"></a>
+
+#### Initializer <a name="Initializer" id="cdk-karpenter.ProviderConfig.Initializer"></a>
+
+```typescript
+import { ProviderConfig } from 'cdk-karpenter'
+
+const providerConfig: ProviderConfig = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-karpenter.ProviderConfig.property.amiFamily">amiFamily</a></code> | <code><a href="#cdk-karpenter.AMIFamily">AMIFamily</a></code> | The AMI used when provisioning nodes. |
+| <code><a href="#cdk-karpenter.ProviderConfig.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Tags will be added to every EC2 instance launched by the provisioner. |
+
+---
+
+##### `amiFamily`<sup>Optional</sup> <a name="amiFamily" id="cdk-karpenter.ProviderConfig.property.amiFamily"></a>
+
+```typescript
+public readonly amiFamily: AMIFamily;
+```
+
+- *Type:* <a href="#cdk-karpenter.AMIFamily">AMIFamily</a>
+
+The AMI used when provisioning nodes.
+
+Based on the value set for amiFamily,Karpenter will automatically query for the appropriate EKS optimized AMI via AWS Systems Manager (SSM).
+
+---
+
+##### `tags`<sup>Optional</sup> <a name="tags" id="cdk-karpenter.ProviderConfig.property.tags"></a>
+
+```typescript
+public readonly tags: {[ key: string ]: string};
+```
+
+- *Type:* {[ key: string ]: string}
+
+Tags will be added to every EC2 instance launched by the provisioner.
+
+---
+
 ### ProvisionerReqs <a name="ProvisionerReqs" id="cdk-karpenter.ProvisionerReqs"></a>
 
 #### Initializer <a name="Initializer" id="cdk-karpenter.ProvisionerReqs.Initializer"></a>
@@ -317,10 +362,10 @@ const provisionerSpecs: ProvisionerSpecs = { ... }
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.requirements">requirements</a></code> | <code><a href="#cdk-karpenter.ProvisionerReqs">ProvisionerReqs</a></code> | Requirements that constrain the parameters of provisioned nodes. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.labels">labels</a></code> | <code>{[ key: string ]: string}</code> | Labels are arbitrary key-values that are applied to all nodes. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.limits">limits</a></code> | <code><a href="#cdk-karpenter.Limits">Limits</a></code> | CPU and Memory Limits. |
-| <code><a href="#cdk-karpenter.ProvisionerSpecs.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Tags will be added to every EC2 instance launched by the provisioner. |
+| <code><a href="#cdk-karpenter.ProvisionerSpecs.property.provider">provider</a></code> | <code><a href="#cdk-karpenter.ProviderConfig">ProviderConfig</a></code> | AWS cloud provider configuration. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.taints">taints</a></code> | <code><a href="#cdk-karpenter.Taints">Taints</a>[]</code> | Provisioned nodes will have these taints. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.ttlSecondsAfterEmpty">ttlSecondsAfterEmpty</a></code> | <code>aws-cdk-lib.Duration</code> | Time in seconds in which nodes will scale down due to low utilization. |
-| <code><a href="#cdk-karpenter.ProvisionerSpecs.property.ttlSecondsUntilExpired">ttlSecondsUntilExpired</a></code> | <code>aws-cdk-lib.Duration</code> | Time in seconds in which ndoes will expire and get replaced. |
+| <code><a href="#cdk-karpenter.ProvisionerSpecs.property.ttlSecondsUntilExpired">ttlSecondsUntilExpired</a></code> | <code>aws-cdk-lib.Duration</code> | Time in seconds in which nodes will expire and get replaced. |
 
 ---
 
@@ -364,15 +409,15 @@ Resource limits constrain the total size of the cluster. Limits prevent Karpente
 
 ---
 
-##### `tags`<sup>Optional</sup> <a name="tags" id="cdk-karpenter.ProvisionerSpecs.property.tags"></a>
+##### `provider`<sup>Optional</sup> <a name="provider" id="cdk-karpenter.ProvisionerSpecs.property.provider"></a>
 
 ```typescript
-public readonly tags: {[ key: string ]: string};
+public readonly provider: ProviderConfig;
 ```
 
-- *Type:* {[ key: string ]: string}
+- *Type:* <a href="#cdk-karpenter.ProviderConfig">ProviderConfig</a>
 
-Tags will be added to every EC2 instance launched by the provisioner.
+AWS cloud provider configuration.
 
 ---
 
@@ -397,11 +442,10 @@ public readonly ttlSecondsAfterEmpty: Duration;
 ```
 
 - *Type:* aws-cdk-lib.Duration
-- *Default:* 30
 
 Time in seconds in which nodes will scale down due to low utilization.
 
-i.e. Duration.minutes(30)
+If omitted, the feature is disabled, nodes will never scale down due to low utilization
 
 ---
 
@@ -412,11 +456,10 @@ public readonly ttlSecondsUntilExpired: Duration;
 ```
 
 - *Type:* aws-cdk-lib.Duration
-- *Default:* 2592000
 
-Time in seconds in which ndoes will expire and get replaced.
+Time in seconds in which nodes will expire and get replaced.
 
-i.e. Duration.hours(12)
+If omitted, the feature is disabled and nodes will never expire. i.e. Duration.days(7)
 
 ---
 
@@ -492,6 +535,37 @@ Value.
 
 
 ## Enums <a name="Enums" id="Enums"></a>
+
+### AMIFamily <a name="AMIFamily" id="cdk-karpenter.AMIFamily"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-karpenter.AMIFamily.AL2">AL2</a></code> | Amazon Linux 2 AMI family Note: If a custom launch template is specified, then the AMI value in the launch template is used rather than the amiFamily value. |
+| <code><a href="#cdk-karpenter.AMIFamily.BOTTLEROCKET">BOTTLEROCKET</a></code> | Bottlerocket AMI family. |
+| <code><a href="#cdk-karpenter.AMIFamily.UBUNTU">UBUNTU</a></code> | Ubuntu AMI family. |
+
+---
+
+#### `AL2` <a name="AL2" id="cdk-karpenter.AMIFamily.AL2"></a>
+
+Amazon Linux 2 AMI family Note: If a custom launch template is specified, then the AMI value in the launch template is used rather than the amiFamily value.
+
+---
+
+
+#### `BOTTLEROCKET` <a name="BOTTLEROCKET" id="cdk-karpenter.AMIFamily.BOTTLEROCKET"></a>
+
+Bottlerocket AMI family.
+
+---
+
+
+#### `UBUNTU` <a name="UBUNTU" id="cdk-karpenter.AMIFamily.UBUNTU"></a>
+
+Ubuntu AMI family.
+
+---
+
 
 ### ArchType <a name="ArchType" id="cdk-karpenter.ArchType"></a>
 

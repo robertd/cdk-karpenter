@@ -1,7 +1,7 @@
 import { Duration } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
-import { ArchType, Karpenter } from '../src/index';
+import { AMIFamily, ArchType, Karpenter } from '../src/index';
 import { testFixtureCluster } from './util';
 
 const { stack, vpc, cluster } = testFixtureCluster();
@@ -38,8 +38,11 @@ karpenter.addProvisioner('custom', {
     cpu: '1',
     mem: '1000Gi',
   },
-  tags: {
-    Foo: 'Bar',
+  provider: {
+    amiFamily: AMIFamily.AL2,
+    tags: {
+      Foo: 'Bar',
+    },
   },
 });
 
