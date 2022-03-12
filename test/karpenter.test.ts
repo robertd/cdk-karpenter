@@ -187,7 +187,7 @@ test('has default provider', () => {
           },
           '","',
           {
-            "Fn::Select": [
+            'Fn::Select': [
               1,
               {
                 'Fn::GetAZs': '',
