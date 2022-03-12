@@ -176,41 +176,41 @@ test('has default provider', () => {
       'Fn::Join': [
         '',
         [
-          "[{\"apiVersion\":\"karpenter.sh/v1alpha5\",\"kind\":\"Provisioner\",\"metadata\":{\"name\":\"default\"},\"spec\":{\"requirements\":[{\"key\":\"karpenter.sh/capacity-type\",\"operator\":\"In\",\"values\":[\"spot\"]},{\"key\":\"kubernetes.io/arch\",\"operator\":\"In\",\"values\":[\"amd64\"]},{\"key\":\"topology.kubernetes.io/zone\",\"operator\":\"In\",\"values\":[\"",
+          '[{"apiVersion":"karpenter.sh/v1alpha5","kind":"Provisioner","metadata":{"name":"default"},"spec":{"requirements":[{"key":"karpenter.sh/capacity-type","operator":"In","values":["spot"]},{"key":"kubernetes.io/arch","operator":"In","values":["amd64"]},{"key":"topology.kubernetes.io/zone","operator":"In","values":["',
           {
-            "Fn::Select": [
+            'Fn::Select': [
               0,
               {
-                "Fn::GetAZs": ""
-              }
-            ]
+                'Fn::GetAZs': '',
+              },
+            ],
           },
-          "\",\"",
+          '","',
           {
             "Fn::Select": [
               1,
               {
-                "Fn::GetAZs": ""
-              }
-            ]
+                'Fn::GetAZs': '',
+              },
+            ],
           },
-          "\"]}],\"labels\":{\"cluster-name\":\"",
+          '"]}],"labels":{"cluster-name":"',
           {
-            "Ref": "Cluster9EE0221C"
+            Ref: 'Cluster9EE0221C',
           },
-          "\"},\"provider\":{\"subnetSelector\":{\"karpenter.sh/discovery/",
+          '"},"provider":{"subnetSelector":{"karpenter.sh/discovery/',
           {
-            "Ref": "Cluster9EE0221C"
+            Ref: 'Cluster9EE0221C',
           },
-          "\":\"*\"},\"securityGroupSelector\":{\"kubernetes.io/cluster/",
+          '":"*"},"securityGroupSelector":{"kubernetes.io/cluster/',
           {
-            "Ref": "Cluster9EE0221C"
+            Ref: 'Cluster9EE0221C',
           },
-          "\":\"owned\"},\"instanceProfile\":\"KarpenterNodeInstanceProfile-",
+          '":"owned"},"instanceProfile":"KarpenterNodeInstanceProfile-',
           {
-            "Ref": "Cluster9EE0221C"
+            Ref: 'Cluster9EE0221C',
           },
-          "\"}}}]"
+          '"}}}]',
         ],
       ],
     },
@@ -223,42 +223,42 @@ test('has custom provider', () => {
       'Fn::Join': [
         '',
         [
-          "[{\"apiVersion\":\"karpenter.sh/v1alpha5\",\"kind\":\"Provisioner\",\"metadata\":{\"name\":\"custom\"},\"spec\":{\"limits\":{\"resources\":{\"mem\":\"1000Gi\",\"cpu\":\"1\"}},\"ttlSecondsAfterEmpty\":7200,\"ttlSecondsUntilExpired\":7776000,\"requirements\":[{\"key\":\"karpenter.sh/capacity-type\",\"operator\":\"In\",\"values\":[\"spot\"]},{\"key\":\"kubernetes.io/arch\",\"operator\":\"In\",\"values\":[\"amd64\",\"arm64\"]},{\"key\":\"topology.kubernetes.io/zone\",\"operator\":\"In\",\"values\":[\"",
+          '[{"apiVersion":"karpenter.sh/v1alpha5","kind":"Provisioner","metadata":{"name":"custom"},"spec":{"limits":{"resources":{"mem":"1000Gi","cpu":"1"}},"ttlSecondsAfterEmpty":7200,"ttlSecondsUntilExpired":7776000,"requirements":[{"key":"karpenter.sh/capacity-type","operator":"In","values":["spot"]},{"key":"kubernetes.io/arch","operator":"In","values":["amd64","arm64"]},{"key":"topology.kubernetes.io/zone","operator":"In","values":["',
           {
-            "Fn::Select": [
+            'Fn::Select': [
               0,
               {
-                "Fn::GetAZs": ""
-              }
-            ]
+                'Fn::GetAZs': '',
+              },
+            ],
           },
-          "\",\"",
+          '","',
           {
-            "Fn::Select": [
+            'Fn::Select': [
               1,
               {
-                "Fn::GetAZs": ""
-              }
-            ]
+                'Fn::GetAZs': '',
+              },
+            ],
           },
-          "\"]},{\"key\":\"node.kubernetes.io/instance-type\",\"operator\":\"In\",\"values\":[\"m5.large\",\"m5a.large\",\"m6g.large\"]},{\"key\":\"node.kubernetes.io/instance-type\",\"operator\":\"NotIn\",\"values\":[\"g5.large\"]}],\"labels\":{\"cluster-name\":\"",
+          '"]},{"key":"node.kubernetes.io/instance-type","operator":"In","values":["m5.large","m5a.large","m6g.large"]},{"key":"node.kubernetes.io/instance-type","operator":"NotIn","values":["g5.large"]}],"labels":{"cluster-name":"',
           {
-            "Ref": "Cluster9EE0221C"
+            Ref: 'Cluster9EE0221C',
           },
-          "\"},\"provider\":{\"subnetSelector\":{\"karpenter.sh/discovery/",
+          '"},"provider":{"subnetSelector":{"karpenter.sh/discovery/',
           {
-            "Ref": "Cluster9EE0221C"
+            Ref: 'Cluster9EE0221C',
           },
-          "\":\"*\"},\"securityGroupSelector\":{\"kubernetes.io/cluster/",
+          '":"*"},"securityGroupSelector":{"kubernetes.io/cluster/',
           {
-            "Ref": "Cluster9EE0221C"
+            Ref: 'Cluster9EE0221C',
           },
-          "\":\"owned\"},\"instanceProfile\":\"KarpenterNodeInstanceProfile-",
+          '":"owned"},"instanceProfile":"KarpenterNodeInstanceProfile-',
           {
-            "Ref": "Cluster9EE0221C"
+            Ref: 'Cluster9EE0221C',
           },
-          "\",\"tags\":{\"Foo\":\"Bar\"},\"amiFamily\":\"AL2\"}}}]"
-        ]
+          '","tags":{"Foo":"Bar"},"amiFamily":"AL2"}}}]',
+        ],
       ],
     },
   });
