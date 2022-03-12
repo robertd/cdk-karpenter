@@ -90,8 +90,7 @@ export interface ProvisionerReqs {
 export interface ProviderConfig {
   /**
    * The AMI used when provisioning nodes.
-   * Based on the value set for amiFamily, Karpenter will automatically
-   * query for the appropriate EKS optimized AMI via AWS Systems Manager (SSM).
+   * Based on the value set for amiFamily,Karpenter will automatically query for the appropriate EKS optimized AMI via AWS Systems Manager (SSM).
    */
   readonly amiFamily?: AMIFamily;
 
