@@ -90,7 +90,7 @@ export interface ProvisionerReqs {
 export interface ProviderConfig {
   /**
    * The AMI used when provisioning nodes.
-   * Based on the value set for amiFamily, Karpenter will automatically 
+   * Based on the value set for amiFamily, Karpenter will automatically
    * query for the appropriate EKS optimized AMI via AWS Systems Manager (SSM).
    */
   readonly amiFamily?: AMIFamily;
@@ -162,7 +162,7 @@ export enum ArchType {
 export enum AMIFamily {
   /**
    * Amazon Linux 2 AMI family
-   * Note: If a custom launch template is specified, then the AMI value 
+   * Note: If a custom launch template is specified, then the AMI value
    * in the launch template is used rather than the amiFamily value.
    */
   AL2='AL2',
