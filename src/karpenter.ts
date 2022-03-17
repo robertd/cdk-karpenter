@@ -331,8 +331,8 @@ export class Karpenter extends Construct {
             },
           },
         },
-        ...provisionerSpecs?.ttlSecondsAfterEmpty && { ttlSecondsAfterEmpty: provisionerSpecs!.ttlSecondsAfterEmpty?.toSeconds() },
-        ...provisionerSpecs?.ttlSecondsUntilExpired && { ttlSecondsUntilExpired: provisionerSpecs!.ttlSecondsUntilExpired!.toSeconds() },
+        ...(provisionerSpecs?.ttlSecondsAfterEmpty && { ttlSecondsAfterEmpty: provisionerSpecs!.ttlSecondsAfterEmpty!.toSeconds() }),
+        ...(provisionerSpecs?.ttlSecondsUntilExpired && { ttlSecondsUntilExpired: provisionerSpecs!.ttlSecondsUntilExpired!.toSeconds() }),
         requirements: [
           ...requirements,
         ],
@@ -340,9 +340,9 @@ export class Karpenter extends Construct {
           'cluster-name': this.cluster.clusterName,
           ...provisionerSpecs?.labels,
         },
-        ...provisionerSpecs?.taints && {
+        ...(provisionerSpecs?.taints && {
           taints: provisionerSpecs!.taints!,
-        },
+        }),
         provider: {
           subnetSelector: {
             [`karpenter.sh/discovery/${this.cluster.clusterName}`]: '*',
@@ -351,8 +351,8 @@ export class Karpenter extends Construct {
             [`kubernetes.io/cluster/${this.cluster.clusterName}`]: 'owned',
           },
           instanceProfile: this.instanceProfile.instanceProfileName,
-          ...provisionerSpecs?.provider?.tags && { tags: { ...provisionerSpecs!.provider!.tags! } },
-          ...provisionerSpecs?.provider?.amiFamily && { amiFamily: provisionerSpecs!.provider!.amiFamily! },
+          ...(provisionerSpecs?.provider?.tags && { tags: { ...provisionerSpecs!.provider!.tags! } }),
+          ...(provisionerSpecs?.provider?.amiFamily && { amiFamily: provisionerSpecs!.provider!.amiFamily! }),
         },
       },
     });

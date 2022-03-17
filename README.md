@@ -48,13 +48,13 @@ karpenter.addProvisioner('custom', {
   ttlSecondsAfterEmpty: Duration.hours(2),
   ttlSecondsUntilExpired: Duration.days(90),
   labels: {
-    billing: 'my-team'
+    billing: 'my-team',
   },
   taints: [
     {
       key: 'example.com/special-taint',
       effect: 'NoSchedule',
-    }
+    },
   ],
   limits: {
     cpu: '1',

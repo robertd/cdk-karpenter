@@ -245,7 +245,7 @@ test('has custom provider', () => {
           {
             Ref: 'Cluster9EE0221C',
           },
-          '"},"provider":{"subnetSelector":{"karpenter.sh/discovery/',
+          '\",\"billing\":\"my-team\"},\"taints\":[{\"key\":\"example.com/special-taint\",\"effect\":\"NoSchedule\"}],\"provider\":{\"subnetSelector\":{\"karpenter.sh/discovery/',
           {
             Ref: 'Cluster9EE0221C',
           },
