@@ -331,13 +331,17 @@ export class Karpenter extends Construct {
             },
           },
         },
-        ...provisionerSpecs?.ttlSecondsAfterEmpty && { ttlSecondsAfterEmpty: provisionerSpecs?.ttlSecondsAfterEmpty?.toSeconds() },
+        ...provisionerSpecs?.ttlSecondsAfterEmpty && { ttlSecondsAfterEmpty: provisionerSpecs!.ttlSecondsAfterEmpty?.toSeconds() },
         ...provisionerSpecs?.ttlSecondsUntilExpired && { ttlSecondsUntilExpired: provisionerSpecs!.ttlSecondsUntilExpired!.toSeconds() },
         requirements: [
           ...requirements,
         ],
         labels: {
           'cluster-name': this.cluster.clusterName,
+          ...provisionerSpecs?.labels,
+        },
+        ...provisionerSpecs?.taints && {
+          taints: provisionerSpecs!.taints!,
         },
         provider: {
           subnetSelector: {
