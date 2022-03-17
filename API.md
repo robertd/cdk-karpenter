@@ -538,6 +538,8 @@ Value.
 
 ### AMIFamily <a name="AMIFamily" id="cdk-karpenter.AMIFamily"></a>
 
+#### Members <a name="Members" id="Members"></a>
+
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#cdk-karpenter.AMIFamily.AL2">AL2</a></code> | Amazon Linux 2 AMI family Note: If a custom launch template is specified, then the AMI value in the launch template is used rather than the amiFamily value. |
@@ -546,21 +548,21 @@ Value.
 
 ---
 
-#### `AL2` <a name="AL2" id="cdk-karpenter.AMIFamily.AL2"></a>
+##### `AL2` <a name="AL2" id="cdk-karpenter.AMIFamily.AL2"></a>
 
 Amazon Linux 2 AMI family Note: If a custom launch template is specified, then the AMI value in the launch template is used rather than the amiFamily value.
 
 ---
 
 
-#### `BOTTLEROCKET` <a name="BOTTLEROCKET" id="cdk-karpenter.AMIFamily.BOTTLEROCKET"></a>
+##### `BOTTLEROCKET` <a name="BOTTLEROCKET" id="cdk-karpenter.AMIFamily.BOTTLEROCKET"></a>
 
 Bottlerocket AMI family.
 
 ---
 
 
-#### `UBUNTU` <a name="UBUNTU" id="cdk-karpenter.AMIFamily.UBUNTU"></a>
+##### `UBUNTU` <a name="UBUNTU" id="cdk-karpenter.AMIFamily.UBUNTU"></a>
 
 Ubuntu AMI family.
 
@@ -569,6 +571,8 @@ Ubuntu AMI family.
 
 ### ArchType <a name="ArchType" id="cdk-karpenter.ArchType"></a>
 
+#### Members <a name="Members" id="Members"></a>
+
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#cdk-karpenter.ArchType.ARM64">ARM64</a></code> | ARM based instances. |
@@ -576,14 +580,14 @@ Ubuntu AMI family.
 
 ---
 
-#### `ARM64` <a name="ARM64" id="cdk-karpenter.ArchType.ARM64"></a>
+##### `ARM64` <a name="ARM64" id="cdk-karpenter.ArchType.ARM64"></a>
 
 ARM based instances.
 
 ---
 
 
-#### `AMD64` <a name="AMD64" id="cdk-karpenter.ArchType.AMD64"></a>
+##### `AMD64` <a name="AMD64" id="cdk-karpenter.ArchType.AMD64"></a>
 
 x86 based instances.
 
@@ -592,6 +596,8 @@ x86 based instances.
 
 ### CapacityType <a name="CapacityType" id="cdk-karpenter.CapacityType"></a>
 
+#### Members <a name="Members" id="Members"></a>
+
 | **Name** | **Description** |
 | --- | --- |
 | <code><a href="#cdk-karpenter.CapacityType.SPOT">SPOT</a></code> | Spot capacity. |
@@ -599,14 +605,14 @@ x86 based instances.
 
 ---
 
-#### `SPOT` <a name="SPOT" id="cdk-karpenter.CapacityType.SPOT"></a>
+##### `SPOT` <a name="SPOT" id="cdk-karpenter.CapacityType.SPOT"></a>
 
 Spot capacity.
 
 ---
 
 
-#### `ON_DEMAND` <a name="ON_DEMAND" id="cdk-karpenter.CapacityType.ON_DEMAND"></a>
+##### `ON_DEMAND` <a name="ON_DEMAND" id="cdk-karpenter.CapacityType.ON_DEMAND"></a>
 
 On demand capacity.
 
