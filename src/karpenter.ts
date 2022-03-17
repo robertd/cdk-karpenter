@@ -280,7 +280,7 @@ export class Karpenter extends Construct {
     this.karpenterHelmChart = new HelmChart(this, 'HelmChart', {
       chart: 'karpenter',
       createNamespace: true,
-      version: '0.6.5',
+      version: '0.7.1',
       cluster: this.cluster,
       namespace: 'karpenter',
       release: 'karpenter',
@@ -320,7 +320,7 @@ export class Karpenter extends Construct {
       apiVersion: 'karpenter.sh/v1alpha5',
       kind: 'Provisioner',
       metadata: {
-        name: id,
+        name: id.toLowerCase(),
       },
       spec: {
         ...provisionerSpecs?.limits && {
