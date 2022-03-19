@@ -1,5 +1,5 @@
 import { CfnJson, CfnOutput, Duration } from 'aws-cdk-lib';
-import { ISubnet, IVpc, InstanceType } from 'aws-cdk-lib/aws-ec2';
+import { ISubnet, IVpc, InstanceType, EbsDeviceVolumeType } from 'aws-cdk-lib/aws-ec2';
 import { Cluster, HelmChart } from 'aws-cdk-lib/aws-eks';
 import { CfnInstanceProfile, ManagedPolicy, OpenIdConnectPrincipal, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
@@ -62,7 +62,7 @@ export interface ProvisionerSpecs {
   /**
    * AWS cloud provider configuration
    */
-  readonly provider?: ProviderConfig;
+  readonly provider?: ProviderProps;
 }
 
 export interface ProvisionerReqs {
@@ -87,7 +87,7 @@ export interface ProvisionerReqs {
   readonly archTypes: ArchType[];
 }
 
-export interface ProviderConfig {
+export interface ProviderProps {
   /**
    * The AMI used when provisioning nodes.
    * Based on the value set for amiFamily,Karpenter will automatically query for the appropriate EKS optimized AMI via AWS Systems Manager (SSM).
@@ -98,6 +98,11 @@ export interface ProviderConfig {
    * Tags will be added to every EC2 instance launched by the provisioner.
    */
   readonly tags?: {[key: string]: string};
+
+  /**
+   * EBS
+   */
+  readonly blockDeviceMappings?: BlockDeviceMappingsProps[];
 }
 
 export interface Limits {
@@ -175,6 +180,76 @@ export enum AMIFamily {
    * Ubuntu AMI family
    */
   UBUNTU='Ubuntu',
+}
+
+export interface BlockDeviceMappingsProps {
+  /**
+   * The device name (for example, /dev/sdh or xvdh)
+   */
+  readonly deviceName: string;
+
+  readonly ebs?: EbsProps;
+}
+
+/**
+ * Parameters used to automatically set up EBS volumes when the instance is launched.
+ */
+export interface EbsProps {
+  /**
+   * Indicates whether the volume should be encrypted.
+   */
+  readonly encrypted?: boolean;
+
+  /**
+   * Indicates whether the EBS volume is deleted on instance termination.
+   */
+  readonly deleteOnTermination?: boolean;
+
+  /**
+   * The size of the volume, in GiBs.
+   * You must specify either a snapshot ID or a volume size. If you specify a snapshot, the default is the snapshot size. You can specify a volume size that is equal to or larger than the snapshot size.
+   *
+   * The following are the supported volumes sizes for each volume type:
+   * - gp2 and gp3 :1-16,384
+   * - io1 and io2 : 4-16,384
+   * - st1 and sc1 : 125-16,384
+   * - standard : 1-1,024
+   */
+  readonly volumeSize?: string;
+
+  /**
+   * The volume type. For more information, see Amazon EBS volume types in the Amazon EC2 User Guide. If the volume type is io1 or io2, you must specify the IOPS that the volume supports.
+   */
+  readonly volumeType?: EbsDeviceVolumeType;
+
+  /**
+   * The identifier of the AWS KMS key to use for Amazon EBS encryption.
+   * If KmsKeyId is specified, the encrypted state must be true. If the encrypted state is true but you do not specify KmsKeyId, your KMS key for EBS is used.
+   * You can specify the KMS key using any of the following:
+   * - Key ARN. For example, arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab.
+   */
+  readonly kmsKeyId?: string;
+
+  /**
+   * Throughput to provision for a gp3 volume, with a maximum of 1,000 MiB/s.
+   */
+  readonly troughput?: number;
+
+  /**
+   * The number of I/O operations per second (IOPS).
+   *
+   * For gp3 , io1 , and io2 volumes, this represents the number of IOPS that are provisioned for the volume. For gp2 volumes, this represents the baseline performance of the volume and the rate at which the volume accumulates I/O credits for bursting.
+   *
+   * The following are the supported values for each volume type:
+   * - gp3 : 3,000-16,000 IOPS
+   * - io1 : 100-64,000 IOPS
+   * - io2 : 100-64,000 IOPS
+   *
+   * For io1 and io2 volumes, we guarantee 64,000 IOPS only for Instances built on the Nitro System. Other instance families guarantee performance up to 32,000 IOPS.
+   *
+    * This parameter is required for io1 and io2 volumes. The default for gp3 volumes is 3,000 IOPS. This parameter is not supported for gp2, st1, sc1, or standard volumes.
+   */
+  readonly iops?: number;
 }
 
 /**
@@ -353,6 +428,7 @@ export class Karpenter extends Construct {
           instanceProfile: this.instanceProfile.instanceProfileName,
           ...(provisionerSpecs?.provider?.tags && { tags: { ...provisionerSpecs!.provider!.tags! } }),
           ...(provisionerSpecs?.provider?.amiFamily && { amiFamily: provisionerSpecs!.provider!.amiFamily! }),
+          ...(provisionerSpecs?.provider?.blockDeviceMappings && { blockDeviceMappings: provisionerSpecs!.provider!.blockDeviceMappings! }),
         },
       },
     });
