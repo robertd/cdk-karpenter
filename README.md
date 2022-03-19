@@ -9,7 +9,7 @@ More info about Karpenter at: https://karpenter.sh
 ## Showcase
 
 ```ts
-import { InstanceClass, InstanceSize, InstanceType, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { InstanceClass, InstanceSize, InstanceType, EbsDeviceVolumeType, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Cluster, KubernetesVersion, Nodegroup } from 'aws-cdk-lib/aws-eks';
 import { Karpenter, AMIFamily } from "cdk-karpenter";
 
@@ -65,6 +65,20 @@ karpenter.addProvisioner('custom', {
     tags: {
       Foo: 'Bar',
     },
+    blockDeviceMappings: [
+      {
+        deviceName: 'test',
+        ebs: {
+          encrypted: true,
+          deleteOnTermination: true,
+          volumeSize: '100Gib',
+          volumeType: EbsDeviceVolumeType.GP3,
+          iops: 5000,
+          troughput: 1000,
+          kmsKeyId: 'arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab',
+        },
+      },
+    ],
   },
 });
 ```

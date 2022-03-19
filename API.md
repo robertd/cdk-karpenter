@@ -130,6 +130,165 @@ The tree node.
 
 ## Structs <a name="Structs" id="Structs"></a>
 
+### BlockDeviceMappingsProps <a name="BlockDeviceMappingsProps" id="cdk-karpenter.BlockDeviceMappingsProps"></a>
+
+#### Initializer <a name="Initializer" id="cdk-karpenter.BlockDeviceMappingsProps.Initializer"></a>
+
+```typescript
+import { BlockDeviceMappingsProps } from 'cdk-karpenter'
+
+const blockDeviceMappingsProps: BlockDeviceMappingsProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-karpenter.BlockDeviceMappingsProps.property.deviceName">deviceName</a></code> | <code>string</code> | The device name (for example, /dev/sdh or xvdh). |
+| <code><a href="#cdk-karpenter.BlockDeviceMappingsProps.property.ebs">ebs</a></code> | <code><a href="#cdk-karpenter.EbsProps">EbsProps</a></code> | *No description.* |
+
+---
+
+##### `deviceName`<sup>Required</sup> <a name="deviceName" id="cdk-karpenter.BlockDeviceMappingsProps.property.deviceName"></a>
+
+```typescript
+public readonly deviceName: string;
+```
+
+- *Type:* string
+
+The device name (for example, /dev/sdh or xvdh).
+
+---
+
+##### `ebs`<sup>Optional</sup> <a name="ebs" id="cdk-karpenter.BlockDeviceMappingsProps.property.ebs"></a>
+
+```typescript
+public readonly ebs: EbsProps;
+```
+
+- *Type:* <a href="#cdk-karpenter.EbsProps">EbsProps</a>
+
+---
+
+### EbsProps <a name="EbsProps" id="cdk-karpenter.EbsProps"></a>
+
+Parameters used to automatically set up EBS volumes when the instance is launched.
+
+#### Initializer <a name="Initializer" id="cdk-karpenter.EbsProps.Initializer"></a>
+
+```typescript
+import { EbsProps } from 'cdk-karpenter'
+
+const ebsProps: EbsProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-karpenter.EbsProps.property.deleteOnTermination">deleteOnTermination</a></code> | <code>boolean</code> | Indicates whether the EBS volume is deleted on instance termination. |
+| <code><a href="#cdk-karpenter.EbsProps.property.encrypted">encrypted</a></code> | <code>boolean</code> | Indicates whether the volume should be encrypted. |
+| <code><a href="#cdk-karpenter.EbsProps.property.iops">iops</a></code> | <code>number</code> | The number of I/O operations per second (IOPS). |
+| <code><a href="#cdk-karpenter.EbsProps.property.kmsKeyId">kmsKeyId</a></code> | <code>string</code> | The identifier of the AWS KMS key to use for Amazon EBS encryption. |
+| <code><a href="#cdk-karpenter.EbsProps.property.troughput">troughput</a></code> | <code>number</code> | Throughput to provision for a gp3 volume, with a maximum of 1,000 MiB/s. |
+| <code><a href="#cdk-karpenter.EbsProps.property.volumeSize">volumeSize</a></code> | <code>string</code> | The size of the volume, in GiBs. |
+| <code><a href="#cdk-karpenter.EbsProps.property.volumeType">volumeType</a></code> | <code>aws-cdk-lib.aws_ec2.EbsDeviceVolumeType</code> | The volume type. |
+
+---
+
+##### `deleteOnTermination`<sup>Optional</sup> <a name="deleteOnTermination" id="cdk-karpenter.EbsProps.property.deleteOnTermination"></a>
+
+```typescript
+public readonly deleteOnTermination: boolean;
+```
+
+- *Type:* boolean
+
+Indicates whether the EBS volume is deleted on instance termination.
+
+---
+
+##### `encrypted`<sup>Optional</sup> <a name="encrypted" id="cdk-karpenter.EbsProps.property.encrypted"></a>
+
+```typescript
+public readonly encrypted: boolean;
+```
+
+- *Type:* boolean
+
+Indicates whether the volume should be encrypted.
+
+---
+
+##### `iops`<sup>Optional</sup> <a name="iops" id="cdk-karpenter.EbsProps.property.iops"></a>
+
+```typescript
+public readonly iops: number;
+```
+
+- *Type:* number
+
+The number of I/O operations per second (IOPS).
+
+For gp3 , io1 , and io2 volumes, this represents the number of IOPS that are provisioned for the volume. For gp2 volumes, this represents the baseline performance of the volume and the rate at which the volume accumulates I/O credits for bursting.  The following are the supported values for each volume type: - gp3 : 3,000-16,000 IOPS - io1 : 100-64,000 IOPS - io2 : 100-64,000 IOPS  For io1 and io2 volumes, we guarantee 64,000 IOPS only for Instances built on the Nitro System. Other instance families guarantee performance up to 32,000 IOPS.   This parameter is required for io1 and io2 volumes. The default for gp3 volumes is 3,000 IOPS. This parameter is not supported for gp2, st1, sc1, or standard volumes.
+
+---
+
+##### `kmsKeyId`<sup>Optional</sup> <a name="kmsKeyId" id="cdk-karpenter.EbsProps.property.kmsKeyId"></a>
+
+```typescript
+public readonly kmsKeyId: string;
+```
+
+- *Type:* string
+
+The identifier of the AWS KMS key to use for Amazon EBS encryption.
+
+If KmsKeyId is specified, the encrypted state must be true. If the encrypted state is true but you do not specify KmsKeyId, your KMS key for EBS is used. You can specify the KMS key using any of the following: - Key ARN. For example, arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab.
+
+---
+
+##### `troughput`<sup>Optional</sup> <a name="troughput" id="cdk-karpenter.EbsProps.property.troughput"></a>
+
+```typescript
+public readonly troughput: number;
+```
+
+- *Type:* number
+
+Throughput to provision for a gp3 volume, with a maximum of 1,000 MiB/s.
+
+---
+
+##### `volumeSize`<sup>Optional</sup> <a name="volumeSize" id="cdk-karpenter.EbsProps.property.volumeSize"></a>
+
+```typescript
+public readonly volumeSize: string;
+```
+
+- *Type:* string
+
+The size of the volume, in GiBs.
+
+You must specify either a snapshot ID or a volume size. If you specify a snapshot, the default is the snapshot size. You can specify a volume size that is equal to or larger than the snapshot size.  The following are the supported volumes sizes for each volume type: - gp2 and gp3 :1-16,384 - io1 and io2 : 4-16,384 - st1 and sc1 : 125-16,384 - standard : 1-1,024
+
+---
+
+##### `volumeType`<sup>Optional</sup> <a name="volumeType" id="cdk-karpenter.EbsProps.property.volumeType"></a>
+
+```typescript
+public readonly volumeType: EbsDeviceVolumeType;
+```
+
+- *Type:* aws-cdk-lib.aws_ec2.EbsDeviceVolumeType
+
+The volume type.
+
+For more information, see Amazon EBS volume types in the Amazon EC2 User Guide. If the volume type is io1 or io2, you must specify the IOPS that the volume supports.
+
+---
+
 ### KarpenterProps <a name="KarpenterProps" id="cdk-karpenter.KarpenterProps"></a>
 
 #### Initializer <a name="Initializer" id="cdk-karpenter.KarpenterProps.Initializer"></a>
@@ -231,26 +390,27 @@ Memory limits (i.e. 1000Gi).
 
 ---
 
-### ProviderConfig <a name="ProviderConfig" id="cdk-karpenter.ProviderConfig"></a>
+### ProviderProps <a name="ProviderProps" id="cdk-karpenter.ProviderProps"></a>
 
-#### Initializer <a name="Initializer" id="cdk-karpenter.ProviderConfig.Initializer"></a>
+#### Initializer <a name="Initializer" id="cdk-karpenter.ProviderProps.Initializer"></a>
 
 ```typescript
-import { ProviderConfig } from 'cdk-karpenter'
+import { ProviderProps } from 'cdk-karpenter'
 
-const providerConfig: ProviderConfig = { ... }
+const providerProps: ProviderProps = { ... }
 ```
 
 #### Properties <a name="Properties" id="Properties"></a>
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#cdk-karpenter.ProviderConfig.property.amiFamily">amiFamily</a></code> | <code><a href="#cdk-karpenter.AMIFamily">AMIFamily</a></code> | The AMI used when provisioning nodes. |
-| <code><a href="#cdk-karpenter.ProviderConfig.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Tags will be added to every EC2 instance launched by the provisioner. |
+| <code><a href="#cdk-karpenter.ProviderProps.property.amiFamily">amiFamily</a></code> | <code><a href="#cdk-karpenter.AMIFamily">AMIFamily</a></code> | The AMI used when provisioning nodes. |
+| <code><a href="#cdk-karpenter.ProviderProps.property.blockDeviceMappings">blockDeviceMappings</a></code> | <code><a href="#cdk-karpenter.BlockDeviceMappingsProps">BlockDeviceMappingsProps</a>[]</code> | EBS. |
+| <code><a href="#cdk-karpenter.ProviderProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Tags will be added to every EC2 instance launched by the provisioner. |
 
 ---
 
-##### `amiFamily`<sup>Optional</sup> <a name="amiFamily" id="cdk-karpenter.ProviderConfig.property.amiFamily"></a>
+##### `amiFamily`<sup>Optional</sup> <a name="amiFamily" id="cdk-karpenter.ProviderProps.property.amiFamily"></a>
 
 ```typescript
 public readonly amiFamily: AMIFamily;
@@ -264,7 +424,19 @@ Based on the value set for amiFamily,Karpenter will automatically query for the 
 
 ---
 
-##### `tags`<sup>Optional</sup> <a name="tags" id="cdk-karpenter.ProviderConfig.property.tags"></a>
+##### `blockDeviceMappings`<sup>Optional</sup> <a name="blockDeviceMappings" id="cdk-karpenter.ProviderProps.property.blockDeviceMappings"></a>
+
+```typescript
+public readonly blockDeviceMappings: BlockDeviceMappingsProps[];
+```
+
+- *Type:* <a href="#cdk-karpenter.BlockDeviceMappingsProps">BlockDeviceMappingsProps</a>[]
+
+EBS.
+
+---
+
+##### `tags`<sup>Optional</sup> <a name="tags" id="cdk-karpenter.ProviderProps.property.tags"></a>
 
 ```typescript
 public readonly tags: {[ key: string ]: string};
@@ -362,7 +534,7 @@ const provisionerSpecs: ProvisionerSpecs = { ... }
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.requirements">requirements</a></code> | <code><a href="#cdk-karpenter.ProvisionerReqs">ProvisionerReqs</a></code> | Requirements that constrain the parameters of provisioned nodes. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.labels">labels</a></code> | <code>{[ key: string ]: string}</code> | Labels are arbitrary key-values that are applied to all nodes. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.limits">limits</a></code> | <code><a href="#cdk-karpenter.Limits">Limits</a></code> | CPU and Memory Limits. |
-| <code><a href="#cdk-karpenter.ProvisionerSpecs.property.provider">provider</a></code> | <code><a href="#cdk-karpenter.ProviderConfig">ProviderConfig</a></code> | AWS cloud provider configuration. |
+| <code><a href="#cdk-karpenter.ProvisionerSpecs.property.provider">provider</a></code> | <code><a href="#cdk-karpenter.ProviderProps">ProviderProps</a></code> | AWS cloud provider configuration. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.taints">taints</a></code> | <code><a href="#cdk-karpenter.Taints">Taints</a>[]</code> | Provisioned nodes will have these taints. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.ttlSecondsAfterEmpty">ttlSecondsAfterEmpty</a></code> | <code>aws-cdk-lib.Duration</code> | Time in seconds in which nodes will scale down due to low utilization. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.ttlSecondsUntilExpired">ttlSecondsUntilExpired</a></code> | <code>aws-cdk-lib.Duration</code> | Time in seconds in which nodes will expire and get replaced. |
@@ -412,10 +584,10 @@ Resource limits constrain the total size of the cluster. Limits prevent Karpente
 ##### `provider`<sup>Optional</sup> <a name="provider" id="cdk-karpenter.ProvisionerSpecs.property.provider"></a>
 
 ```typescript
-public readonly provider: ProviderConfig;
+public readonly provider: ProviderProps;
 ```
 
-- *Type:* <a href="#cdk-karpenter.ProviderConfig">ProviderConfig</a>
+- *Type:* <a href="#cdk-karpenter.ProviderProps">ProviderProps</a>
 
 AWS cloud provider configuration.
 

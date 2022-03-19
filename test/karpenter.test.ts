@@ -1,6 +1,6 @@
 import { Duration } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
-import { InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
+import { EbsDeviceVolumeType, InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
 import { AMIFamily, ArchType, Karpenter } from '../src/index';
 import { testFixtureCluster } from './util';
 
@@ -43,6 +43,20 @@ karpenter.addProvisioner('custom', {
     tags: {
       Foo: 'Bar',
     },
+    blockDeviceMappings: [
+      {
+        deviceName: 'test',
+        ebs: {
+          encrypted: true,
+          deleteOnTermination: true,
+          volumeSize: '100Gi',
+          volumeType: EbsDeviceVolumeType.GP3,
+          iops: 5000,
+          troughput: 1000,
+          kmsKeyId: 'arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab',
+        },
+      },
+    ],
   },
 });
 
@@ -257,7 +271,7 @@ test('has custom provider', () => {
           {
             Ref: 'Cluster9EE0221C',
           },
-          '","tags":{"Foo":"Bar"},"amiFamily":"AL2"}}}]',
+          '\",\"tags\":{\"Foo\":\"Bar\"},\"amiFamily\":\"AL2\",\"blockDeviceMappings\":[{\"deviceName\":\"test\",\"ebs\":{\"encrypted\":true,\"deleteOnTermination\":true,\"volumeSize\":\"100Gi\",\"volumeType\":\"gp3\",\"iops\":5000,\"troughput\":1000,\"kmsKeyId\":\"arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab\"}}]}}}]',
         ],
       ],
     },
