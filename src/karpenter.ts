@@ -72,9 +72,9 @@ export interface ProvisionerReqs {
   readonly instanceTypes?: InstanceType[];
 
   /**
-   * Instance types to be rejected by the Karpenter Provider.
+   * Instance types to be excluded by the Karpenter Provider.
    */
-  readonly rejectInstanceTypes?: InstanceType[];
+  readonly restrictInstanceTypes?: InstanceType[];
 
   /**
    * Capacity type of the node instances.
@@ -90,7 +90,8 @@ export interface ProvisionerReqs {
 export interface ProviderProps {
   /**
    * The AMI used when provisioning nodes.
-   * Based on the value set for amiFamily,Karpenter will automatically query for the appropriate EKS optimized AMI via AWS Systems Manager (SSM).
+   * Based on the value set for amiFamily,Karpenter will automatically
+   * query for the appropriate EKS optimized AMI via AWS Systems Manager (SSM).
    */
   readonly amiFamily?: AMIFamily;
 
@@ -218,13 +219,16 @@ export interface EbsProps {
   readonly volumeSize?: string;
 
   /**
-   * The volume type. For more information, see Amazon EBS volume types in the Amazon EC2 User Guide. If the volume type is io1 or io2, you must specify the IOPS that the volume supports.
+   * The volume type. For more information, see Amazon EBS volume types in the Amazon EC2 User Guide.
+   * If the volume type is io1 or io2, you must specify the IOPS that the volume supports.
    */
   readonly volumeType?: EbsDeviceVolumeType;
 
   /**
    * The identifier of the AWS KMS key to use for Amazon EBS encryption.
-   * If KmsKeyId is specified, the encrypted state must be true. If the encrypted state is true but you do not specify KmsKeyId, your KMS key for EBS is used.
+   * If KmsKeyId is specified, the encrypted state must be true. If the encrypted state is true but you do not specify KmsKeyId,
+   * your KMS key for EBS is used.
+   *
    * You can specify the KMS key using any of the following:
    * - Key ARN. For example, arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab.
    */
@@ -238,16 +242,20 @@ export interface EbsProps {
   /**
    * The number of I/O operations per second (IOPS).
    *
-   * For gp3 , io1 , and io2 volumes, this represents the number of IOPS that are provisioned for the volume. For gp2 volumes, this represents the baseline performance of the volume and the rate at which the volume accumulates I/O credits for bursting.
+   * For gp3 , io1 , and io2 volumes, this represents the number of IOPS that are provisioned for the volume.
+   * For gp2 volumes, this represents the baseline performance of the volume and the rate at which the volume accumulates
+   * I/O credits for bursting.
    *
    * The following are the supported values for each volume type:
    * - gp3 : 3,000-16,000 IOPS
    * - io1 : 100-64,000 IOPS
    * - io2 : 100-64,000 IOPS
    *
-   * For io1 and io2 volumes, we guarantee 64,000 IOPS only for Instances built on the Nitro System. Other instance families guarantee performance up to 32,000 IOPS.
+   * For io1 and io2 volumes, we guarantee 64,000 IOPS only for Instances built on the Nitro System.
+   * Other instance families guarantee performance up to 32,000 IOPS.
    *
-    * This parameter is required for io1 and io2 volumes. The default for gp3 volumes is 3,000 IOPS. This parameter is not supported for gp2, st1, sc1, or standard volumes.
+    * This parameter is required for io1 and io2 volumes. The default for gp3 volumes is 3,000 IOPS.
+    * This parameter is not supported for gp2, st1, sc1, or standard volumes.
    */
   readonly iops?: number;
 }
@@ -377,10 +385,6 @@ export class Karpenter extends Construct {
     });
 
     new CfnOutput(this, 'clusterName', { value: this.cluster.clusterName });
-    // new CfnOutput(this, 'karpenterControllerRole', { value: this.karpenterControllerRole.roleName });
-    // new CfnOutput(this, 'karpenterNodeRole', { value: this.karpenterNodeRole.roleName });
-    // new CfnOutput(this, 'instanceProfileName', { value: this.instanceProfile.instanceProfileName || '' });
-    // new CfnOutput(this, 'karpenterControllerPolicy', { value: karpenterControllerPolicy.managedPolicyName });
   }
 
   /**
@@ -401,8 +405,8 @@ export class Karpenter extends Construct {
         ...provisionerSpecs?.limits && {
           limits: {
             resources: {
-              ...(provisionerSpecs.limits.mem && { mem: provisionerSpecs!.limits.mem }),
-              ...(provisionerSpecs.limits.cpu && { cpu: provisionerSpecs!.limits.cpu }),
+              ...(provisionerSpecs!.limits.mem && { mem: provisionerSpecs!.limits.mem }),
+              ...(provisionerSpecs!.limits.cpu && { cpu: provisionerSpecs!.limits.cpu }),
             },
           },
         },
@@ -415,9 +419,7 @@ export class Karpenter extends Construct {
           'cluster-name': this.cluster.clusterName,
           ...provisionerSpecs?.labels,
         },
-        ...(provisionerSpecs?.taints && {
-          taints: provisionerSpecs!.taints!,
-        }),
+        ...(provisionerSpecs?.taints && { taints: provisionerSpecs!.taints! }),
         provider: {
           subnetSelector: {
             [`karpenter.sh/discovery/${this.cluster.clusterName}`]: '*',
@@ -462,11 +464,11 @@ export class Karpenter extends Construct {
       });
     }
 
-    if (reqs?.rejectInstanceTypes) {
+    if (reqs?.restrictInstanceTypes) {
       requirements.push({
         key: 'node.kubernetes.io/instance-type',
         operator: 'NotIn',
-        values: reqs!.rejectInstanceTypes!.map((i)=> { return i.toString(); }),
+        values: reqs!.restrictInstanceTypes!.map((i)=> { return i.toString(); }),
       });
     }
 

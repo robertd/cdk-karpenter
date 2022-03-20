@@ -19,7 +19,7 @@ karpenter.addProvisioner('custom', {
       InstanceType.of(InstanceClass.M5A, InstanceSize.LARGE),
       InstanceType.of(InstanceClass.M6G, InstanceSize.LARGE),
     ],
-    rejectInstanceTypes: [
+    restrictInstanceTypes: [
       InstanceType.of(InstanceClass.G5, InstanceSize.LARGE),
     ],
   },
