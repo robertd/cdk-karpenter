@@ -191,7 +191,7 @@ const ebsProps: EbsProps = { ... }
 | <code><a href="#cdk-karpenter.EbsProps.property.encrypted">encrypted</a></code> | <code>boolean</code> | Indicates whether the volume should be encrypted. |
 | <code><a href="#cdk-karpenter.EbsProps.property.iops">iops</a></code> | <code>number</code> | The number of I/O operations per second (IOPS). |
 | <code><a href="#cdk-karpenter.EbsProps.property.kmsKeyId">kmsKeyId</a></code> | <code>string</code> | The identifier of the AWS KMS key to use for Amazon EBS encryption. |
-| <code><a href="#cdk-karpenter.EbsProps.property.troughput">troughput</a></code> | <code>number</code> | Throughput to provision for a gp3 volume, with a maximum of 1,000 MiB/s. |
+| <code><a href="#cdk-karpenter.EbsProps.property.throughput">throughput</a></code> | <code>number</code> | Throughput to provision for a gp3 volume, with a maximum of 1,000 MiB/s. |
 | <code><a href="#cdk-karpenter.EbsProps.property.volumeSize">volumeSize</a></code> | <code>string</code> | The size of the volume, in GiBs. |
 | <code><a href="#cdk-karpenter.EbsProps.property.volumeType">volumeType</a></code> | <code>aws-cdk-lib.aws_ec2.EbsDeviceVolumeType</code> | The volume type. |
 
@@ -249,10 +249,10 @@ If KmsKeyId is specified, the encrypted state must be true. If the encrypted sta
 
 ---
 
-##### `troughput`<sup>Optional</sup> <a name="troughput" id="cdk-karpenter.EbsProps.property.troughput"></a>
+##### `throughput`<sup>Optional</sup> <a name="throughput" id="cdk-karpenter.EbsProps.property.throughput"></a>
 
 ```typescript
-public readonly troughput: number;
+public readonly throughput: number;
 ```
 
 - *Type:* number

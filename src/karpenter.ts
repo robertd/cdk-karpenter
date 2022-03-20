@@ -233,7 +233,7 @@ export interface EbsProps {
   /**
    * Throughput to provision for a gp3 volume, with a maximum of 1,000 MiB/s.
    */
-  readonly troughput?: number;
+  readonly throughput?: number;
 
   /**
    * The number of I/O operations per second (IOPS).

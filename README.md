@@ -74,7 +74,7 @@ karpenter.addProvisioner('custom', {
           volumeSize: '100Gib',
           volumeType: EbsDeviceVolumeType.GP3,
           iops: 5000,
-          troughput: 1000,
+          throughput: 1000,
           kmsKeyId: 'arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab',
         },
       },
