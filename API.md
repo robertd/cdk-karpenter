@@ -191,6 +191,7 @@ const ebsProps: EbsProps = { ... }
 | <code><a href="#cdk-karpenter.EbsProps.property.encrypted">encrypted</a></code> | <code>boolean</code> | Indicates whether the volume should be encrypted. |
 | <code><a href="#cdk-karpenter.EbsProps.property.iops">iops</a></code> | <code>number</code> | The number of I/O operations per second (IOPS). |
 | <code><a href="#cdk-karpenter.EbsProps.property.kmsKeyId">kmsKeyId</a></code> | <code>string</code> | The identifier of the AWS KMS key to use for Amazon EBS encryption. |
+| <code><a href="#cdk-karpenter.EbsProps.property.snapshotId">snapshotId</a></code> | <code>string</code> | The snapshot ID of the volume to use. |
 | <code><a href="#cdk-karpenter.EbsProps.property.throughput">throughput</a></code> | <code>number</code> | Throughput to provision for a gp3 volume, with a maximum of 1,000 MiB/s. |
 | <code><a href="#cdk-karpenter.EbsProps.property.volumeSize">volumeSize</a></code> | <code>string</code> | The size of the volume, in GiBs. |
 | <code><a href="#cdk-karpenter.EbsProps.property.volumeType">volumeType</a></code> | <code>aws-cdk-lib.aws_ec2.EbsDeviceVolumeType</code> | The volume type. |
@@ -245,7 +246,21 @@ public readonly kmsKeyId: string;
 
 The identifier of the AWS KMS key to use for Amazon EBS encryption.
 
-If KmsKeyId is specified, the encrypted state must be true. If the encrypted state is true but you do not specify KmsKeyId, your KMS key for EBS is used.  You can specify the KMS key using any of the following: - Key ARN. For example, arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab.
+If KmsKeyId is specified, the encrypted state must be true. If the encrypted state is true but you do not specify KmsKeyId, your KMS key for EBS is used.  You can specify the KMS key using key ARN. For example, arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab.
+
+---
+
+##### `snapshotId`<sup>Optional</sup> <a name="snapshotId" id="cdk-karpenter.EbsProps.property.snapshotId"></a>
+
+```typescript
+public readonly snapshotId: string;
+```
+
+- *Type:* string
+
+The snapshot ID of the volume to use.
+
+If you specify both SnapshotId and VolumeSize, VolumeSize must be equal or greater than the size of the snapshot.
 
 ---
 
@@ -258,6 +273,8 @@ public readonly throughput: number;
 - *Type:* number
 
 Throughput to provision for a gp3 volume, with a maximum of 1,000 MiB/s.
+
+Valid Range: Minimum value of 125. Maximum value of 1000.
 
 ---
 
