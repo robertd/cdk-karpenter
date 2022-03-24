@@ -231,7 +231,20 @@ public readonly iops: number;
 
 The number of I/O operations per second (IOPS).
 
-For gp3 , io1 , and io2 volumes, this represents the number of IOPS that are provisioned for the volume. For gp2 volumes, this represents the baseline performance of the volume and the rate at which the volume accumulates I/O credits for bursting.  The following are the supported values for each volume type: - gp3 : 3,000-16,000 IOPS - io1 : 100-64,000 IOPS - io2 : 100-64,000 IOPS  For io1 and io2 volumes, we guarantee 64,000 IOPS only for Instances built on the Nitro System. Other instance families guarantee performance up to 32,000 IOPS.   This parameter is required for io1 and io2 volumes. The default for gp3 volumes is 3,000 IOPS.  This parameter is not supported for gp2, st1, sc1, or standard volumes.
+For gp3 , io1 , and io2 volumes, this represents the number of IOPS that are provisioned for the volume.
+For gp2 volumes, this represents the baseline performance of the volume and the rate at which the volume accumulates
+I/O credits for bursting.
+
+The following are the supported values for each volume type:
+- gp3 : 3,000-16,000 IOPS
+- io1 : 100-64,000 IOPS
+- io2 : 100-64,000 IOPS
+
+For io1 and io2 volumes, we guarantee 64,000 IOPS only for Instances built on the Nitro System.
+Other instance families guarantee performance up to 32,000 IOPS.
+
+ This parameter is required for io1 and io2 volumes. The default for gp3 volumes is 3,000 IOPS.
+ This parameter is not supported for gp2, st1, sc1, or standard volumes.
 
 ---
 
@@ -245,7 +258,11 @@ public readonly kmsKeyId: string;
 
 The identifier of the AWS KMS key to use for Amazon EBS encryption.
 
-If KmsKeyId is specified, the encrypted state must be true. If the encrypted state is true but you do not specify KmsKeyId, your KMS key for EBS is used.  You can specify the KMS key using any of the following: - Key ARN. For example, arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab.
+If KmsKeyId is specified, the encrypted state must be true. If the encrypted state is true but you do not specify KmsKeyId,
+your KMS key for EBS is used.
+
+You can specify the KMS key using any of the following:
+- Key ARN. For example, arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab.
 
 ---
 
@@ -271,7 +288,13 @@ public readonly volumeSize: string;
 
 The size of the volume, in GiBs.
 
-You must specify either a snapshot ID or a volume size. If you specify a snapshot, the default is the snapshot size. You can specify a volume size that is equal to or larger than the snapshot size.  The following are the supported volumes sizes for each volume type: - gp2 and gp3 :1-16,384 - io1 and io2 : 4-16,384 - st1 and sc1 : 125-16,384 - standard : 1-1,024
+You must specify either a snapshot ID or a volume size. If you specify a snapshot, the default is the snapshot size. You can specify a volume size that is equal to or larger than the snapshot size.
+
+The following are the supported volumes sizes for each volume type:
+- gp2 and gp3 :1-16,384
+- io1 and io2 : 4-16,384
+- st1 and sc1 : 125-16,384
+- standard : 1-1,024
 
 ---
 
@@ -285,7 +308,8 @@ public readonly volumeType: EbsDeviceVolumeType;
 
 The volume type.
 
-For more information, see Amazon EBS volume types in the Amazon EC2 User Guide. If the volume type is io1 or io2, you must specify the IOPS that the volume supports.
+For more information, see Amazon EBS volume types in the Amazon EC2 User Guide.
+If the volume type is io1 or io2, you must specify the IOPS that the volume supports.
 
 ---
 
@@ -420,7 +444,8 @@ public readonly amiFamily: AMIFamily;
 
 The AMI used when provisioning nodes.
 
-Based on the value set for amiFamily,Karpenter will automatically query for the appropriate EKS optimized AMI via AWS Systems Manager (SSM).
+Based on the value set for amiFamily,Karpenter will automatically
+query for the appropriate EKS optimized AMI via AWS Systems Manager (SSM).
 
 ---
 
@@ -577,7 +602,8 @@ public readonly limits: Limits;
 
 CPU and Memory Limits.
 
-Resource limits constrain the total size of the cluster. Limits prevent Karpenter from creating new instances once the limit is exceeded.
+Resource limits constrain the total size of the cluster.
+Limits prevent Karpenter from creating new instances once the limit is exceeded.
 
 ---
 
@@ -631,7 +657,8 @@ public readonly ttlSecondsUntilExpired: Duration;
 
 Time in seconds in which nodes will expire and get replaced.
 
-If omitted, the feature is disabled and nodes will never expire. i.e. Duration.days(7)
+If omitted, the feature is disabled and nodes will never expire.
+i.e. Duration.days(7)
 
 ---
 
