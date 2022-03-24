@@ -225,17 +225,17 @@ export interface EbsProps {
   readonly volumeType?: EbsDeviceVolumeType;
 
   /**
-   * The identifier of the AWS KMS key to use for Amazon EBS encryption.
-   * If KmsKeyId is specified, the encrypted state must be true. If the encrypted state is true but you do not specify KmsKeyId,
-   * your KMS key for EBS is used.
+   * The identifier of the AWS KMS key to use for Amazon EBS encryption. If KmsKeyId is specified, the encrypted state must be true.
+   * If the encrypted state is true but you do not specify KmsKeyId, your KMS key for EBS is used.
    *
-   * You can specify the KMS key using any of the following:
-   * - Key ARN. For example, arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab.
+   * You can specify the KMS key using key ARN. For example, arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab.
    */
   readonly kmsKeyId?: string;
 
   /**
    * Throughput to provision for a gp3 volume, with a maximum of 1,000 MiB/s.
+   *
+   * Valid Range: Minimum value of 125. Maximum value of 1000.
    */
   readonly throughput?: number;
 
@@ -258,6 +258,11 @@ export interface EbsProps {
     * This parameter is not supported for gp2, st1, sc1, or standard volumes.
    */
   readonly iops?: number;
+
+  /**
+   * The snapshot ID of the volume to use. If you specify both SnapshotId and VolumeSize, VolumeSize must be equal or greater than the size of the snapshot.
+   */
+  readonly snapshotId?: string;
 }
 
 /**
@@ -363,7 +368,7 @@ export class Karpenter extends Construct {
     this.karpenterHelmChart = new HelmChart(this, 'HelmChart', {
       chart: 'karpenter',
       createNamespace: true,
-      version: '0.7.2',
+      version: '0.7.3',
       cluster: this.cluster,
       namespace: 'karpenter',
       release: 'karpenter',
