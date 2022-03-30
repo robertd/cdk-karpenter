@@ -66,7 +66,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "f6936269880ca7cba4a55a3b31d35973da96a3a8d67bf1bdb89ec0377026b8ee.zip",
+          "S3Key": "408bb589e2a379e3b3827165d52a52f8de9119c73e7acc52fe42416ebcc08ec0.zip",
         },
         "Handler": "__entrypoint__.handler",
         "MemorySize": 128,
@@ -1344,7 +1344,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/d2979dc765aff0b77466e00cf30a7d791daa14fb6e580d122ce16f485ad54e34.json",
+              "/6efc4f9b8f6a0cf8db2388b68d9370a9340ac79cdde27868fbeb024af16ab27f.json",
             ],
           ],
         },
@@ -1393,7 +1393,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/8b8f4a3c34308f8fce64317194f29ac7f83fb2f8f31de8c10ebee1d4e98bbfe3.json",
+              "/d896169ff624a542b99e63cb2ced6909377766ff73dc68a75f1f4e6fe7cc24b2.json",
             ],
           ],
         },
@@ -1993,12 +1993,28 @@ def on_delete(event):
             Object {
               "Action": "lambda:InvokeFunction",
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "karpenterTagSubnetsFunction9F1EEF47",
-                  "Arn",
-                ],
-              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "karpenterTagSubnetsFunction9F1EEF47",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "karpenterTagSubnetsFunction9F1EEF47",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
             },
           ],
           "Version": "2012-10-17",
