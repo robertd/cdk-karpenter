@@ -1567,7 +1567,7 @@ Object {
                   "Arn",
                 ],
               },
-              "\\"}},\\"aws\\":{}}",
+              "\\"}},\\"aws\\":{\\"defaultInstanceProfile\\":\\"karpenterInstanceProfile13C1F80D\\"}}",
             ],
           ],
         },

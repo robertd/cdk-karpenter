@@ -383,7 +383,9 @@ export class Karpenter extends Construct {
           },
         },
         aws: {
-          defaultInstanceProfile: this.instanceProfile.instanceProfileName,
+          // instanceProfile is created using L1 construct (CfnInstanceProfile), thus we're referencing logicalId directly 
+          // TODO: revisit this when L2 InstanceProfile construct is released
+          defaultInstanceProfile: this.instanceProfile.logicalId,
         },
       },
     });
