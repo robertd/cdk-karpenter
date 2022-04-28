@@ -334,7 +334,6 @@ export class Karpenter extends Construct {
 
     this.instanceProfile = new CfnInstanceProfile(this, 'InstanceProfile', {
       roles: [this.karpenterNodeRole.roleName],
-      instanceProfileName: `KarpenterNodeInstanceProfile-${this.cluster.clusterName}`,
       path: '/',
     });
 
@@ -432,7 +431,9 @@ export class Karpenter extends Construct {
           securityGroupSelector: {
             [`kubernetes.io/cluster/${this.cluster.clusterName}`]: 'owned',
           },
-          instanceProfile: this.instanceProfile.instanceProfileName,
+          // instanceProfile is created using L1 construct (CfnInstanceProfile), thus we're referencing logicalId directly 
+          // TODO: revisit this when L2 InstanceProfile construct is released
+          instanceProfile: this.instanceProfile.logicalId,
           ...(provisionerSpecs?.provider?.tags && { tags: { ...provisionerSpecs!.provider!.tags! } }),
           ...(provisionerSpecs?.provider?.amiFamily && { amiFamily: provisionerSpecs!.provider!.amiFamily! }),
           ...(provisionerSpecs?.provider?.blockDeviceMappings && { blockDeviceMappings: provisionerSpecs!.provider!.blockDeviceMappings! }),

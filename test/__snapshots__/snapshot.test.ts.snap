@@ -653,11 +653,7 @@ Object {
               Object {
                 "Ref": "Cluster9EE0221C",
               },
-              "\\":\\"owned\\"},\\"instanceProfile\\":\\"KarpenterNodeInstanceProfile-",
-              Object {
-                "Ref": "Cluster9EE0221C",
-              },
-              "\\",\\"tags\\":{\\"Foo\\":\\"Bar\\"},\\"amiFamily\\":\\"AL2\\"}}}]",
+              "\\":\\"owned\\"},\\"instanceProfile\\":\\"karpenterInstanceProfile13C1F80D\\",\\"tags\\":{\\"Foo\\":\\"Bar\\"},\\"amiFamily\\":\\"AL2\\"}}}]",
             ],
           ],
         },
@@ -721,11 +717,7 @@ Object {
               Object {
                 "Ref": "Cluster9EE0221C",
               },
-              "\\":\\"owned\\"},\\"instanceProfile\\":\\"KarpenterNodeInstanceProfile-",
-              Object {
-                "Ref": "Cluster9EE0221C",
-              },
-              "\\"}}}]",
+              "\\":\\"owned\\"},\\"instanceProfile\\":\\"karpenterInstanceProfile13C1F80D\\"}}}]",
             ],
           ],
         },
@@ -1344,7 +1336,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/875750bc897b79790c766638b8bb00ab2c799cd937ec7919dd3e84369e66a2c6.json",
+              "/946761d030245a1a34a15faa1ca178d4c86af2c34de544219cc6b0d78396b330.json",
             ],
           ],
         },
@@ -1393,7 +1385,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/20cf2fcc359b059905309c452928d5b0021a406e0d524d1b60bd4a76fd790864.json",
+              "/962af092a88a3b841b9d922d655a1c573253eaa1954576255d5aff23c4eab81a.json",
             ],
           ],
         },
@@ -1575,11 +1567,7 @@ Object {
                   "Arn",
                 ],
               },
-              "\\"}},\\"aws\\":{\\"defaultInstanceProfile\\":\\"KarpenterNodeInstanceProfile-",
-              Object {
-                "Ref": "Cluster9EE0221C",
-              },
-              "\\"}}",
+              "\\"}},\\"aws\\":{}}",
             ],
           ],
         },
@@ -1591,17 +1579,6 @@ Object {
     },
     "karpenterInstanceProfile13C1F80D": Object {
       "Properties": Object {
-        "InstanceProfileName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "KarpenterNodeInstanceProfile-",
-              Object {
-                "Ref": "Cluster9EE0221C",
-              },
-            ],
-          ],
-        },
         "Path": "/",
         "Roles": Array [
           Object {
