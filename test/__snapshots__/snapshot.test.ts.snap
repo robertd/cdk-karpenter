@@ -653,7 +653,11 @@ Object {
               Object {
                 "Ref": "Cluster9EE0221C",
               },
-              "\\":\\"owned\\"},\\"instanceProfile\\":\\"karpenterInstanceProfile13C1F80D\\",\\"tags\\":{\\"Foo\\":\\"Bar\\"},\\"amiFamily\\":\\"AL2\\"}}}]",
+              "\\":\\"owned\\"},\\"instanceProfile\\":\\"",
+              Object {
+                "Ref": "karpenterInstanceProfile13C1F80D",
+              },
+              "\\",\\"tags\\":{\\"Foo\\":\\"Bar\\"},\\"amiFamily\\":\\"AL2\\"}}}]",
             ],
           ],
         },
@@ -717,7 +721,11 @@ Object {
               Object {
                 "Ref": "Cluster9EE0221C",
               },
-              "\\":\\"owned\\"},\\"instanceProfile\\":\\"karpenterInstanceProfile13C1F80D\\"}}}]",
+              "\\":\\"owned\\"},\\"instanceProfile\\":\\"",
+              Object {
+                "Ref": "karpenterInstanceProfile13C1F80D",
+              },
+              "\\"}}}]",
             ],
           ],
         },
@@ -1567,7 +1575,11 @@ Object {
                   "Arn",
                 ],
               },
-              "\\"}},\\"aws\\":{\\"defaultInstanceProfile\\":\\"karpenterInstanceProfile13C1F80D\\"}}",
+              "\\"}},\\"aws\\":{\\"defaultInstanceProfile\\":\\"",
+              Object {
+                "Ref": "karpenterInstanceProfile13C1F80D",
+              },
+              "\\"}}",
             ],
           ],
         },

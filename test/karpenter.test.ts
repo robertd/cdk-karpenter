@@ -210,7 +210,11 @@ test('has default provider', () => {
           {
             Ref: 'Cluster9EE0221C',
           },
-          '":"owned"},"instanceProfile":"karpenterInstanceProfile13C1F80D"}}}]',
+          '":"owned"},"instanceProfile":"',
+          {
+            Ref: 'karpenterInstanceProfile13C1F80D',
+          },
+          '"}}}]',
         ],
       ],
     },
@@ -253,7 +257,11 @@ test('has custom provider', () => {
           {
             Ref: 'Cluster9EE0221C',
           },
-          '":"owned"},"instanceProfile":"karpenterInstanceProfile13C1F80D","tags":{"Foo":"Bar"},"amiFamily":"AL2","blockDeviceMappings":[{"deviceName":"test","ebs":{"encrypted":true,"deleteOnTermination":true,"volumeSize":"100Gi","volumeType":"gp3","iops":5000,"throughput":1000,"kmsKeyId":"arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab","snapshotId":"snap-0123457890"}}]}}}]',
+          '":"owned"},"instanceProfile":"',
+          {
+            Ref: 'karpenterInstanceProfile13C1F80D',
+          }
+          , '","tags":{"Foo":"Bar"},"amiFamily":"AL2","blockDeviceMappings":[{"deviceName":"test","ebs":{"encrypted":true,"deleteOnTermination":true,"volumeSize":"100Gi","volumeType":"gp3","iops":5000,"throughput":1000,"kmsKeyId":"arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab","snapshotId":"snap-0123457890"}}]}}}]',
         ],
       ],
     },
