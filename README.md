@@ -6,6 +6,8 @@ Karpenter simplifies Kubernetes infrastructure with the right nodes at the right
 
 More info about Karpenter at: https://karpenter.sh
 
+Karpenter Best Practices: https://aws.github.io/aws-eks-best-practices/karpenter/
+
 ## Showcase
 
 ```ts
