@@ -367,7 +367,7 @@ export class Karpenter extends Construct {
     this.karpenterHelmChart = new HelmChart(this, 'HelmChart', {
       chart: 'karpenter',
       createNamespace: true,
-      version: '0.9.1',
+      version: '0.10.0',
       cluster: this.cluster,
       namespace: 'karpenter',
       release: 'karpenter',
