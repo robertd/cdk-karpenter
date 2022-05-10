@@ -54,6 +54,13 @@ export interface ProvisionerSpecs {
   readonly taints?: Taints[];
 
   /**
+   * Provisioned nodes will have these taints, but pods do not need to tolerate these taints to be provisioned by this 
+   * provisioner. These taints are expected to be temporary and some other entity (e.g. a DaemonSet) is responsible for
+   * removing the taint after it has finished initializing the node.
+   */
+  readonly startupTaints?: Taints[];
+
+  /**
    * Requirements that constrain the parameters of provisioned nodes.
    * These requirements are combined with pod.spec.affinity.nodeAffinity rules.
    */
@@ -426,6 +433,7 @@ export class Karpenter extends Construct {
           ...provisionerSpecs?.labels,
         },
         ...(provisionerSpecs?.taints && { taints: provisionerSpecs!.taints! }),
+        ...(provisionerSpecs?.startupTaints && { startupTaints: provisionerSpecs!.startupTaints! }),
         provider: {
           subnetSelector: {
             [`karpenter.sh/discovery/${this.cluster.clusterName}`]: '*',

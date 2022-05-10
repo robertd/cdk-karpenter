@@ -34,6 +34,12 @@ karpenter.addProvisioner('custom', {
       effect: 'NoSchedule',
     },
   ],
+  startupTaints: [
+    {
+      key: 'example.com/another-taint',
+      effect: 'NoSchedule',
+    },
+  ],
   limits: {
     cpu: '1',
     mem: '1000Gi',

@@ -34,6 +34,12 @@ karpenter.addProvisioner('custom', {
       effect: 'NoSchedule',
     },
   ],
+  startupTaints: [
+    {
+      key: 'example.com/another-taint',
+      effect: 'NoSchedule',
+    },
+  ],
   limits: {
     cpu: '1',
     mem: '1000Gi',
@@ -249,7 +255,7 @@ test('has custom provider', () => {
           {
             Ref: 'Cluster9EE0221C',
           },
-          '","billing":"my-team"},"taints":[{"key":"example.com/special-taint","effect":"NoSchedule"}],"provider":{"subnetSelector":{"karpenter.sh/discovery/',
+          '","billing":"my-team"},"taints":[{"key":"example.com/special-taint","effect":"NoSchedule"}],"startupTaints":[{"key":"example.com/another-taint","effect":"NoSchedule"}],"provider":{"subnetSelector":{"karpenter.sh/discovery/',
           {
             Ref: 'Cluster9EE0221C',
           },
