@@ -54,7 +54,7 @@ export interface ProvisionerSpecs {
   readonly taints?: Taints[];
 
   /**
-   * Provisioned nodes will have these taints, but pods do not need to tolerate these taints to be provisioned by this 
+   * Provisioned nodes will have these taints, but pods do not need to tolerate these taints to be provisioned by this
    * provisioner. These taints are expected to be temporary and some other entity (e.g. a DaemonSet) is responsible for
    * removing the taint after it has finished initializing the node.
    */

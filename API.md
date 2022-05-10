@@ -576,6 +576,7 @@ const provisionerSpecs: ProvisionerSpecs = { ... }
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.labels">labels</a></code> | <code>{[ key: string ]: string}</code> | Labels are arbitrary key-values that are applied to all nodes. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.limits">limits</a></code> | <code><a href="#cdk-karpenter.Limits">Limits</a></code> | CPU and Memory Limits. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.provider">provider</a></code> | <code><a href="#cdk-karpenter.ProviderProps">ProviderProps</a></code> | AWS cloud provider configuration. |
+| <code><a href="#cdk-karpenter.ProvisionerSpecs.property.startupTaints">startupTaints</a></code> | <code><a href="#cdk-karpenter.Taints">Taints</a>[]</code> | Provisioned nodes will have these taints, but pods do not need to tolerate these taints to be provisioned by this provisioner. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.taints">taints</a></code> | <code><a href="#cdk-karpenter.Taints">Taints</a>[]</code> | Provisioned nodes will have these taints. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.ttlSecondsAfterEmpty">ttlSecondsAfterEmpty</a></code> | <code>aws-cdk-lib.Duration</code> | Time in seconds in which nodes will scale down due to low utilization. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.ttlSecondsUntilExpired">ttlSecondsUntilExpired</a></code> | <code>aws-cdk-lib.Duration</code> | Time in seconds in which nodes will expire and get replaced. |
@@ -632,6 +633,21 @@ public readonly provider: ProviderProps;
 - *Type:* <a href="#cdk-karpenter.ProviderProps">ProviderProps</a>
 
 AWS cloud provider configuration.
+
+---
+
+##### `startupTaints`<sup>Optional</sup> <a name="startupTaints" id="cdk-karpenter.ProvisionerSpecs.property.startupTaints"></a>
+
+```typescript
+public readonly startupTaints: Taints[];
+```
+
+- *Type:* <a href="#cdk-karpenter.Taints">Taints</a>[]
+
+Provisioned nodes will have these taints, but pods do not need to tolerate these taints to be provisioned by this provisioner.
+
+These taints are expected to be temporary and some other entity (e.g. a DaemonSet) is responsible for
+removing the taint after it has finished initializing the node.
 
 ---
 
