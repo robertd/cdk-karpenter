@@ -167,6 +167,9 @@ test('has karpenter controller role', () => {
       ],
     },
   });
+
+  const ref = stack.resolve(karpenter.controllerRole.roleName);
+  expect(ref).toStrictEqual({ Ref: 'karpenterControllerRole06530798' });
 });
 
 test('has an instance profile', () => {
