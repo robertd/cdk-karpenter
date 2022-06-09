@@ -613,7 +613,6 @@ Object {
       "DeletionPolicy": "Delete",
       "DependsOn": Array [
         "ClusterKubectlReadyBarrier200052AF",
-        "karpenterHelmChart85F67B30",
       ],
       "Properties": Object {
         "ClusterName": Object {
@@ -681,7 +680,6 @@ Object {
       "DeletionPolicy": "Delete",
       "DependsOn": Array [
         "ClusterKubectlReadyBarrier200052AF",
-        "karpenterHelmChart85F67B30",
       ],
       "Properties": Object {
         "ClusterName": Object {
@@ -1525,69 +1523,6 @@ Object {
         ],
       },
       "Type": "AWS::IAM::Role",
-    },
-    "karpenterHelmChart85F67B30": Object {
-      "DeletionPolicy": "Delete",
-      "DependsOn": Array [
-        "ClusterKubectlReadyBarrier200052AF",
-      ],
-      "Properties": Object {
-        "Chart": "karpenter",
-        "ClusterName": Object {
-          "Ref": "Cluster9EE0221C",
-        },
-        "CreateNamespace": true,
-        "Namespace": "karpenter",
-        "Release": "karpenter",
-        "Repository": "https://charts.karpenter.sh",
-        "RoleArn": Object {
-          "Fn::GetAtt": Array [
-            "ClusterCreationRole360249B6",
-            "Arn",
-          ],
-        },
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "awscdkawseksKubectlProviderNestedStackawscdkawseksKubectlProviderNestedStackResourceA7AEBA6B",
-            "Outputs.StackawscdkawseksKubectlProviderframeworkonEvent8897FD9BArn",
-          ],
-        },
-        "Timeout": "900s",
-        "Values": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "{\\"clusterName\\":\\"",
-              Object {
-                "Ref": "Cluster9EE0221C",
-              },
-              "\\",\\"clusterEndpoint\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "Cluster9EE0221C",
-                  "Endpoint",
-                ],
-              },
-              "\\",\\"serviceAccount\\":{\\"annotations\\":{\\"eks.amazonaws.com/role-arn\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "karpenterControllerRole06530798",
-                  "Arn",
-                ],
-              },
-              "\\"}},\\"aws\\":{\\"defaultInstanceProfile\\":\\"",
-              Object {
-                "Ref": "karpenterInstanceProfile13C1F80D",
-              },
-              "\\"}}",
-            ],
-          ],
-        },
-        "Version": "0.10.0",
-        "Wait": true,
-      },
-      "Type": "Custom::AWSCDK-EKS-HelmChart",
-      "UpdateReplacePolicy": "Delete",
     },
     "karpenterInstanceProfile13C1F80D": Object {
       "Properties": Object {

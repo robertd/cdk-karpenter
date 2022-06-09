@@ -1,7 +1,15 @@
 import { CfnJson, CfnOutput, Duration } from 'aws-cdk-lib';
 import { ISubnet, IVpc, InstanceType, EbsDeviceVolumeType } from 'aws-cdk-lib/aws-ec2';
 import { Cluster, HelmChart } from 'aws-cdk-lib/aws-eks';
-import { CfnInstanceProfile, ManagedPolicy, OpenIdConnectPrincipal, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import {
+  CfnInstanceProfile,
+  IRole,
+  ManagedPolicy,
+  OpenIdConnectPrincipal,
+  PolicyStatement,
+  Role,
+  ServicePrincipal,
+} from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import { TagSubnetsCustomResource } from './custom-resource';
 
@@ -21,6 +29,14 @@ export interface KarpenterProps {
    * If left blank, private VPC subnets will be used and tagged by default.
    */
   readonly subnets?: ISubnet[];
+
+  /**
+   * Whether to deploy the Karpenter Helm chart via CDK or not.
+   * If set to false the Helm chart will need to be deployed separately.
+   *
+   * @default true
+   */
+  readonly deployHelmChart?: boolean;
 }
 
 export interface ProvisionerSpecs {
@@ -283,7 +299,7 @@ export class Karpenter extends Construct {
   private readonly instanceProfile: CfnInstanceProfile;
   private readonly karpenterNodeRole: Role;
   private readonly karpenterControllerRole: Role;
-  private readonly karpenterHelmChart: HelmChart;
+  private readonly karpenterHelmChart?: HelmChart;
 
   constructor(scope: Construct, id: string, props: KarpenterProps) {
     super(scope, id);
@@ -371,33 +387,39 @@ export class Karpenter extends Construct {
     });
     this.karpenterControllerRole.addManagedPolicy(karpenterControllerPolicy);
 
-    this.karpenterHelmChart = new HelmChart(this, 'HelmChart', {
-      chart: 'karpenter',
-      createNamespace: true,
-      version: '0.10.0',
-      cluster: this.cluster,
-      namespace: 'karpenter',
-      release: 'karpenter',
-      repository: 'https://charts.karpenter.sh',
-      timeout: Duration.minutes(15),
-      wait: true,
-      values: {
-        clusterName: this.cluster.clusterName,
-        clusterEndpoint: this.cluster.clusterEndpoint,
-        serviceAccount: {
-          annotations: {
-            'eks.amazonaws.com/role-arn': this.karpenterControllerRole.roleArn,
+    if (props.deployHelmChart) {
+      this.karpenterHelmChart = new HelmChart(this, 'HelmChart', {
+        chart: 'karpenter',
+        createNamespace: true,
+        version: '0.10.0',
+        cluster: this.cluster,
+        namespace: 'karpenter',
+        release: 'karpenter',
+        repository: 'https://charts.karpenter.sh',
+        timeout: Duration.minutes(15),
+        wait: true,
+        values: {
+          clusterName: this.cluster.clusterName,
+          clusterEndpoint: this.cluster.clusterEndpoint,
+          serviceAccount: {
+            annotations: {
+              'eks.amazonaws.com/role-arn': this.karpenterControllerRole.roleArn,
+            },
           },
-        },
-        aws: {
+          aws: {
           // instanceProfile is created using L1 construct (CfnInstanceProfile), thus we're referencing ref directly
           // TODO: revisit this when L2 InstanceProfile construct is released
-          defaultInstanceProfile: this.instanceProfile.ref,
+            defaultInstanceProfile: this.instanceProfile.ref,
+          },
         },
-      },
-    });
+      });
+    }
 
     new CfnOutput(this, 'clusterName', { value: this.cluster.clusterName });
+  }
+
+  get controllerRole(): IRole {
+    return this.karpenterControllerRole;
   }
 
   /**
@@ -450,7 +472,10 @@ export class Karpenter extends Construct {
         },
       },
     });
-    provisioner.node.addDependency(this.karpenterHelmChart);
+
+    if (this.karpenterHelmChart) {
+      provisioner.node.addDependency(this.karpenterHelmChart);
+    }
   }
 
   private setRequirements(reqs?: ProvisionerReqs): any[] {
