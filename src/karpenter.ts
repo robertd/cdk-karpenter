@@ -387,7 +387,7 @@ export class Karpenter extends Construct {
     });
     this.karpenterControllerRole.addManagedPolicy(karpenterControllerPolicy);
 
-    if (props.deployHelmChart) {
+    if (props.deployHelmChart ?? true) {
       this.karpenterHelmChart = new HelmChart(this, 'HelmChart', {
         chart: 'karpenter',
         createNamespace: true,
