@@ -21,6 +21,12 @@ export interface KarpenterProps {
    * If left blank, private VPC subnets will be used and tagged by default.
    */
   readonly subnets?: ISubnet[];
+
+  /**
+   * Override the generated instance profile name.
+   * If left blank the default, CDK-generated name is used.
+   */
+  readonly instanceProfileName?: string;
 }
 
 export interface ProvisionerSpecs {
@@ -340,6 +346,7 @@ export class Karpenter extends Construct {
     });
 
     this.instanceProfile = new CfnInstanceProfile(this, 'InstanceProfile', {
+      instanceProfileName: props.instanceProfileName,
       roles: [this.karpenterNodeRole.roleName],
       path: '/',
     });
