@@ -8,6 +8,7 @@ const { stack, vpc, cluster } = testFixtureCluster();
 const karpenter = new Karpenter(stack, 'karpenter', {
   cluster,
   vpc,
+  instanceProfileName: 'test',
 });
 
 karpenter.addProvisioner('default');
@@ -177,6 +178,7 @@ test('has an instance profile', () => {
       },
     ],
     Path: '/',
+    InstanceProfileName: 'test',
   });
 });
 
