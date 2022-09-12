@@ -64,3 +64,4 @@ src/integ.karpenter-fargate-extended.ts
 src/integ.karpenter-fargate-ephemeral.ts
 src/integ.karpenter-fargate.ts
 src/integ.karpenter.ts
+src/permissions-boundary.ts

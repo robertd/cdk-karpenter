@@ -17,12 +17,12 @@ const project = new awscdk.AwsCdkConstructLibrary({
   compat: true,
   stability: 'experimental',
   cdkVersion: '2.4.0',
-  workflowNodeVersion: '^16.14.2',
+  workflowNodeVersion: '^16.17.0',
   autoApproveOptions: {
     allowedUsernames: ['cdk-karpenter-automation'],
     secret: 'GITHUB_TOKEN',
   },
-  majorVersion: 1,
+  majorVersion: 2,
   autoApproveProjenUpgrades: true,
   projenTokenSecret: 'PROJEN_GITHUB_TOKEN',
   autoApproveUpgrades: true,
@@ -48,6 +48,7 @@ const common_exclude = [
   'src/integ.karpenter-fargate-ephemeral.ts',
   'src/integ.karpenter-fargate.ts',
   'src/integ.karpenter.ts',
+  'src/permissions-boundary.ts',
 ];
 project.gitignore.exclude(...common_exclude);
 

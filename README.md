@@ -8,6 +8,10 @@ More info about Karpenter at: https://karpenter.sh
 
 Karpenter Best Practices: https://aws.github.io/aws-eks-best-practices/karpenter/
 
+Karpenter version: 0.16.1
+
+Note: As of v0.16.0 changed the default replicas from 1 to 2. See: https://github.com/aws/karpenter/blob/main/website/content/en/v0.16.1/troubleshooting.md
+
 ## Showcase
 
 ```ts
@@ -33,8 +37,10 @@ const karpenter = new Karpenter(stack, 'karpenter', {
 
 // default provisioner
 karpenter.addProvisioner('default');
+//Note: Default provisioner has no cpu/mem limits, nor will cleanup provisioned resources. Use with caution.
+// see: https://karpenter.sh/v0.16.1/provisioner/#node-deprovisioning
 
-// customized provisoner
+// custom provisoner - kitchen sink
 karpenter.addProvisioner('custom', {
   requirements: {
     archTypes: [ArchType.AMD64, ArchType.ARM64],
@@ -47,7 +53,7 @@ karpenter.addProvisioner('custom', {
       InstanceType.of(InstanceClass.G5, InstanceSize.LARGE),
     ],
   },
-  ttlSecondsAfterEmpty: Duration.hours(2),
+  ttlSecondsAfterEmpty: Duration.hours(1),
   ttlSecondsUntilExpired: Duration.days(90),
   labels: {
     billing: 'my-team',
@@ -68,11 +74,16 @@ karpenter.addProvisioner('custom', {
     cpu: '1',
     mem: '1000Gi',
   },
+  consolidation: false,
   provider: {
     amiFamily: AMIFamily.AL2,
+    amiSelector: {
+      'aws-ids': 'ami-123,ami-456',
+    },
     tags: {
       Foo: 'Bar',
     },
+    launchTemplate: 'MyLaunchTemplate',
     blockDeviceMappings: [
       {
         deviceName: 'test',

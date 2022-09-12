@@ -445,7 +445,9 @@ const providerProps: ProviderProps = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#cdk-karpenter.ProviderProps.property.amiFamily">amiFamily</a></code> | <code><a href="#cdk-karpenter.AMIFamily">AMIFamily</a></code> | The AMI used when provisioning nodes. |
-| <code><a href="#cdk-karpenter.ProviderProps.property.blockDeviceMappings">blockDeviceMappings</a></code> | <code><a href="#cdk-karpenter.BlockDeviceMappingsProps">BlockDeviceMappingsProps</a>[]</code> | EBS. |
+| <code><a href="#cdk-karpenter.ProviderProps.property.amiSelector">amiSelector</a></code> | <code>{[ key: string ]: string}</code> | AMISelector is used to configure custom AMIs for Karpenter to use, where the AMIs are discovered through AWS tags, similar to subnetSelector. |
+| <code><a href="#cdk-karpenter.ProviderProps.property.blockDeviceMappings">blockDeviceMappings</a></code> | <code><a href="#cdk-karpenter.BlockDeviceMappingsProps">BlockDeviceMappingsProps</a>[]</code> | EBS mapping configuration. |
+| <code><a href="#cdk-karpenter.ProviderProps.property.launchTemplate">launchTemplate</a></code> | <code>string</code> | A launch template is a set of configuration values sufficient for launching an EC2 instance (e.g., AMI, storage spec). A custom launch template is specified by name. If none is specified, Karpenter will automatically create a launch template. |
 | <code><a href="#cdk-karpenter.ProviderProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Tags will be added to every EC2 instance launched by the provisioner. |
 
 ---
@@ -465,6 +467,21 @@ query for the appropriate EKS optimized AMI via AWS Systems Manager (SSM).
 
 ---
 
+##### `amiSelector`<sup>Optional</sup> <a name="amiSelector" id="cdk-karpenter.ProviderProps.property.amiSelector"></a>
+
+```typescript
+public readonly amiSelector: {[ key: string ]: string};
+```
+
+- *Type:* {[ key: string ]: string}
+
+AMISelector is used to configure custom AMIs for Karpenter to use, where the AMIs are discovered through AWS tags, similar to subnetSelector.
+
+This field is optional,
+and Karpenter will use the latest EKS-optimized AMIs if an amiSelector is not specified.
+
+---
+
 ##### `blockDeviceMappings`<sup>Optional</sup> <a name="blockDeviceMappings" id="cdk-karpenter.ProviderProps.property.blockDeviceMappings"></a>
 
 ```typescript
@@ -473,7 +490,19 @@ public readonly blockDeviceMappings: BlockDeviceMappingsProps[];
 
 - *Type:* <a href="#cdk-karpenter.BlockDeviceMappingsProps">BlockDeviceMappingsProps</a>[]
 
-EBS.
+EBS mapping configuration.
+
+---
+
+##### `launchTemplate`<sup>Optional</sup> <a name="launchTemplate" id="cdk-karpenter.ProviderProps.property.launchTemplate"></a>
+
+```typescript
+public readonly launchTemplate: string;
+```
+
+- *Type:* string
+
+A launch template is a set of configuration values sufficient for launching an EC2 instance (e.g., AMI, storage spec). A custom launch template is specified by name. If none is specified, Karpenter will automatically create a launch template.
 
 ---
 
@@ -573,6 +602,7 @@ const provisionerSpecs: ProvisionerSpecs = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.requirements">requirements</a></code> | <code><a href="#cdk-karpenter.ProvisionerReqs">ProvisionerReqs</a></code> | Requirements that constrain the parameters of provisioned nodes. |
+| <code><a href="#cdk-karpenter.ProvisionerSpecs.property.consolidation">consolidation</a></code> | <code>boolean</code> | Enables consolidation which attempts to reduce cluster cost by both removing un-needed nodes and down-sizing those that can't be removed. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.labels">labels</a></code> | <code>{[ key: string ]: string}</code> | Labels are arbitrary key-values that are applied to all nodes. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.limits">limits</a></code> | <code><a href="#cdk-karpenter.Limits">Limits</a></code> | CPU and Memory Limits. |
 | <code><a href="#cdk-karpenter.ProvisionerSpecs.property.provider">provider</a></code> | <code><a href="#cdk-karpenter.ProviderProps">ProviderProps</a></code> | AWS cloud provider configuration. |
@@ -594,6 +624,20 @@ public readonly requirements: ProvisionerReqs;
 Requirements that constrain the parameters of provisioned nodes.
 
 These requirements are combined with pod.spec.affinity.nodeAffinity rules.
+
+---
+
+##### `consolidation`<sup>Optional</sup> <a name="consolidation" id="cdk-karpenter.ProvisionerSpecs.property.consolidation"></a>
+
+```typescript
+public readonly consolidation: boolean;
+```
+
+- *Type:* boolean
+
+Enables consolidation which attempts to reduce cluster cost by both removing un-needed nodes and down-sizing those that can't be removed.
+
+Mutually exclusive with the ttlSecondsAfterEmpty parameter.
 
 ---
 
@@ -675,7 +719,8 @@ public readonly ttlSecondsAfterEmpty: Duration;
 
 Time in seconds in which nodes will scale down due to low utilization.
 
-If omitted, the feature is disabled, nodes will never scale down due to low utilization
+If omitted, the feature is disabled, nodes will never scale down due to low utilization.
+Mutually exclusive with the consolidation parameter.
 
 ---
 
@@ -776,6 +821,7 @@ Value.
 | <code><a href="#cdk-karpenter.AMIFamily.AL2">AL2</a></code> | Amazon Linux 2 AMI family Note: If a custom launch template is specified, then the AMI value in the launch template is used rather than the amiFamily value. |
 | <code><a href="#cdk-karpenter.AMIFamily.BOTTLEROCKET">BOTTLEROCKET</a></code> | Bottlerocket AMI family. |
 | <code><a href="#cdk-karpenter.AMIFamily.UBUNTU">UBUNTU</a></code> | Ubuntu AMI family. |
+| <code><a href="#cdk-karpenter.AMIFamily.CUSTOM">CUSTOM</a></code> | Custom AMI family. |
 
 ---
 
@@ -796,6 +842,13 @@ Bottlerocket AMI family.
 ##### `UBUNTU` <a name="UBUNTU" id="cdk-karpenter.AMIFamily.UBUNTU"></a>
 
 Ubuntu AMI family.
+
+---
+
+
+##### `CUSTOM` <a name="CUSTOM" id="cdk-karpenter.AMIFamily.CUSTOM"></a>
+
+Custom AMI family.
 
 ---
 

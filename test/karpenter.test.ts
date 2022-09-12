@@ -4,6 +4,7 @@ import { EbsDeviceVolumeType, InstanceClass, InstanceSize, InstanceType } from '
 import { AMIFamily, ArchType, Karpenter } from '../src/index';
 import { testFixtureCluster } from './util';
 
+
 const { stack, vpc, cluster } = testFixtureCluster();
 const karpenter = new Karpenter(stack, 'karpenter', {
   cluster,
@@ -77,20 +78,32 @@ test('has karpenter controller policy', () => {
             'ec2:CreateFleet',
             'ec2:RunInstances',
             'ec2:CreateTags',
-            'iam:PassRole',
             'ec2:TerminateInstances',
             'ec2:DeleteLaunchTemplate',
             'ec2:DescribeLaunchTemplates',
             'ec2:DescribeInstances',
             'ec2:DescribeSecurityGroups',
             'ec2:DescribeSubnets',
+            'ec2:DescribeImages',
             'ec2:DescribeInstanceTypes',
             'ec2:DescribeInstanceTypeOfferings',
             'ec2:DescribeAvailabilityZones',
+            'ec2:DescribeSpotPriceHistory',
             'ssm:GetParameter',
+            'pricing:GetProducts',
           ],
           Effect: 'Allow',
           Resource: '*',
+        },
+        {
+          Action: 'iam:PassRole',
+          Effect: 'Allow',
+          Resource: {
+            'Fn::GetAtt': [
+              'karpenterNodeRole086B4B2F',
+              'Arn',
+            ],
+          },
         },
       ],
       Version: '2012-10-17',
@@ -180,7 +193,8 @@ test('has an instance profile', () => {
   });
 });
 
-test('has default provider', () => {
+test('has a default provider', () => {
+  // Default Provider
   Template.fromStack(stack).hasResourceProperties('Custom::AWSCDK-EKS-KubernetesResource', {
     Manifest: {
       'Fn::Join': [
@@ -208,7 +222,19 @@ test('has default provider', () => {
           {
             Ref: 'Cluster9EE0221C',
           },
-          '"},"provider":{"subnetSelector":{"karpenter.sh/discovery/',
+          '"},"providerRef":{"name":"default-awsnodetemplate"}}}]',
+        ],
+      ],
+    },
+  });
+
+  // Default AWSNodeTemplate
+  Template.fromStack(stack).hasResourceProperties('Custom::AWSCDK-EKS-KubernetesResource', {
+    Manifest: {
+      'Fn::Join': [
+        '',
+        [
+          '[{"apiVersion":"karpenter.k8s.aws/v1alpha1","kind":"AWSNodeTemplate","metadata":{"name":"default-awsnodetemplate"},"spec":{"subnetSelector":{"karpenter.sh/discovery/',
           {
             Ref: 'Cluster9EE0221C',
           },
@@ -220,7 +246,7 @@ test('has default provider', () => {
           {
             Ref: 'karpenterInstanceProfile13C1F80D',
           },
-          '"}}}]',
+          '"}}]',
         ],
       ],
     },
@@ -228,6 +254,7 @@ test('has default provider', () => {
 });
 
 test('has custom provider', () => {
+  // Custom Provider
   Template.fromStack(stack).hasResourceProperties('Custom::AWSCDK-EKS-KubernetesResource', {
     Manifest: {
       'Fn::Join': [
@@ -255,7 +282,19 @@ test('has custom provider', () => {
           {
             Ref: 'Cluster9EE0221C',
           },
-          '","billing":"my-team"},"taints":[{"key":"example.com/special-taint","effect":"NoSchedule"}],"startupTaints":[{"key":"example.com/another-taint","effect":"NoSchedule"}],"provider":{"subnetSelector":{"karpenter.sh/discovery/',
+          '","billing":"my-team"},"taints":[{"key":"example.com/special-taint","effect":"NoSchedule"}],"startupTaints":[{"key":"example.com/another-taint","effect":"NoSchedule"}],"providerRef":{"name":"custom-awsnodetemplate"}}}]',
+        ],
+      ],
+    },
+  });
+
+  // Custom AWSNodeTemplate
+  Template.fromStack(stack).hasResourceProperties('Custom::AWSCDK-EKS-KubernetesResource', {
+    Manifest: {
+      'Fn::Join': [
+        '',
+        [
+          '[{"apiVersion":"karpenter.k8s.aws/v1alpha1","kind":"AWSNodeTemplate","metadata":{"name":"custom-awsnodetemplate"},"spec":{"subnetSelector":{"karpenter.sh/discovery/',
           {
             Ref: 'Cluster9EE0221C',
           },
@@ -266,8 +305,8 @@ test('has custom provider', () => {
           '":"owned"},"instanceProfile":"',
           {
             Ref: 'karpenterInstanceProfile13C1F80D',
-          }
-          , '","tags":{"Foo":"Bar"},"amiFamily":"AL2","blockDeviceMappings":[{"deviceName":"test","ebs":{"encrypted":true,"deleteOnTermination":true,"volumeSize":"100Gi","volumeType":"gp3","iops":5000,"throughput":1000,"kmsKeyId":"arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab","snapshotId":"snap-0123457890"}}]}}}]',
+          },
+          '","tags":{"Foo":"Bar"},"amiFamily":"AL2","blockDeviceMappings":[{"deviceName":"test","ebs":{"encrypted":true,"deleteOnTermination":true,"volumeSize":"100Gi","volumeType":"gp3","iops":5000,"throughput":1000,"kmsKeyId":"arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab","snapshotId":"snap-0123457890"}}]}}]',
         ],
       ],
     },

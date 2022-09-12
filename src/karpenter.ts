@@ -25,6 +25,13 @@ export interface KarpenterProps {
 
 export interface ProvisionerSpecs {
   /**
+   * Enables consolidation which attempts to reduce cluster cost by both removing un-needed nodes and down-sizing
+   * those that can't be removed.
+   * Mutually exclusive with the ttlSecondsAfterEmpty parameter.
+   */
+  readonly consolidation?: Boolean;
+
+  /**
    * Time in seconds in which nodes will expire and get replaced.
    * If omitted, the feature is disabled and nodes will never expire.
    * i.e. Duration.days(7)
@@ -33,7 +40,8 @@ export interface ProvisionerSpecs {
 
   /**
    * Time in seconds in which nodes will scale down due to low utilization.
-   * If omitted, the feature is disabled, nodes will never scale down due to low utilization
+   * If omitted, the feature is disabled, nodes will never scale down due to low utilization.
+   * Mutually exclusive with the consolidation parameter.
    */
   readonly ttlSecondsAfterEmpty?: Duration;
 
@@ -44,7 +52,7 @@ export interface ProvisionerSpecs {
   readonly limits?: Limits;
 
   /**
-   * Labels are arbitrary key-values that are applied to all nodes
+   * Labels are arbitrary key-values that are applied to all nodes.
    */
   readonly labels?: {[key: string]: string};
 
@@ -67,7 +75,7 @@ export interface ProvisionerSpecs {
   readonly requirements: ProvisionerReqs;
 
   /**
-   * AWS cloud provider configuration
+   * AWS cloud provider configuration.
    */
   readonly provider?: ProviderProps;
 }
@@ -108,9 +116,22 @@ export interface ProviderProps {
   readonly tags?: {[key: string]: string};
 
   /**
-   * EBS
+   * EBS mapping configuration.
    */
   readonly blockDeviceMappings?: BlockDeviceMappingsProps[];
+
+  /**
+   * AMISelector is used to configure custom AMIs for Karpenter to use, where the AMIs
+   * are discovered through AWS tags, similar to subnetSelector. This field is optional,
+   * and Karpenter will use the latest EKS-optimized AMIs if an amiSelector is not specified.
+   */
+  readonly amiSelector?: {[key: string]: string};
+
+  /**
+   * A launch template is a set of configuration values sufficient for launching an EC2 instance (e.g., AMI, storage spec).
+   * A custom launch template is specified by name. If none is specified, Karpenter will automatically create a launch template.
+   */
+  readonly launchTemplate?: string;
 }
 
 export interface Limits {
@@ -188,6 +209,11 @@ export enum AMIFamily {
    * Ubuntu AMI family
    */
   UBUNTU='Ubuntu',
+
+  /**
+   * Custom AMI family
+   */
+  CUSTOM='Custom',
 }
 
 export interface BlockDeviceMappingsProps {
@@ -283,6 +309,7 @@ export class Karpenter extends Construct {
   private readonly instanceProfile: CfnInstanceProfile;
   private readonly karpenterNodeRole: Role;
   private readonly karpenterControllerRole: Role;
+  private readonly karpenterControllerPolicy: ManagedPolicy;
   private readonly karpenterHelmChart: HelmChart;
 
   constructor(scope: Construct, id: string, props: KarpenterProps) {
@@ -298,7 +325,12 @@ export class Karpenter extends Construct {
       clusterTag: `karpenter.sh/discovery/${this.cluster.clusterName}`,
     });
 
-    const karpenterControllerPolicy = new ManagedPolicy(this, 'ControllerPolicy', {
+    this.karpenterNodeRole = new Role(this, 'NodeRole', {
+      assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+      description: `This is the IAM role Karpenter uses to give compute permissions for ${this.cluster.clusterName}`,
+    });
+
+    this.karpenterControllerPolicy = new ManagedPolicy(this, 'ControllerPolicy', {
       statements: [
         new PolicyStatement({
           actions: [
@@ -307,7 +339,6 @@ export class Karpenter extends Construct {
             'ec2:CreateFleet',
             'ec2:RunInstances',
             'ec2:CreateTags',
-            'iam:PassRole',
             'ec2:TerminateInstances',
             'ec2:DeleteLaunchTemplate',
             // Read Operations
@@ -315,19 +346,25 @@ export class Karpenter extends Construct {
             'ec2:DescribeInstances',
             'ec2:DescribeSecurityGroups',
             'ec2:DescribeSubnets',
+            'ec2:DescribeImages',
             'ec2:DescribeInstanceTypes',
             'ec2:DescribeInstanceTypeOfferings',
             'ec2:DescribeAvailabilityZones',
+            'ec2:DescribeSpotPriceHistory',
             'ssm:GetParameter',
+            'pricing:GetProducts',
           ],
           resources: ['*'],
         }),
+        new PolicyStatement({
+          actions: [
+            'iam:PassRole',
+          ],
+          resources: [
+            this.karpenterNodeRole.roleArn,
+          ],
+        }),
       ],
-    });
-
-    this.karpenterNodeRole = new Role(this, 'NodeRole', {
-      assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
-      description: `This is the IAM role Karpenter uses to give compute permissions for ${this.cluster.clusterName}`,
     });
 
     [
@@ -369,12 +406,13 @@ export class Karpenter extends Construct {
       assumedBy: principal,
       description: `This is the IAM role Karpenter uses to allocate compute for ${this.cluster.clusterName}`,
     });
-    this.karpenterControllerRole.addManagedPolicy(karpenterControllerPolicy);
+
+    this.karpenterControllerRole.addManagedPolicy(this.karpenterControllerPolicy);
 
     this.karpenterHelmChart = new HelmChart(this, 'HelmChart', {
       chart: 'karpenter',
       createNamespace: true,
-      version: '0.10.0',
+      version: '0.16.1',
       cluster: this.cluster,
       namespace: 'karpenter',
       release: 'karpenter',
@@ -407,7 +445,51 @@ export class Karpenter extends Construct {
    * @param provisionerSpecs - spec for the Karpenter Provisioner.
    */
   public addProvisioner(id: string, provisionerSpecs?: ProvisionerSpecs): void {
+    if (provisionerSpecs && provisionerSpecs.consolidation && provisionerSpecs.ttlSecondsAfterEmpty) {
+      throw new Error('Parameters consolidation and ttlSecondsAfterEmpty are mutually exclusive.');
+    }
+
+    // see: https://karpenter.sh/v0.16.1/aws/launch-templates/
+    // see: https://karpenter.sh/v0.16.1/aws/provisioning/
+    const awsNodeTemplateId = `${id}-awsNodeTemplate`.toLowerCase();
+    const awsNodeTemplate = this.cluster.addManifest(awsNodeTemplateId, {
+      apiVersion: 'karpenter.k8s.aws/v1alpha1',
+      kind: 'AWSNodeTemplate',
+      metadata: {
+        name: awsNodeTemplateId,
+      },
+      spec: {
+        subnetSelector: {
+          [`karpenter.sh/discovery/${this.cluster.clusterName}`]: '*',
+        },
+        // see: https://karpenter.sh/v0.16.1/aws/provisioning/#securitygroupselector-required-when-not-using-launchtemplate
+        // Note: required when not using launchTemplate
+        securityGroupSelector: {
+          [`kubernetes.io/cluster/${this.cluster.clusterName}`]: 'owned',
+        },
+        // see: https://karpenter.sh/v0.16.1/aws/provisioning/#instanceprofile
+        // instanceProfile is created using L1 construct (CfnInstanceProfile), thus we're referencing ref directly
+        // TODO: revisit this when L2 InstanceProfile construct is released
+        instanceProfile: this.instanceProfile.ref,
+        // see: https://karpenter.sh/v0.16.1/aws/provisioning/#tags
+        ...(provisionerSpecs?.provider?.tags && { tags: { ...provisionerSpecs!.provider!.tags! } }),
+        // see: https://karpenter.sh/v0.16.1/aws/provisioning/#amazon-machine-image-ami-family
+        ...(provisionerSpecs?.provider?.amiFamily && { amiFamily: provisionerSpecs!.provider!.amiFamily! }),
+        // see: https://karpenter.sh/v0.16.1/aws/provisioning/#block-device-mappings
+        ...(provisionerSpecs?.provider?.blockDeviceMappings && { blockDeviceMappings: provisionerSpecs!.provider!.blockDeviceMappings! }),
+        // see https://karpenter.sh/v0.16.1/aws/provisioning/#amiselector
+        ...(provisionerSpecs?.provider?.amiSelector && { amiSelector: { ...provisionerSpecs!.provider!.amiSelector! } }),
+        // see launchTemplate https://karpenter.sh/v0.16.1/aws/provisioning/#launchtemplate
+        ...(provisionerSpecs?.provider?.launchTemplate && { launchTemplate: provisionerSpecs!.provider!.launchTemplate! }),
+        // TODO: add userData https://karpenter.sh/v0.16.1/aws/provisioning/#userdata
+        // TODO: add metadataOptions https://karpenter.sh/v0.16.1/aws/provisioning/#metadata-options
+      },
+    });
+
+    // see: https://karpenter.sh/v0.16.1/provisioner/#specrequirements
     const requirements = this.setRequirements(provisionerSpecs?.requirements);
+
+    // see: https://karpenter.sh/v0.16.1/provisioner
     const provisioner = this.cluster.addManifest(id, {
       apiVersion: 'karpenter.sh/v1alpha5',
       kind: 'Provisioner',
@@ -415,16 +497,26 @@ export class Karpenter extends Construct {
         name: id.toLowerCase(),
       },
       spec: {
-        ...provisionerSpecs?.limits && {
+        // see: https://karpenter.sh/0.16.1/provisioner/#speclimitsresources
+        ...(provisionerSpecs?.limits && {
           limits: {
             resources: {
               ...(provisionerSpecs!.limits.mem && { mem: provisionerSpecs!.limits.mem }),
               ...(provisionerSpecs!.limits.cpu && { cpu: provisionerSpecs!.limits.cpu }),
             },
           },
+        }),
+        // see: https://karpenter.sh/v0.16.1/provisioner/#example-provisioner-resource
+        ...provisionerSpecs?.consolidation && {
+          consolidation: {
+            enabled: provisionerSpecs!.consolidation,
+          },
         },
+        // see: https://karpenter.sh/v0.16.1/provisioner/#specttlsecondsafterempty
         ...(provisionerSpecs?.ttlSecondsAfterEmpty && { ttlSecondsAfterEmpty: provisionerSpecs!.ttlSecondsAfterEmpty!.toSeconds() }),
+        // see: https://karpenter.sh/v0.16.1/provisioner/#specttlsecondsuntilexpired
         ...(provisionerSpecs?.ttlSecondsUntilExpired && { ttlSecondsUntilExpired: provisionerSpecs!.ttlSecondsUntilExpired!.toSeconds() }),
+        // see: https://karpenter.sh/v0.16.1/provisioner/#specrequirements
         requirements: [
           ...requirements,
         ],
@@ -434,22 +526,12 @@ export class Karpenter extends Construct {
         },
         ...(provisionerSpecs?.taints && { taints: provisionerSpecs!.taints! }),
         ...(provisionerSpecs?.startupTaints && { startupTaints: provisionerSpecs!.startupTaints! }),
-        provider: {
-          subnetSelector: {
-            [`karpenter.sh/discovery/${this.cluster.clusterName}`]: '*',
-          },
-          securityGroupSelector: {
-            [`kubernetes.io/cluster/${this.cluster.clusterName}`]: 'owned',
-          },
-          // instanceProfile is created using L1 construct (CfnInstanceProfile), thus we're referencing ref directly
-          // TODO: revisit this when L2 InstanceProfile construct is released
-          instanceProfile: this.instanceProfile.ref,
-          ...(provisionerSpecs?.provider?.tags && { tags: { ...provisionerSpecs!.provider!.tags! } }),
-          ...(provisionerSpecs?.provider?.amiFamily && { amiFamily: provisionerSpecs!.provider!.amiFamily! }),
-          ...(provisionerSpecs?.provider?.blockDeviceMappings && { blockDeviceMappings: provisionerSpecs!.provider!.blockDeviceMappings! }),
+        providerRef: {
+          name: awsNodeTemplateId,
         },
       },
     });
+    provisioner.node.addDependency(awsNodeTemplate);
     provisioner.node.addDependency(this.karpenterHelmChart);
   }
 
