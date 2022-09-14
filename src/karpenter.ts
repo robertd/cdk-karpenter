@@ -531,7 +531,9 @@ export class Karpenter extends Construct {
         },
       },
     });
+
     provisioner.node.addDependency(awsNodeTemplate);
+    awsNodeTemplate.node.addDependency(this.karpenterHelmChart);
     provisioner.node.addDependency(this.karpenterHelmChart);
   }
 

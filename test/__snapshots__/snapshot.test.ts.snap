@@ -670,6 +670,7 @@ Object {
       "DeletionPolicy": "Delete",
       "DependsOn": Array [
         "ClusterKubectlReadyBarrier200052AF",
+        "karpenterHelmChart85F67B30",
       ],
       "Properties": Object {
         "ClusterName": Object {
@@ -772,6 +773,7 @@ Object {
       "DeletionPolicy": "Delete",
       "DependsOn": Array [
         "ClusterKubectlReadyBarrier200052AF",
+        "karpenterHelmChart85F67B30",
       ],
       "Properties": Object {
         "ClusterName": Object {
