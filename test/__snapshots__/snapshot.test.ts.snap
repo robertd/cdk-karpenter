@@ -1477,7 +1477,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/1f191756b7419680dbe3e56b17165ffea42e0d1c91a5cd546c6b087e2f57ec62.json",
+              "/16e89c6e897efe79213b1c28c6545097103f27cfb41ddfd7f5c139ff82e2d5b5.json",
             ],
           ],
         },
@@ -1679,7 +1679,7 @@ Object {
             ],
           ],
         },
-        "Version": "0.16.1",
+        "Version": "0.16.2",
         "Wait": true,
       },
       "Type": "Custom::AWSCDK-EKS-HelmChart",
