@@ -8,7 +8,7 @@ More info about Karpenter at: https://karpenter.sh
 
 Karpenter Best Practices: https://aws.github.io/aws-eks-best-practices/karpenter/
 
-Karpenter version: 0.16.2
+Karpenter version: 0.16.3
 
 Note: As of v0.16.0 changed the default replicas from 1 to 2. See: https://github.com/aws/karpenter/blob/main/website/content/en/v0.16.1/troubleshooting.md
 
@@ -38,7 +38,7 @@ const karpenter = new Karpenter(stack, 'karpenter', {
 // default provisioner
 karpenter.addProvisioner('default');
 //Note: Default provisioner has no cpu/mem limits, nor will cleanup provisioned resources. Use with caution.
-// see: https://karpenter.sh/v0.16.1/provisioner/#node-deprovisioning
+// see: https://karpenter.sh/v0.16.3/provisioner/#node-deprovisioning
 
 // custom provisoner - kitchen sink
 karpenter.addProvisioner('custom', {
