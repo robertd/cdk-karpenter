@@ -66,7 +66,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "a97987a1729ad440a42cac8aa979b932696afb2dc47dec373aad1a333a1cdbfc.zip",
+          "S3Key": "ea2ad43abcafbd65b1a793e89297e6d9c5c51134bd14a0f0808e46cbf778e451.zip",
         },
         "Handler": "__entrypoint__.handler",
         "MemorySize": 128,
@@ -824,7 +824,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "494e82802f093e633e580188c7937aef9d6ee0ad4a788d58c647e6bea26d2915.zip",
+          "S3Key": "f2bcda38e519cc1457de7398fcdf7bfae874af49a00b7a64e7294a35d3d8e0a8.zip",
         },
         "Handler": "__entrypoint__.handler",
         "MemorySize": 128,
@@ -1422,7 +1422,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/3b947d5be6ce86398444fffe6488f4444ece1d5fc024758f443c67d9184ad78a.json",
+              "/4d9e0f84b9b8dc83b42a91a092fb8f66ec8cdd6ac134da7a94d3101be85da2c0.json",
             ],
           ],
         },
@@ -1477,7 +1477,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/16e89c6e897efe79213b1c28c6545097103f27cfb41ddfd7f5c139ff82e2d5b5.json",
+              "/09e81e20321636630eafc81b33586a99e831846e2dcadf3863c90ded221d35fc.json",
             ],
           ],
         },
@@ -1992,7 +1992,7 @@ def on_delete(event):
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "e7c95e1a12d903d913ebdd526c735f1ac58b2024882a5562110221fe685ebe85.zip",
+          "S3Key": "6ff23d2800aac27308e31c227529dc13854507c3b2598d2433fcf82604fa054d.zip",
         },
         "Description": "AWS CDK resource provider framework - onEvent (Stack/karpenter/TagSubnets/Provider)",
         "Environment": Object {
