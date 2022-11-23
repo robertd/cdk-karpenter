@@ -66,7 +66,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "a97987a1729ad440a42cac8aa979b932696afb2dc47dec373aad1a333a1cdbfc.zip",
+          "S3Key": "6c469f35da6ab121a965268d959faff91c021ab5d46ac363f98648bef832377d.zip",
         },
         "Handler": "__entrypoint__.handler",
         "MemorySize": 128,
@@ -559,15 +559,13 @@ Object {
         "ClientIDList": Array [
           "sts.amazonaws.com",
         ],
+        "CodeHash": "2f66f19d22493bb970ab7d0e10dab28b63e97d1ad344b1ed6dd9696c15c05a6c",
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomAWSCDKOpenIdConnectProviderCustomResourceProviderHandlerF2C543E0",
             "Arn",
           ],
         },
-        "ThumbprintList": Array [
-          "9e99a48a9960b14926bb7f3b02e22da2b0ab7280",
-        ],
         "Url": Object {
           "Fn::GetAtt": Array [
             "Cluster9EE0221C",
@@ -614,7 +612,7 @@ Object {
       "DependsOn": Array [
         "ClusterKubectlReadyBarrier200052AF",
         "ClustermanifestcustomawsnodetemplateD0F4FB53",
-        "karpenterHelmChart85F67B30",
+        "karpenterKarpenterHelmChart14F968A6",
       ],
       "Properties": Object {
         "ClusterName": Object {
@@ -670,7 +668,7 @@ Object {
       "DeletionPolicy": "Delete",
       "DependsOn": Array [
         "ClusterKubectlReadyBarrier200052AF",
-        "karpenterHelmChart85F67B30",
+        "karpenterKarpenterHelmChart14F968A6",
       ],
       "Properties": Object {
         "ClusterName": Object {
@@ -717,7 +715,7 @@ Object {
       "DependsOn": Array [
         "ClusterKubectlReadyBarrier200052AF",
         "ClustermanifestdefaultawsnodetemplateB531B369",
-        "karpenterHelmChart85F67B30",
+        "karpenterKarpenterHelmChart14F968A6",
       ],
       "Properties": Object {
         "ClusterName": Object {
@@ -773,7 +771,7 @@ Object {
       "DeletionPolicy": "Delete",
       "DependsOn": Array [
         "ClusterKubectlReadyBarrier200052AF",
-        "karpenterHelmChart85F67B30",
+        "karpenterKarpenterHelmChart14F968A6",
       ],
       "Properties": Object {
         "ClusterName": Object {
@@ -824,7 +822,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "494e82802f093e633e580188c7937aef9d6ee0ad4a788d58c647e6bea26d2915.zip",
+          "S3Key": "2f66f19d22493bb970ab7d0e10dab28b63e97d1ad344b1ed6dd9696c15c05a6c.zip",
         },
         "Handler": "__entrypoint__.handler",
         "MemorySize": 128,
@@ -834,7 +832,7 @@ Object {
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -1422,7 +1420,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/3b947d5be6ce86398444fffe6488f4444ece1d5fc024758f443c67d9184ad78a.json",
+              "/d929d9537242e8e3125035d5ec9b727cc070d924b2e92c74f4805659fe08a8a0.json",
             ],
           ],
         },
@@ -1477,7 +1475,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/16e89c6e897efe79213b1c28c6545097103f27cfb41ddfd7f5c139ff82e2d5b5.json",
+              "/60350b395b520ecca87c6d2187f86b25629e84544228ef7de408d9deefbe3664.json",
             ],
           ],
         },
@@ -1564,6 +1562,21 @@ Object {
               "Resource": "*",
             },
             Object {
+              "Action": Array [
+                "sqs:DeleteMessage",
+                "sqs:GetQueueUrl",
+                "sqs:GetQueueAttributes",
+                "sqs:ReceiveMessage",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "karpenterInterruptionQueueC4CC9BE1",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
               "Action": "iam:PassRole",
               "Effect": "Allow",
               "Resource": Object {
@@ -1622,7 +1635,187 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "karpenterHelmChart85F67B30": Object {
+    "karpenterInstanceProfile13C1F80D": Object {
+      "Properties": Object {
+        "Path": "/",
+        "Roles": Array [
+          Object {
+            "Ref": "karpenterNodeRole086B4B2F",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::InstanceProfile",
+    },
+    "karpenterInstanceStateChangeRule31905394": Object {
+      "Properties": Object {
+        "EventPattern": Object {
+          "detail-type": Array [
+            "EC2 Instance State-change Notification",
+          ],
+          "source": Array [
+            "aws.ec2",
+          ],
+        },
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "karpenterInterruptionQueueC4CC9BE1",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "karpenterInterruptionQueueC4CC9BE1": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "MessageRetentionPeriod": 300,
+        "QueueName": Object {
+          "Ref": "Cluster9EE0221C",
+        },
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "karpenterInterruptionQueuePolicy2D1D4545": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": Array [
+                  "events.amazonaws.com",
+                  "sqs.amazonaws.com",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:SourceArn": Object {
+                    "Fn::GetAtt": Array [
+                      "karpenterScheduledChangeRuleD6254BB3",
+                      "Arn",
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "events.amazonaws.com",
+              },
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "karpenterInterruptionQueueC4CC9BE1",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:SourceArn": Object {
+                    "Fn::GetAtt": Array [
+                      "karpenterSpotInterruptionRule55F38CD3",
+                      "Arn",
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "events.amazonaws.com",
+              },
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "karpenterInterruptionQueueC4CC9BE1",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:SourceArn": Object {
+                    "Fn::GetAtt": Array [
+                      "karpenterRebalanceRule264672C7",
+                      "Arn",
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "events.amazonaws.com",
+              },
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "karpenterInterruptionQueueC4CC9BE1",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:SourceArn": Object {
+                    "Fn::GetAtt": Array [
+                      "karpenterInstanceStateChangeRule31905394",
+                      "Arn",
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "events.amazonaws.com",
+              },
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "karpenterInterruptionQueueC4CC9BE1",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": Array [
+          Object {
+            "Ref": "karpenterInterruptionQueueC4CC9BE1",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+    "karpenterKarpenterHelmChart14F968A6": Object {
       "DeletionPolicy": "Delete",
       "DependsOn": Array [
         "ClusterKubectlReadyBarrier200052AF",
@@ -1635,7 +1828,7 @@ Object {
         "CreateNamespace": true,
         "Namespace": "karpenter",
         "Release": "karpenter",
-        "Repository": "https://charts.karpenter.sh",
+        "Repository": "oci://public.ecr.aws/karpenter/karpenter",
         "RoleArn": Object {
           "Fn::GetAtt": Array [
             "ClusterCreationRole360249B6",
@@ -1653,7 +1846,14 @@ Object {
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"clusterName\\":\\"",
+              "{\\"serviceAccount\\":{\\"annotations\\":{\\"eks.amazonaws.com/role-arn\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "karpenterControllerRole06530798",
+                  "Arn",
+                ],
+              },
+              "\\"}},\\"settings\\":{\\"aws\\":{\\"clusterName\\":\\"",
               Object {
                 "Ref": "Cluster9EE0221C",
               },
@@ -1664,37 +1864,26 @@ Object {
                   "Endpoint",
                 ],
               },
-              "\\",\\"serviceAccount\\":{\\"annotations\\":{\\"eks.amazonaws.com/role-arn\\":\\"",
+              "\\",\\"interruptionQueueName\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
-                  "karpenterControllerRole06530798",
-                  "Arn",
+                  "karpenterInterruptionQueueC4CC9BE1",
+                  "QueueName",
                 ],
               },
-              "\\"}},\\"aws\\":{\\"defaultInstanceProfile\\":\\"",
+              "\\",\\"defaultInstanceProfile\\":\\"",
               Object {
                 "Ref": "karpenterInstanceProfile13C1F80D",
               },
-              "\\"}}",
+              "\\"}}}",
             ],
           ],
         },
-        "Version": "0.16.3",
+        "Version": "v0.19.2",
         "Wait": true,
       },
       "Type": "Custom::AWSCDK-EKS-HelmChart",
       "UpdateReplacePolicy": "Delete",
-    },
-    "karpenterInstanceProfile13C1F80D": Object {
-      "Properties": Object {
-        "Path": "/",
-        "Roles": Array [
-          Object {
-            "Ref": "karpenterNodeRole086B4B2F",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::InstanceProfile",
     },
     "karpenterNodeRole086B4B2F": Object {
       "Properties": Object {
@@ -1773,6 +1962,81 @@ Object {
         ],
       },
       "Type": "AWS::IAM::Role",
+    },
+    "karpenterRebalanceRule264672C7": Object {
+      "Properties": Object {
+        "EventPattern": Object {
+          "detail-type": Array [
+            "EC2 Instance Rebalance Recommendation",
+          ],
+          "source": Array [
+            "aws.ec2",
+          ],
+        },
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "karpenterInterruptionQueueC4CC9BE1",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "karpenterScheduledChangeRuleD6254BB3": Object {
+      "Properties": Object {
+        "EventPattern": Object {
+          "detail-type": Array [
+            "EC2 Instance Rebalance Recommendation",
+          ],
+          "source": Array [
+            "aws.ec2",
+          ],
+        },
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "karpenterInterruptionQueueC4CC9BE1",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "karpenterSpotInterruptionRule55F38CD3": Object {
+      "Properties": Object {
+        "EventPattern": Object {
+          "detail-type": Array [
+            "EC2 Spot Instance Interruption Warning",
+          ],
+          "source": Array [
+            "aws.ec2",
+          ],
+        },
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "karpenterInterruptionQueueC4CC9BE1",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
     },
     "karpenterTagSubnets67CF00B1": Object {
       "DeletionPolicy": "Delete",
@@ -1992,7 +2256,7 @@ def on_delete(event):
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "e7c95e1a12d903d913ebdd526c735f1ac58b2024882a5562110221fe685ebe85.zip",
+          "S3Key": "6ff23d2800aac27308e31c227529dc13854507c3b2598d2433fcf82604fa054d.zip",
         },
         "Description": "AWS CDK resource provider framework - onEvent (Stack/karpenter/TagSubnets/Provider)",
         "Environment": Object {

@@ -1,6 +1,10 @@
 {
   "dependencies": [
     {
+      "name": "@aws-cdk/lambda-layer-kubectl-v23",
+      "type": "build"
+    },
+    {
       "name": "@types/jest",
       "version": "^27",
       "type": "build"
@@ -78,7 +82,7 @@
     },
     {
       "name": "npm-check-updates",
-      "version": "^15",
+      "version": "^16",
       "type": "build"
     },
     {
@@ -105,24 +109,18 @@
       "type": "override"
     },
     {
-      "name": "@types/responselike",
-      "version": "1.0.0",
-      "type": "override"
-    },
-    {
-      "name": "got",
-      "version": "12.3.1",
-      "type": "override"
-    },
-    {
       "name": "aws-cdk-lib",
-      "version": "^2.4.0",
+      "version": "^2.49.0",
       "type": "peer"
     },
     {
       "name": "constructs",
       "version": "^10.0.5",
       "type": "peer"
+    },
+    {
+      "name": "@aws-cdk/lambda-layer-kubectl-v23",
+      "type": "runtime"
     },
     {
       "name": "aws-cdk-lib",

@@ -1,7 +1,10 @@
 import { CfnJson, CfnOutput, Duration } from 'aws-cdk-lib';
 import { ISubnet, IVpc, InstanceType, EbsDeviceVolumeType } from 'aws-cdk-lib/aws-ec2';
 import { Cluster, HelmChart } from 'aws-cdk-lib/aws-eks';
+import { Rule } from 'aws-cdk-lib/aws-events';
+import { SqsQueue } from 'aws-cdk-lib/aws-events-targets';
 import { CfnInstanceProfile, ManagedPolicy, OpenIdConnectPrincipal, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 import { TagSubnetsCustomResource } from './custom-resource';
 
@@ -310,6 +313,7 @@ export class Karpenter extends Construct {
   private readonly karpenterNodeRole: Role;
   private readonly karpenterControllerRole: Role;
   private readonly karpenterControllerPolicy: ManagedPolicy;
+  private readonly karpenterInterruptionQueue: Queue;
   private readonly karpenterHelmChart: HelmChart;
 
   constructor(scope: Construct, id: string, props: KarpenterProps) {
@@ -323,6 +327,55 @@ export class Karpenter extends Construct {
     new TagSubnetsCustomResource(this, 'TagSubnets', {
       subnets: subnets.map((subnet) => { return subnet.subnetId; }),
       clusterTag: `karpenter.sh/discovery/${this.cluster.clusterName}`,
+    });
+
+    this.karpenterInterruptionQueue = new Queue(this, 'InterruptionQueue', {
+      queueName: this.cluster.clusterName,
+      retentionPeriod: Duration.minutes(5),
+    });
+
+    // KarpenterInterruptionQueuePolicy
+    this.karpenterInterruptionQueue.addToResourcePolicy(new PolicyStatement({
+      actions: [
+        'sqs:SendMessage',
+      ],
+      principals: [
+        new ServicePrincipal('events.amazonaws.com'),
+        new ServicePrincipal('sqs.amazonaws.com'),
+      ],
+    }));
+
+    [
+      // ScheduledChangeRule
+      new Rule(this, 'ScheduledChangeRule', {
+        eventPattern: {
+          source: ['aws.ec2'],
+          detailType: ['EC2 Instance Rebalance Recommendation'],
+        },
+      }),
+      // SpotInterruptionRule
+      new Rule(this, 'SpotInterruptionRule', {
+        eventPattern: {
+          source: ['aws.ec2'],
+          detailType: ['EC2 Spot Instance Interruption Warning'],
+        },
+      }),
+      // RebalanceRule
+      new Rule(this, 'RebalanceRule', {
+        eventPattern: {
+          source: ['aws.ec2'],
+          detailType: ['EC2 Instance Rebalance Recommendation'],
+        },
+      }),
+      // InstanceStateChangeRule
+      new Rule(this, 'InstanceStateChangeRule', {
+        eventPattern: {
+          source: ['aws.ec2'],
+          detailType: ['EC2 Instance State-change Notification'],
+        },
+      }),
+    ].forEach((rule) => {
+      rule.addTarget(new SqsQueue(this.karpenterInterruptionQueue));
     });
 
     this.karpenterNodeRole = new Role(this, 'NodeRole', {
@@ -355,6 +408,19 @@ export class Karpenter extends Construct {
             'pricing:GetProducts',
           ],
           resources: ['*'],
+        }),
+        new PolicyStatement({
+          actions: [
+            // Write Operations
+            'sqs:DeleteMessage',
+            // Read Operations
+            'sqs:GetQueueUrl',
+            'sqs:GetQueueAttributes',
+            'sqs:ReceiveMessage',
+          ],
+          resources: [
+            this.karpenterInterruptionQueue.queueArn,
+          ],
         }),
         new PolicyStatement({
           actions: [
@@ -409,28 +475,31 @@ export class Karpenter extends Construct {
 
     this.karpenterControllerRole.addManagedPolicy(this.karpenterControllerPolicy);
 
-    this.karpenterHelmChart = new HelmChart(this, 'HelmChart', {
+    this.karpenterHelmChart = new HelmChart(this, 'KarpenterHelmChart', {
       chart: 'karpenter',
       createNamespace: true,
-      version: '0.16.3',
+      version: 'v0.19.2',
       cluster: this.cluster,
       namespace: 'karpenter',
       release: 'karpenter',
-      repository: 'https://charts.karpenter.sh',
+      repository: 'oci://public.ecr.aws/karpenter/karpenter',
       timeout: Duration.minutes(15),
       wait: true,
       values: {
-        clusterName: this.cluster.clusterName,
-        clusterEndpoint: this.cluster.clusterEndpoint,
         serviceAccount: {
           annotations: {
             'eks.amazonaws.com/role-arn': this.karpenterControllerRole.roleArn,
           },
         },
-        aws: {
-          // instanceProfile is created using L1 construct (CfnInstanceProfile), thus we're referencing ref directly
-          // TODO: revisit this when L2 InstanceProfile construct is released
-          defaultInstanceProfile: this.instanceProfile.ref,
+        settings: {
+          aws: {
+            clusterName: this.cluster.clusterName,
+            clusterEndpoint: this.cluster.clusterEndpoint,
+            interruptionQueueName: this.karpenterInterruptionQueue.queueName,
+            // instanceProfile is created using L1 construct (CfnInstanceProfile), thus we're referencing ref directly
+            // TODO: revisit this when L2 InstanceProfile construct is released
+            defaultInstanceProfile: this.instanceProfile.ref,
+          },
         },
       },
     });
@@ -449,8 +518,8 @@ export class Karpenter extends Construct {
       throw new Error('Parameters consolidation and ttlSecondsAfterEmpty are mutually exclusive.');
     }
 
-    // see: https://karpenter.sh/v0.16.3/aws/launch-templates/
-    // see: https://karpenter.sh/v0.16.3/aws/provisioning/
+    // see: https://karpenter.sh/v0.19.2/aws/launch-templates/
+    // see: https://karpenter.sh/v0.19.2/aws/provisioning/
     const awsNodeTemplateId = `${id}-awsNodeTemplate`.toLowerCase();
     const awsNodeTemplate = this.cluster.addManifest(awsNodeTemplateId, {
       apiVersion: 'karpenter.k8s.aws/v1alpha1',
@@ -462,34 +531,34 @@ export class Karpenter extends Construct {
         subnetSelector: {
           [`karpenter.sh/discovery/${this.cluster.clusterName}`]: '*',
         },
-        // see: https://karpenter.sh/v0.16.3/aws/provisioning/#securitygroupselector-required-when-not-using-launchtemplate
+        // see: https://karpenter.sh/v0.19.2/aws/provisioning/#securitygroupselector-required-when-not-using-launchtemplate
         // Note: required when not using launchTemplate
         securityGroupSelector: {
           [`kubernetes.io/cluster/${this.cluster.clusterName}`]: 'owned',
         },
-        // see: https://karpenter.sh/v0.16.3/aws/provisioning/#instanceprofile
+        // see: https://karpenter.sh/v0.19.2/aws/provisioning/#instanceprofile
         // instanceProfile is created using L1 construct (CfnInstanceProfile), thus we're referencing ref directly
         // TODO: revisit this when L2 InstanceProfile construct is released
         instanceProfile: this.instanceProfile.ref,
-        // see: https://karpenter.sh/v0.16.3/aws/provisioning/#tags
+        // see: https://karpenter.sh/v0.19.2/aws/provisioning/#tags
         ...(provisionerSpecs?.provider?.tags && { tags: { ...provisionerSpecs!.provider!.tags! } }),
-        // see: https://karpenter.sh/v0.16.3/aws/provisioning/#amazon-machine-image-ami-family
+        // see: https://karpenter.sh/v0.19.2/aws/provisioning/#amazon-machine-image-ami-family
         ...(provisionerSpecs?.provider?.amiFamily && { amiFamily: provisionerSpecs!.provider!.amiFamily! }),
-        // see: https://karpenter.sh/v0.16.3/aws/provisioning/#block-device-mappings
+        // see: https://karpenter.sh/v0.19.2/aws/provisioning/#block-device-mappings
         ...(provisionerSpecs?.provider?.blockDeviceMappings && { blockDeviceMappings: provisionerSpecs!.provider!.blockDeviceMappings! }),
-        // see https://karpenter.sh/v0.16.3/aws/provisioning/#amiselector
+        // see https://karpenter.sh/v0.19.2/aws/provisioning/#amiselector
         ...(provisionerSpecs?.provider?.amiSelector && { amiSelector: { ...provisionerSpecs!.provider!.amiSelector! } }),
-        // see launchTemplate https://karpenter.sh/v0.16.3/aws/provisioning/#launchtemplate
+        // see launchTemplate https://karpenter.sh/v0.19.2/aws/provisioning/#launchtemplate
         ...(provisionerSpecs?.provider?.launchTemplate && { launchTemplate: provisionerSpecs!.provider!.launchTemplate! }),
-        // TODO: add userData https://karpenter.sh/v0.16.3/aws/provisioning/#userdata
-        // TODO: add metadataOptions https://karpenter.sh/v0.16.3/aws/provisioning/#metadata-options
+        // TODO: add userData https://karpenter.sh/v0.19.2/aws/provisioning/#userdata
+        // TODO: add metadataOptions https://karpenter.sh/v0.19.2/aws/provisioning/#metadata-options
       },
     });
 
-    // see: https://karpenter.sh/v0.16.3/provisioner/#specrequirements
+    // see: https://karpenter.sh/v0.19.2/provisioner/#specrequirements
     const requirements = this.setRequirements(provisionerSpecs?.requirements);
 
-    // see: https://karpenter.sh/v0.16.3/provisioner
+    // see: https://karpenter.sh/v0.19.2/provisioner
     const provisioner = this.cluster.addManifest(id, {
       apiVersion: 'karpenter.sh/v1alpha5',
       kind: 'Provisioner',
@@ -506,17 +575,17 @@ export class Karpenter extends Construct {
             },
           },
         }),
-        // see: https://karpenter.sh/v0.16.3/provisioner/#example-provisioner-resource
+        // see: https://karpenter.sh/v0.19.2/provisioner/#example-provisioner-resource
         ...provisionerSpecs?.consolidation && {
           consolidation: {
             enabled: provisionerSpecs!.consolidation,
           },
         },
-        // see: https://karpenter.sh/v0.16.3/provisioner/#specttlsecondsafterempty
+        // see: https://karpenter.sh/v0.19.2/provisioner/#specttlsecondsafterempty
         ...(provisionerSpecs?.ttlSecondsAfterEmpty && { ttlSecondsAfterEmpty: provisionerSpecs!.ttlSecondsAfterEmpty!.toSeconds() }),
-        // see: https://karpenter.sh/v0.16.3/provisioner/#specttlsecondsuntilexpired
+        // see: https://karpenter.sh/v0.19.2/provisioner/#specttlsecondsuntilexpired
         ...(provisionerSpecs?.ttlSecondsUntilExpired && { ttlSecondsUntilExpired: provisionerSpecs!.ttlSecondsUntilExpired!.toSeconds() }),
-        // see: https://karpenter.sh/v0.16.3/provisioner/#specrequirements
+        // see: https://karpenter.sh/v0.19.2/provisioner/#specrequirements
         requirements: [
           ...requirements,
         ],

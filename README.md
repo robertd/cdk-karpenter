@@ -8,7 +8,7 @@ More info about Karpenter at: https://karpenter.sh
 
 Karpenter Best Practices: https://aws.github.io/aws-eks-best-practices/karpenter/
 
-Karpenter version: 0.16.3
+Karpenter version: 0.19.2
 
 Note: As of v0.16.0 changed the default replicas from 1 to 2. See: https://github.com/aws/karpenter/blob/main/website/content/en/v0.16.1/troubleshooting.md
 

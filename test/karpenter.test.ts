@@ -96,6 +96,21 @@ test('has karpenter controller policy', () => {
           Resource: '*',
         },
         {
+          Action: [
+            'sqs:DeleteMessage',
+            'sqs:GetQueueUrl',
+            'sqs:GetQueueAttributes',
+            'sqs:ReceiveMessage',
+          ],
+          Effect: 'Allow',
+          Resource: {
+            'Fn::GetAtt': [
+              'karpenterInterruptionQueueC4CC9BE1',
+              'Arn',
+            ],
+          },
+        },
+        {
           Action: 'iam:PassRole',
           Effect: 'Allow',
           Resource: {
