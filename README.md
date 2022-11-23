@@ -17,6 +17,7 @@ Note: As of v0.16.0 changed the default replicas from 1 to 2. See: https://githu
 ```ts
 import { InstanceClass, InstanceSize, InstanceType, EbsDeviceVolumeType, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Cluster, KubernetesVersion, Nodegroup } from 'aws-cdk-lib/aws-eks';
+import { KubectlV23Layer } from '@aws-cdk/lambda-layer-kubectl-v23';
 import { Karpenter, AMIFamily } from "cdk-karpenter";
 
 ...
@@ -25,7 +26,8 @@ const vpc = new Vpc(stack, 'Vpc', { natGateways: 1 });
 
 const cluster = new Cluster(stack, 'eks', {
   vpc,
-  version: KubernetesVersion.V1_21,
+  version: KubernetesVersion.V1_23,
+  kubectlLayer: new KubectlV23Layer(stack, 'kubectl'),
   defaultCapacity: 1,
   defaultCapacityInstance: InstanceType.of(InstanceClass.T3A, InstanceSize.MEDIUM),
 });
@@ -38,7 +40,7 @@ const karpenter = new Karpenter(stack, 'karpenter', {
 // default provisioner
 karpenter.addProvisioner('default');
 //Note: Default provisioner has no cpu/mem limits, nor will cleanup provisioned resources. Use with caution.
-// see: https://karpenter.sh/v0.16.3/provisioner/#node-deprovisioning
+// see: https://karpenter.sh/v0.19.2/provisioner/#node-deprovisioning
 
 // custom provisoner - kitchen sink
 karpenter.addProvisioner('custom', {
