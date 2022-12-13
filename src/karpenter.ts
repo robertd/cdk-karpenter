@@ -478,7 +478,7 @@ export class Karpenter extends Construct {
     this.karpenterHelmChart = new HelmChart(this, 'KarpenterHelmChart', {
       chart: 'karpenter',
       createNamespace: true,
-      version: 'v0.19.3',
+      version: 'v0.20.0',
       cluster: this.cluster,
       namespace: 'karpenter',
       release: 'karpenter',
@@ -518,8 +518,8 @@ export class Karpenter extends Construct {
       throw new Error('Parameters consolidation and ttlSecondsAfterEmpty are mutually exclusive.');
     }
 
-    // see: https://karpenter.sh/v0.19.3/aws/launch-templates/
-    // see: https://karpenter.sh/v0.19.3/aws/provisioning/
+    // see: https://karpenter.sh/v0.20.0/aws/launch-templates/
+    // see: https://karpenter.sh/v0.20.0/aws/provisioning/
     const awsNodeTemplateId = `${id}-awsNodeTemplate`.toLowerCase();
     const awsNodeTemplate = this.cluster.addManifest(awsNodeTemplateId, {
       apiVersion: 'karpenter.k8s.aws/v1alpha1',
@@ -531,34 +531,34 @@ export class Karpenter extends Construct {
         subnetSelector: {
           [`karpenter.sh/discovery/${this.cluster.clusterName}`]: '*',
         },
-        // see: https://karpenter.sh/v0.19.3/aws/provisioning/#securitygroupselector-required-when-not-using-launchtemplate
+        // see: https://karpenter.sh/v0.20.0/aws/provisioning/#securitygroupselector-required-when-not-using-launchtemplate
         // Note: required when not using launchTemplate
         securityGroupSelector: {
           [`kubernetes.io/cluster/${this.cluster.clusterName}`]: 'owned',
         },
-        // see: https://karpenter.sh/v0.19.3/aws/provisioning/#instanceprofile
+        // see: https://karpenter.sh/v0.20.0/aws/provisioning/#instanceprofile
         // instanceProfile is created using L1 construct (CfnInstanceProfile), thus we're referencing ref directly
         // TODO: revisit this when L2 InstanceProfile construct is released
         instanceProfile: this.instanceProfile.ref,
-        // see: https://karpenter.sh/v0.19.3/aws/provisioning/#tags
+        // see: https://karpenter.sh/v0.20.0/aws/provisioning/#tags
         ...(provisionerSpecs?.provider?.tags && { tags: { ...provisionerSpecs!.provider!.tags! } }),
-        // see: https://karpenter.sh/v0.19.3/aws/provisioning/#amazon-machine-image-ami-family
+        // see: https://karpenter.sh/v0.20.0/aws/provisioning/#amazon-machine-image-ami-family
         ...(provisionerSpecs?.provider?.amiFamily && { amiFamily: provisionerSpecs!.provider!.amiFamily! }),
-        // see: https://karpenter.sh/v0.19.3/aws/provisioning/#block-device-mappings
+        // see: https://karpenter.sh/v0.20.0/aws/provisioning/#block-device-mappings
         ...(provisionerSpecs?.provider?.blockDeviceMappings && { blockDeviceMappings: provisionerSpecs!.provider!.blockDeviceMappings! }),
-        // see https://karpenter.sh/v0.19.3/aws/provisioning/#amiselector
+        // see https://karpenter.sh/v0.20.0/aws/provisioning/#amiselector
         ...(provisionerSpecs?.provider?.amiSelector && { amiSelector: { ...provisionerSpecs!.provider!.amiSelector! } }),
-        // see launchTemplate https://karpenter.sh/v0.19.3/aws/provisioning/#launchtemplate
+        // see launchTemplate https://karpenter.sh/v0.20.0/aws/provisioning/#launchtemplate
         ...(provisionerSpecs?.provider?.launchTemplate && { launchTemplate: provisionerSpecs!.provider!.launchTemplate! }),
-        // TODO: add userData https://karpenter.sh/v0.19.3/aws/provisioning/#userdata
-        // TODO: add metadataOptions https://karpenter.sh/v0.19.3/aws/provisioning/#metadata-options
+        // TODO: add userData https://karpenter.sh/v0.20.0/aws/provisioning/#userdata
+        // TODO: add metadataOptions https://karpenter.sh/v0.20.0/aws/provisioning/#metadata-options
       },
     });
 
-    // see: https://karpenter.sh/v0.19.3/provisioner/#specrequirements
+    // see: https://karpenter.sh/v0.20.0/provisioner/#specrequirements
     const requirements = this.setRequirements(provisionerSpecs?.requirements);
 
-    // see: https://karpenter.sh/v0.19.3/provisioner
+    // see: https://karpenter.sh/v0.20.0/provisioner
     const provisioner = this.cluster.addManifest(id, {
       apiVersion: 'karpenter.sh/v1alpha5',
       kind: 'Provisioner',
@@ -566,7 +566,7 @@ export class Karpenter extends Construct {
         name: id.toLowerCase(),
       },
       spec: {
-        // see: https://karpenter.sh/0.16.3/provisioner/#speclimitsresources
+        // see: https://karpenter.sh/0.20.0/provisioner/#speclimitsresources
         ...(provisionerSpecs?.limits && {
           limits: {
             resources: {
@@ -575,17 +575,17 @@ export class Karpenter extends Construct {
             },
           },
         }),
-        // see: https://karpenter.sh/v0.19.3/provisioner/#example-provisioner-resource
+        // see: https://karpenter.sh/v0.20.0/provisioner/#example-provisioner-resource
         ...provisionerSpecs?.consolidation && {
           consolidation: {
             enabled: provisionerSpecs!.consolidation,
           },
         },
-        // see: https://karpenter.sh/v0.19.3/provisioner/#specttlsecondsafterempty
+        // see: https://karpenter.sh/v0.20.0/provisioner/#specttlsecondsafterempty
         ...(provisionerSpecs?.ttlSecondsAfterEmpty && { ttlSecondsAfterEmpty: provisionerSpecs!.ttlSecondsAfterEmpty!.toSeconds() }),
-        // see: https://karpenter.sh/v0.19.3/provisioner/#specttlsecondsuntilexpired
+        // see: https://karpenter.sh/v0.20.0/provisioner/#specttlsecondsuntilexpired
         ...(provisionerSpecs?.ttlSecondsUntilExpired && { ttlSecondsUntilExpired: provisionerSpecs!.ttlSecondsUntilExpired!.toSeconds() }),
-        // see: https://karpenter.sh/v0.19.3/provisioner/#specrequirements
+        // see: https://karpenter.sh/v0.20.0/provisioner/#specrequirements
         requirements: [
           ...requirements,
         ],

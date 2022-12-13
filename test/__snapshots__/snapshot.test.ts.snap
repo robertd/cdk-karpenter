@@ -1879,7 +1879,7 @@ Object {
             ],
           ],
         },
-        "Version": "v0.19.3",
+        "Version": "v0.20.0",
         "Wait": true,
       },
       "Type": "Custom::AWSCDK-EKS-HelmChart",

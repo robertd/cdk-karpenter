@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "@aws-cdk/lambda-layer-kubectl-v23": "^2.0.3",
+    "@aws-cdk/lambda-layer-kubectl-v24": "^2.0.56",
     "@types/jest": "^27",
     "@types/node": "^14",
     "@typescript-eslint/eslint-plugin": "^5",
@@ -54,17 +55,18 @@
     "jsii-pacmak": "^1.72.0",
     "json-schema": "^0.4.0",
     "npm-check-updates": "^16",
-    "projen": "^0.65.50",
+    "projen": "^0.65.58",
     "standard-version": "^9",
     "ts-jest": "^27",
     "typescript": "^4.9.4"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "^2.49.0",
+    "aws-cdk-lib": "^2.54.0",
     "constructs": "^10.0.5"
   },
   "dependencies": {
     "@aws-cdk/lambda-layer-kubectl-v23": "^2.0.3",
+    "@aws-cdk/lambda-layer-kubectl-v24": "^2.0.56",
     "aws-cdk-lib": "^2.54.0"
   },
   "keywords": [
