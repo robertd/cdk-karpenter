@@ -1,8 +1,8 @@
 import { Duration } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { EbsDeviceVolumeType, InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
-import { AMIFamily, ArchType, Karpenter } from '../src/index';
 import { testFixtureCluster } from './util';
+import { AMIFamily, ArchType, Karpenter } from '../src/index';
 
 
 const { stack, vpc, cluster } = testFixtureCluster();
@@ -74,23 +74,23 @@ test('has karpenter controller policy', () => {
       Statement: [
         {
           Action: [
-            'ec2:CreateLaunchTemplate',
             'ec2:CreateFleet',
-            'ec2:RunInstances',
+            'ec2:CreateLaunchTemplate',
             'ec2:CreateTags',
-            'ec2:TerminateInstances',
             'ec2:DeleteLaunchTemplate',
-            'ec2:DescribeLaunchTemplates',
-            'ec2:DescribeInstances',
-            'ec2:DescribeSecurityGroups',
-            'ec2:DescribeSubnets',
-            'ec2:DescribeImages',
-            'ec2:DescribeInstanceTypes',
-            'ec2:DescribeInstanceTypeOfferings',
+            'ec2:RunInstances',
+            'ec2:TerminateInstances',
             'ec2:DescribeAvailabilityZones',
+            'ec2:DescribeImages',
+            'ec2:DescribeInstances',
+            'ec2:DescribeInstanceTypeOfferings',
+            'ec2:DescribeInstanceTypes',
+            'ec2:DescribeLaunchTemplates',
+            'ec2:DescribeSecurityGroups',
             'ec2:DescribeSpotPriceHistory',
-            'ssm:GetParameter',
+            'ec2:DescribeSubnets',
             'pricing:GetProducts',
+            'ssm:GetParameter',
           ],
           Effect: 'Allow',
           Resource: '*',
@@ -98,8 +98,8 @@ test('has karpenter controller policy', () => {
         {
           Action: [
             'sqs:DeleteMessage',
-            'sqs:GetQueueUrl',
             'sqs:GetQueueAttributes',
+            'sqs:GetQueueUrl',
             'sqs:ReceiveMessage',
           ],
           Effect: 'Allow',
@@ -321,7 +321,7 @@ test('has custom provider', () => {
           {
             Ref: 'karpenterInstanceProfile13C1F80D',
           },
-          '","tags":{"Foo":"Bar"},"amiFamily":"AL2","blockDeviceMappings":[{"deviceName":"test","ebs":{"encrypted":true,"deleteOnTermination":true,"volumeSize":"100Gi","volumeType":"gp3","iops":5000,"throughput":1000,"kmsKeyId":"arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab","snapshotId":"snap-0123457890"}}]}}]',
+          '","amiFamily":"AL2","tags":{"Foo":"Bar"},"blockDeviceMappings":[{"deviceName":"test","ebs":{"encrypted":true,"deleteOnTermination":true,"volumeSize":"100Gi","volumeType":"gp3","iops":5000,"throughput":1000,"kmsKeyId":"arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab","snapshotId":"snap-0123457890"}}]}}]',
         ],
       ],
     },

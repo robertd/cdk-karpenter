@@ -447,7 +447,6 @@ const providerProps: ProviderProps = { ... }
 | <code><a href="#cdk-karpenter.ProviderProps.property.amiFamily">amiFamily</a></code> | <code><a href="#cdk-karpenter.AMIFamily">AMIFamily</a></code> | The AMI used when provisioning nodes. |
 | <code><a href="#cdk-karpenter.ProviderProps.property.amiSelector">amiSelector</a></code> | <code>{[ key: string ]: string}</code> | AMISelector is used to configure custom AMIs for Karpenter to use, where the AMIs are discovered through AWS tags, similar to subnetSelector. |
 | <code><a href="#cdk-karpenter.ProviderProps.property.blockDeviceMappings">blockDeviceMappings</a></code> | <code><a href="#cdk-karpenter.BlockDeviceMappingsProps">BlockDeviceMappingsProps</a>[]</code> | EBS mapping configuration. |
-| <code><a href="#cdk-karpenter.ProviderProps.property.launchTemplate">launchTemplate</a></code> | <code>string</code> | A launch template is a set of configuration values sufficient for launching an EC2 instance (e.g., AMI, storage spec). A custom launch template is specified by name. If none is specified, Karpenter will automatically create a launch template. |
 | <code><a href="#cdk-karpenter.ProviderProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Tags will be added to every EC2 instance launched by the provisioner. |
 
 ---
@@ -491,18 +490,6 @@ public readonly blockDeviceMappings: BlockDeviceMappingsProps[];
 - *Type:* <a href="#cdk-karpenter.BlockDeviceMappingsProps">BlockDeviceMappingsProps</a>[]
 
 EBS mapping configuration.
-
----
-
-##### `launchTemplate`<sup>Optional</sup> <a name="launchTemplate" id="cdk-karpenter.ProviderProps.property.launchTemplate"></a>
-
-```typescript
-public readonly launchTemplate: string;
-```
-
-- *Type:* string
-
-A launch template is a set of configuration values sufficient for launching an EC2 instance (e.g., AMI, storage spec). A custom launch template is specified by name. If none is specified, Karpenter will automatically create a launch template.
 
 ---
 

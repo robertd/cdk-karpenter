@@ -690,7 +690,7 @@ Object {
               Object {
                 "Ref": "karpenterInstanceProfile13C1F80D",
               },
-              "\\",\\"tags\\":{\\"Foo\\":\\"Bar\\"},\\"amiFamily\\":\\"AL2\\"}}]",
+              "\\",\\"amiFamily\\":\\"AL2\\",\\"tags\\":{\\"Foo\\":\\"Bar\\"}}}]",
             ],
           ],
         },
@@ -1420,7 +1420,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/d929d9537242e8e3125035d5ec9b727cc070d924b2e92c74f4805659fe08a8a0.json",
+              "/baa273b7ee976f45bc63baed6efc34e040011cf9972fb891e34d7dfbb7995931.json",
             ],
           ],
         },
@@ -1475,7 +1475,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/60350b395b520ecca87c6d2187f86b25629e84544228ef7de408d9deefbe3664.json",
+              "/2d9e41dae28669548850c0b7a70da96fdc2e4508ba5b2cd8deb5df596fc469b1.json",
             ],
           ],
         },
@@ -1540,23 +1540,23 @@ Object {
           "Statement": Array [
             Object {
               "Action": Array [
-                "ec2:CreateLaunchTemplate",
                 "ec2:CreateFleet",
-                "ec2:RunInstances",
+                "ec2:CreateLaunchTemplate",
                 "ec2:CreateTags",
-                "ec2:TerminateInstances",
                 "ec2:DeleteLaunchTemplate",
-                "ec2:DescribeLaunchTemplates",
-                "ec2:DescribeInstances",
-                "ec2:DescribeSecurityGroups",
-                "ec2:DescribeSubnets",
-                "ec2:DescribeImages",
-                "ec2:DescribeInstanceTypes",
-                "ec2:DescribeInstanceTypeOfferings",
+                "ec2:RunInstances",
+                "ec2:TerminateInstances",
                 "ec2:DescribeAvailabilityZones",
+                "ec2:DescribeImages",
+                "ec2:DescribeInstances",
+                "ec2:DescribeInstanceTypeOfferings",
+                "ec2:DescribeInstanceTypes",
+                "ec2:DescribeLaunchTemplates",
+                "ec2:DescribeSecurityGroups",
                 "ec2:DescribeSpotPriceHistory",
-                "ssm:GetParameter",
+                "ec2:DescribeSubnets",
                 "pricing:GetProducts",
+                "ssm:GetParameter",
               ],
               "Effect": "Allow",
               "Resource": "*",
@@ -1564,8 +1564,8 @@ Object {
             Object {
               "Action": Array [
                 "sqs:DeleteMessage",
-                "sqs:GetQueueUrl",
                 "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
                 "sqs:ReceiveMessage",
               ],
               "Effect": "Allow",
@@ -1879,7 +1879,7 @@ Object {
             ],
           ],
         },
-        "Version": "v0.20.0",
+        "Version": "v0.22.1",
         "Wait": true,
       },
       "Type": "Custom::AWSCDK-EKS-HelmChart",
@@ -1992,10 +1992,10 @@ Object {
       "Properties": Object {
         "EventPattern": Object {
           "detail-type": Array [
-            "EC2 Instance Rebalance Recommendation",
+            "AWS Health Event",
           ],
           "source": Array [
-            "aws.ec2",
+            "aws.health",
           ],
         },
         "State": "ENABLED",
@@ -2256,7 +2256,7 @@ def on_delete(event):
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "6ff23d2800aac27308e31c227529dc13854507c3b2598d2433fcf82604fa054d.zip",
+          "S3Key": "2157f4ab8972014e220d70707296b292b3b7301f163f7cd641ccda0ee663530f.zip",
         },
         "Description": "AWS CDK resource provider framework - onEvent (Stack/karpenter/TagSubnets/Provider)",
         "Environment": Object {
