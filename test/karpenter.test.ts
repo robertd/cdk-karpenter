@@ -1,8 +1,8 @@
 import { Duration } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { EbsDeviceVolumeType, InstanceClass, InstanceSize, InstanceType } from 'aws-cdk-lib/aws-ec2';
-import { AMIFamily, ArchType, Karpenter } from '../src/index';
 import { testFixtureCluster } from './util';
+import { AMIFamily, ArchType, Karpenter } from '../src/index';
 
 
 const { stack, vpc, cluster } = testFixtureCluster();
