@@ -472,7 +472,7 @@ export class Karpenter extends Construct {
     this.karpenterHelmChart = new HelmChart(this, 'KarpenterHelmChart', {
       chart: 'karpenter',
       createNamespace: true,
-      version: 'v0.22.1',
+      version: 'v0.23.0',
       cluster: this.cluster,
       namespace: 'karpenter',
       release: 'karpenter',
@@ -512,8 +512,8 @@ export class Karpenter extends Construct {
       throw new Error('Parameters consolidation and ttlSecondsAfterEmpty are mutually exclusive.');
     }
 
-    // see: https://karpenter.sh/v0.22.1/concepts/provisioners/
-    // see: https://karpenter.sh/v0.22.1/concepts/node-templates/
+    // see: https://karpenter.sh/v0.23.0/concepts/provisioners/
+    // see: https://karpenter.sh/v0.23.0/concepts/node-templates/
     const awsNodeTemplateId = `${id}-awsNodeTemplate`.toLowerCase();
     const awsNodeTemplate = this.cluster.addManifest(awsNodeTemplateId, {
       apiVersion: 'karpenter.k8s.aws/v1alpha1',
@@ -522,35 +522,35 @@ export class Karpenter extends Construct {
         name: awsNodeTemplateId,
       },
       spec: {
-        // see: https://karpenter.sh/v0.22.1/concepts/node-templates/#specsubnetselector
+        // see: https://karpenter.sh/v0.23.0/concepts/node-templates/#specsubnetselector
         subnetSelector: {
           [`karpenter.sh/discovery/${this.cluster.clusterName}`]: '*',
         },
-        // see: https://karpenter.sh/v0.22.1/concepts/node-templates/#specsecuritygroupselector
+        // see: https://karpenter.sh/v0.23.0/concepts/node-templates/#specsecuritygroupselector
         securityGroupSelector: {
           [`kubernetes.io/cluster/${this.cluster.clusterName}`]: 'owned',
         },
-        // see: https://karpenter.sh/v0.22.1/concepts/node-templates/#specsecuritygroupselector
+        // see: https://karpenter.sh/v0.23.0/concepts/node-templates/#specsecuritygroupselector
         // instanceProfile is created using L1 construct (CfnInstanceProfile), thus we're referencing ref directly
         // TODO: revisit this when L2 InstanceProfile construct is released
         instanceProfile: this.instanceProfile.ref,
-        // see: https://karpenter.sh/v0.22.1/concepts/node-templates/#specamifamily
+        // see: https://karpenter.sh/v0.23.0/concepts/node-templates/#specamifamily
         ...(provisionerSpecs?.provider?.amiFamily && { amiFamily: provisionerSpecs!.provider!.amiFamily! }),
-        // see https://karpenter.sh/v0.22.1/concepts/node-templates/#specamiselector
+        // see https://karpenter.sh/v0.23.0/concepts/node-templates/#specamiselector
         ...(provisionerSpecs?.provider?.amiSelector && { amiSelector: { ...provisionerSpecs!.provider!.amiSelector! } }),
-        // see: https://karpenter.sh/v0.22.1/aws/provisioning/#tags
+        // see: https://karpenter.sh/v0.23.0/aws/provisioning/#tags
         ...(provisionerSpecs?.provider?.tags && { tags: { ...provisionerSpecs!.provider!.tags! } }),
-        // see: https://karpenter.sh/v0.22.1/aws/provisioning/#block-device-mappings
+        // see: https://karpenter.sh/v0.23.0/aws/provisioning/#block-device-mappings
         ...(provisionerSpecs?.provider?.blockDeviceMappings && { blockDeviceMappings: provisionerSpecs!.provider!.blockDeviceMappings! }),
-        // TODO: add userData https://karpenter.sh/v0.22.1/aws/provisioning/#userdata
-        // TODO: add metadataOptions https://karpenter.sh/v0.22.1/aws/provisioning/#metadata-options
+        // TODO: add userData https://karpenter.sh/v0.23.0/aws/provisioning/#userdata
+        // TODO: add metadataOptions https://karpenter.sh/v0.23.0/aws/provisioning/#metadata-options
       },
     });
 
-    // see: https://karpenter.sh/v0.22.1/concepts/provisioners/#specrequirements
+    // see: https://karpenter.sh/v0.23.0/concepts/provisioners/#specrequirements
     const requirements = this.setRequirements(provisionerSpecs?.requirements);
 
-    // see: https://karpenter.sh/v0.22.1/concepts/provisioners/
+    // see: https://karpenter.sh/v0.23.0/concepts/provisioners/
     const provisioner = this.cluster.addManifest(id, {
       apiVersion: 'karpenter.sh/v1alpha5',
       kind: 'Provisioner',
@@ -558,7 +558,7 @@ export class Karpenter extends Construct {
         name: id.toLowerCase(),
       },
       spec: {
-        // see: https://karpenter.sh/v0.22.1/concepts/provisioners/#speclimitsresources
+        // see: https://karpenter.sh/v0.23.0/concepts/provisioners/#speclimitsresources
         ...(provisionerSpecs?.limits && {
           limits: {
             resources: {
@@ -567,7 +567,7 @@ export class Karpenter extends Construct {
             },
           },
         }),
-        // see: https://karpenter.sh/v0.22.1/concepts/provisioners/#specconsolidation
+        // see: https://karpenter.sh/v0.23.0/concepts/provisioners/#specconsolidation
         ...provisionerSpecs?.consolidation && {
           consolidation: {
             enabled: provisionerSpecs!.consolidation,
@@ -575,7 +575,7 @@ export class Karpenter extends Construct {
         },
         ...(provisionerSpecs?.ttlSecondsAfterEmpty && { ttlSecondsAfterEmpty: provisionerSpecs!.ttlSecondsAfterEmpty!.toSeconds() }),
         ...(provisionerSpecs?.ttlSecondsUntilExpired && { ttlSecondsUntilExpired: provisionerSpecs!.ttlSecondsUntilExpired!.toSeconds() }),
-        // see: https://karpenter.sh/v0.22.1/provisioner/#specrequirements
+        // see: https://karpenter.sh/v0.23.0/provisioner/#specrequirements
         requirements: [
           ...requirements,
         ],
@@ -585,11 +585,11 @@ export class Karpenter extends Construct {
         },
         ...(provisionerSpecs?.taints && { taints: provisionerSpecs!.taints! }),
         ...(provisionerSpecs?.startupTaints && { startupTaints: provisionerSpecs!.startupTaints! }),
-        // see: https://karpenter.sh/v0.22.1/concepts/provisioners/#specproviderref
+        // see: https://karpenter.sh/v0.23.0/concepts/provisioners/#specproviderref
         providerRef: {
           name: awsNodeTemplateId,
         },
-        // see: https://karpenter.sh/v0.22.1/concepts/provisioners/#specproviderref
+        // see: https://karpenter.sh/v0.23.0/concepts/provisioners/#specproviderref
 
       },
     });
