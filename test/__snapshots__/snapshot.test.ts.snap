@@ -66,7 +66,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "6c469f35da6ab121a965268d959faff91c021ab5d46ac363f98648bef832377d.zip",
+          "S3Key": "26c112af1f276b5d27a75309a6bc859d69debba531106f24403856cad6b6c825.zip",
         },
         "Handler": "__entrypoint__.handler",
         "MemorySize": 128,
@@ -559,7 +559,7 @@ Object {
         "ClientIDList": Array [
           "sts.amazonaws.com",
         ],
-        "CodeHash": "2f66f19d22493bb970ab7d0e10dab28b63e97d1ad344b1ed6dd9696c15c05a6c",
+        "CodeHash": "086f508ae8b4a8d34bf4cc41b0368212cefb106c92eb809b2e000c60d35a8f33",
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomAWSCDKOpenIdConnectProviderCustomResourceProviderHandlerF2C543E0",
@@ -822,7 +822,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "2f66f19d22493bb970ab7d0e10dab28b63e97d1ad344b1ed6dd9696c15c05a6c.zip",
+          "S3Key": "086f508ae8b4a8d34bf4cc41b0368212cefb106c92eb809b2e000c60d35a8f33.zip",
         },
         "Handler": "__entrypoint__.handler",
         "MemorySize": 128,
@@ -890,7 +890,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "eb5b005c858404ea0c8f68098ed5dcdf5340e02461f149751d10f59c210d5ef8.zip",
+          "S3Key": "e45ee2082d227db1b6f0292696ce5ce2b061c105d15efb341925ca040d1feb68.zip",
         },
         "Handler": "index.handler",
         "Role": Object {
@@ -1420,7 +1420,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/baa273b7ee976f45bc63baed6efc34e040011cf9972fb891e34d7dfbb7995931.json",
+              "/1182ce43096b732c5939f6e70bb532dcf4bcc27c8b4f68ffb8ac6caf451fbb21.json",
             ],
           ],
         },
@@ -1475,7 +1475,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/2d9e41dae28669548850c0b7a70da96fdc2e4508ba5b2cd8deb5df596fc469b1.json",
+              "/55ca119fef5bb752af1a92d7007abd6834f818e1f500f804927c1f9aeb776bcf.json",
             ],
           ],
         },
@@ -2256,7 +2256,7 @@ def on_delete(event):
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "2157f4ab8972014e220d70707296b292b3b7301f163f7cd641ccda0ee663530f.zip",
+          "S3Key": "53c95d71cfd280747d971a38505aea07f812fdba75874a090358a2fc4f58f79b.zip",
         },
         "Description": "AWS CDK resource provider framework - onEvent (Stack/karpenter/TagSubnets/Provider)",
         "Environment": Object {
