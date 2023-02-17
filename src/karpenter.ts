@@ -6,7 +6,9 @@ import { SqsQueue } from 'aws-cdk-lib/aws-events-targets';
 import { CfnInstanceProfile, ManagedPolicy, OpenIdConnectPrincipal, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
+import {merge} from 'lodash';
 import { TagSubnetsCustomResource } from './custom-resource';
+
 
 export interface KarpenterProps {
   /**
@@ -24,6 +26,14 @@ export interface KarpenterProps {
    * If left blank, private VPC subnets will be used and tagged by default.
    */
   readonly subnets?: ISubnet[];
+
+  /**
+   * Optional map of values to pass to the Karpenter helm chart.
+   * This will be merged into the default values that setup AWS related values.
+   */
+  readonly helmValues?: {
+    [key: string]: any;
+  };
 }
 
 export interface ProvisionerSpecs {
@@ -469,17 +479,8 @@ export class Karpenter extends Construct {
 
     this.karpenterControllerRole.addManagedPolicy(this.karpenterControllerPolicy);
 
-    this.karpenterHelmChart = new HelmChart(this, 'KarpenterHelmChart', {
-      chart: 'karpenter',
-      createNamespace: true,
-      version: 'v0.23.0',
-      cluster: this.cluster,
-      namespace: 'karpenter',
-      release: 'karpenter',
-      repository: 'oci://public.ecr.aws/karpenter/karpenter',
-      timeout: Duration.minutes(15),
-      wait: true,
-      values: {
+    const helm_values: {[key: string]: any} = merge(
+      {
         serviceAccount: {
           annotations: {
             'eks.amazonaws.com/role-arn': this.karpenterControllerRole.roleArn,
@@ -496,6 +497,20 @@ export class Karpenter extends Construct {
           },
         },
       },
+      props?.helmValues ?? {},
+    );
+
+    this.karpenterHelmChart = new HelmChart(this, 'KarpenterHelmChart', {
+      chart: 'karpenter',
+      createNamespace: true,
+      version: 'v0.23.0',
+      cluster: this.cluster,
+      namespace: 'karpenter',
+      release: 'karpenter',
+      repository: 'oci://public.ecr.aws/karpenter/karpenter',
+      timeout: Duration.minutes(15),
+      wait: true,
+      values: helm_values,
     });
 
     new CfnOutput(this, 'clusterName', { value: this.cluster.clusterName });
