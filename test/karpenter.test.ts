@@ -9,6 +9,9 @@ const { stack, vpc, cluster } = testFixtureCluster();
 const karpenter = new Karpenter(stack, 'karpenter', {
   cluster,
   vpc,
+  helmValues: {
+    replicas: 1,
+  },
 });
 
 karpenter.addProvisioner('default');
@@ -66,6 +69,11 @@ karpenter.addProvisioner('custom', {
       },
     ],
   },
+  /*
+  finalizeProvisioner: (r) => {
+    r.spec.weight = 10;
+  },
+  */
 });
 
 test('has karpenter controller policy', () => {
