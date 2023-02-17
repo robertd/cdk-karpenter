@@ -6,7 +6,7 @@ import { SqsQueue } from 'aws-cdk-lib/aws-events-targets';
 import { CfnInstanceProfile, ManagedPolicy, OpenIdConnectPrincipal, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
-import {merge} from 'lodash';
+import { merge } from 'lodash';
 import { TagSubnetsCustomResource } from './custom-resource';
 
 
@@ -95,8 +95,9 @@ export interface ProvisionerSpecs {
   /**
    * Optional callback to perform final modifications on the Provisoner resource definition.
    */
-  readonly finalizeProvisioner?: (r: Record<string, any>) => void;
+  readonly finalizeProvisioner?: {(r:Record<string, any>): void};
 }
+
 
 export interface ProvisionerReqs {
   /**
@@ -148,7 +149,7 @@ export interface ProviderProps {
   /**
    * Optionall callback to perform final modifications on the node template resource definition.
    */
-  readonly finalizeProvider?: (r: Record<string, any>) => void;
+  readonly finalizeProvider?: {(r:Record<string, any>): void};
 }
 
 export interface Limits {
