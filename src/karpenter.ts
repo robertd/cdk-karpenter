@@ -91,6 +91,11 @@ export interface ProvisionerSpecs {
    * AWS cloud provider configuration.
    */
   readonly provider?: ProviderProps;
+
+  /**
+   * Optional callback to perform final modifications on the Provisoner resource definition.
+   */
+  readonly finalizeProvisioner?: (r: Record<string, any>) => void;
 }
 
 export interface ProvisionerReqs {
@@ -139,6 +144,11 @@ export interface ProviderProps {
    * and Karpenter will use the latest EKS-optimized AMIs if an amiSelector is not specified.
    */
   readonly amiSelector?: {[key: string]: string};
+
+  /**
+   * Optionall callback to perform final modifications on the node template resource definition.
+   */
+  readonly finalizeProvider?: (r: Record<string, any>) => void;
 }
 
 export interface Limits {
@@ -530,7 +540,7 @@ export class Karpenter extends Construct {
     // see: https://karpenter.sh/v0.23.0/concepts/provisioners/
     // see: https://karpenter.sh/v0.23.0/concepts/node-templates/
     const awsNodeTemplateId = `${id}-awsNodeTemplate`.toLowerCase();
-    const awsNodeTemplate = this.cluster.addManifest(awsNodeTemplateId, {
+    const aws_node_template_resource: Record<string, any> = {
       apiVersion: 'karpenter.k8s.aws/v1alpha1',
       kind: 'AWSNodeTemplate',
       metadata: {
@@ -560,13 +570,15 @@ export class Karpenter extends Construct {
         // TODO: add userData https://karpenter.sh/v0.23.0/aws/provisioning/#userdata
         // TODO: add metadataOptions https://karpenter.sh/v0.23.0/aws/provisioning/#metadata-options
       },
-    });
+    };
+    provisionerSpecs?.provider?.finalizeProvider?.(aws_node_template_resource);
+    const awsNodeTemplate = this.cluster.addManifest(awsNodeTemplateId, aws_node_template_resource);
 
     // see: https://karpenter.sh/v0.23.0/concepts/provisioners/#specrequirements
     const requirements = this.setRequirements(provisionerSpecs?.requirements);
 
     // see: https://karpenter.sh/v0.23.0/concepts/provisioners/
-    const provisioner = this.cluster.addManifest(id, {
+    const provisioner_resource: Record<string, any> = {
       apiVersion: 'karpenter.sh/v1alpha5',
       kind: 'Provisioner',
       metadata: {
@@ -607,7 +619,9 @@ export class Karpenter extends Construct {
         // see: https://karpenter.sh/v0.23.0/concepts/provisioners/#specproviderref
 
       },
-    });
+    };
+    provisionerSpecs?.finalizeProvisioner?.(provisioner_resource);
+    const provisioner = this.cluster.addManifest(id, provisioner_resource);
 
     provisioner.node.addDependency(awsNodeTemplate);
     awsNodeTemplate.node.addDependency(this.karpenterHelmChart);
