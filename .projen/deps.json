@@ -14,6 +14,11 @@
       "type": "build"
     },
     {
+      "name": "@types/lodash",
+      "version": "^4",
+      "type": "build"
+    },
+    {
       "name": "@types/node",
       "version": "^14",
       "type": "build"
@@ -133,6 +138,11 @@
     },
     {
       "name": "aws-cdk-lib",
+      "type": "runtime"
+    },
+    {
+      "name": "lodash",
+      "version": "^4",
       "type": "runtime"
     }
   ],

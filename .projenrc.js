@@ -26,8 +26,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
   autoApproveProjenUpgrades: true,
   projenTokenSecret: 'PROJEN_GITHUB_TOKEN',
   autoApproveUpgrades: true,
-  deps: ['aws-cdk-lib', '@aws-cdk/lambda-layer-kubectl-v23', '@aws-cdk/lambda-layer-kubectl-v24'],
-  devDeps: ['aws-cdk-lib', '@aws-cdk/lambda-layer-kubectl-v23', '@aws-cdk/lambda-layer-kubectl-v24'],
+  deps: ['aws-cdk-lib', '@aws-cdk/lambda-layer-kubectl-v23', '@aws-cdk/lambda-layer-kubectl-v24', 'lodash@^4'],
+  devDeps: ['aws-cdk-lib', '@aws-cdk/lambda-layer-kubectl-v23', '@aws-cdk/lambda-layer-kubectl-v24', '@types/lodash@^4'],
   // deps: [],                /* Runtime dependencies of this module. */
   // devDeps: [],             /* Build dependencies for this module. */
   // packageName: undefined,  /* The "name" in package.json. */
