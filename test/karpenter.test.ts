@@ -120,6 +120,16 @@ test('has karpenter controller policy', () => {
             ],
           },
         },
+        {
+          Action: 'eks:DescribeCluster',
+          Effect: 'Allow',
+          Resource: {
+            'Fn::GetAtt': [
+              'Cluster9EE0221C',
+              'Arn',
+            ],
+          },
+        },
       ],
       Version: '2012-10-17',
     },

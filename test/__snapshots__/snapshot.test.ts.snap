@@ -1420,7 +1420,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/1182ce43096b732c5939f6e70bb532dcf4bcc27c8b4f68ffb8ac6caf451fbb21.json",
+              "/ec49b6a7b1f3278de4e63929e9d91ba8a77c14f8f93c3be7ebcc607566f0dc96.json",
             ],
           ],
         },
@@ -1475,7 +1475,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/55ca119fef5bb752af1a92d7007abd6834f818e1f500f804927c1f9aeb776bcf.json",
+              "/2614a4343612e563101d0bb2c31b3017310658b1e9ab768ab0edb92c8be59ded.json",
             ],
           ],
         },
@@ -1582,6 +1582,16 @@ Object {
               "Resource": Object {
                 "Fn::GetAtt": Array [
                   "karpenterNodeRole086B4B2F",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": "eks:DescribeCluster",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "Cluster9EE0221C",
                   "Arn",
                 ],
               },
@@ -1857,13 +1867,6 @@ Object {
               Object {
                 "Ref": "Cluster9EE0221C",
               },
-              "\\",\\"clusterEndpoint\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "Cluster9EE0221C",
-                  "Endpoint",
-                ],
-              },
               "\\",\\"interruptionQueueName\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
@@ -1879,7 +1882,7 @@ Object {
             ],
           ],
         },
-        "Version": "v0.23.0",
+        "Version": "v0.26.1",
         "Wait": true,
       },
       "Type": "Custom::AWSCDK-EKS-HelmChart",

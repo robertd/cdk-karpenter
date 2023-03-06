@@ -447,7 +447,7 @@ const providerProps: ProviderProps = { ... }
 | <code><a href="#cdk-karpenter.ProviderProps.property.amiFamily">amiFamily</a></code> | <code><a href="#cdk-karpenter.AMIFamily">AMIFamily</a></code> | The AMI used when provisioning nodes. |
 | <code><a href="#cdk-karpenter.ProviderProps.property.amiSelector">amiSelector</a></code> | <code>{[ key: string ]: string}</code> | AMISelector is used to configure custom AMIs for Karpenter to use, where the AMIs are discovered through AWS tags, similar to subnetSelector. |
 | <code><a href="#cdk-karpenter.ProviderProps.property.blockDeviceMappings">blockDeviceMappings</a></code> | <code><a href="#cdk-karpenter.BlockDeviceMappingsProps">BlockDeviceMappingsProps</a>[]</code> | EBS mapping configuration. |
-| <code><a href="#cdk-karpenter.ProviderProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Tags will be added to every EC2 instance launched by the provisioner. |
+| <code><a href="#cdk-karpenter.ProviderProps.property.tags">tags</a></code> | <code>{[ key: string ]: string}</code> | Provisioner level tags. |
 
 ---
 
@@ -501,7 +501,10 @@ public readonly tags: {[ key: string ]: string};
 
 - *Type:* {[ key: string ]: string}
 
+Provisioner level tags.
+
 Tags will be added to every EC2 instance launched by the provisioner.
+Provisioner level tags override global Karpenter tags.
 
 ---
 

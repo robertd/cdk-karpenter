@@ -1,4 +1,4 @@
-const { awscdk, TaskRuntime } = require('projen');
+const { awscdk } = require('projen');
 const project = new awscdk.AwsCdkConstructLibrary({
   name: 'cdk-karpenter',
   description: 'Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time.\
@@ -16,7 +16,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
   compat: true,
   stability: 'experimental',
-  cdkVersion: '2.60.0',
+  cdkVersion: '2.67.0',
   workflowNodeVersion: '^18.13.0',
   autoApproveOptions: {
     allowedUsernames: ['cdk-karpenter-automation'],

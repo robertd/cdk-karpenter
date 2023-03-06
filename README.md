@@ -8,7 +8,7 @@ More info about Karpenter at: https://karpenter.sh
 
 Karpenter Best Practices: https://aws.github.io/aws-eks-best-practices/karpenter/
 
-Karpenter version: v0.23.0
+Karpenter version: v0.26.1
 
 Notes: 
 - Karpenter no longer supports Kubernetes v1.20, but now supports Kubernetes v1.25. This change is due to the v1 PDB API, which was introduced in K8s v1.20 and subsequent removal of the v1beta1 API in K8s v1.25.
@@ -43,7 +43,7 @@ const karpenter = new Karpenter(stack, 'karpenter', {
 // default provisioner
 karpenter.addProvisioner('default');
 //Note: Default provisioner has no cpu/mem limits, nor will cleanup provisioned resources. Use with caution.
-// see: https://karpenter.sh/v0.23.0/concepts/deprovisioning/
+// see: https://karpenter.sh/v0.26.1/concepts/deprovisioning/
 
 // custom provisoner - kitchen sink
 karpenter.addProvisioner('custom', {
