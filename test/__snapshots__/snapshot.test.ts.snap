@@ -1882,7 +1882,7 @@ Object {
             ],
           ],
         },
-        "Version": "v0.26.1",
+        "Version": "v0.27.0",
         "Wait": true,
       },
       "Type": "Custom::AWSCDK-EKS-HelmChart",

@@ -35,13 +35,14 @@
     "organization": false
   },
   "devDependencies": {
-    "@aws-cdk/lambda-layer-kubectl-v23": "^2.0.4",
-    "@aws-cdk/lambda-layer-kubectl-v24": "^2.0.120",
+    "@aws-cdk/lambda-layer-kubectl-v23": "^2.0.5",
+    "@aws-cdk/lambda-layer-kubectl-v24": "^2.0.124",
+    "@aws-cdk/lambda-layer-kubectl-v25": "^2.0.1",
     "@types/jest": "^27",
     "@types/node": "^14",
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
-    "aws-cdk-lib": "^2.67.0",
+    "aws-cdk-lib": "^2.68.0",
     "constructs": "10.0.5",
     "eslint": "^8",
     "eslint-import-resolver-node": "^0.3.7",
@@ -54,7 +55,7 @@
     "jsii-docgen": "^6.3.27",
     "jsii-pacmak": "^1.77.0",
     "npm-check-updates": "^16",
-    "projen": "^0.67.74",
+    "projen": "^0.67.78",
     "standard-version": "^9",
     "ts-jest": "^27",
     "typescript": "^4.9.5"
@@ -64,9 +65,10 @@
     "constructs": "^10.0.5"
   },
   "dependencies": {
-    "@aws-cdk/lambda-layer-kubectl-v23": "^2.0.4",
-    "@aws-cdk/lambda-layer-kubectl-v24": "^2.0.120",
-    "aws-cdk-lib": "^2.67.0"
+    "@aws-cdk/lambda-layer-kubectl-v23": "^2.0.5",
+    "@aws-cdk/lambda-layer-kubectl-v24": "^2.0.124",
+    "@aws-cdk/lambda-layer-kubectl-v25": "^2.0.1",
+    "aws-cdk-lib": "^2.68.0"
   },
   "keywords": [
     "aws",
