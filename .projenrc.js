@@ -16,8 +16,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
   compat: true,
   stability: 'experimental',
-  cdkVersion: '2.67.0',
-  workflowNodeVersion: '^18.14.2',
+  cdkVersion: '2.74.0',
+  workflowNodeVersion: '^18.15.0',
   autoApproveOptions: {
     allowedUsernames: ['cdk-karpenter-automation'],
     secret: 'GITHUB_TOKEN',
@@ -31,12 +31,14 @@ const project = new awscdk.AwsCdkConstructLibrary({
     '@aws-cdk/lambda-layer-kubectl-v23',
     '@aws-cdk/lambda-layer-kubectl-v24',
     '@aws-cdk/lambda-layer-kubectl-v25',
+    '@aws-cdk/lambda-layer-kubectl-v26',
   ],
   devDeps: [
     'aws-cdk-lib',
     '@aws-cdk/lambda-layer-kubectl-v23',
     '@aws-cdk/lambda-layer-kubectl-v24',
     '@aws-cdk/lambda-layer-kubectl-v25',
+    '@aws-cdk/lambda-layer-kubectl-v26',
   ],
   // deps: [],                /* Runtime dependencies of this module. */
   // devDeps: [],             /* Build dependencies for this module. */

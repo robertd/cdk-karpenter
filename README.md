@@ -8,14 +8,14 @@ More info about Karpenter at: https://karpenter.sh
 
 Karpenter Best Practices: https://aws.github.io/aws-eks-best-practices/karpenter/
 
-Karpenter version: v0.27.0
+Karpenter version: v0.27.2
 
 Notes: 
 - Karpenter no longer supports Kubernetes v1.20, but now supports Kubernetes v1.25. This change is due to the v1 PDB API, which was introduced in K8s v1.20 and subsequent removal of the v1beta1 API in K8s v1.25.
 - Prior to v0.20.0, Karpenter would prioritize certain instance type categories absent of any requirements in the Provisioner. v0.20.0+ removes prioritizing these instance type categories (“m”, “c”, “r”, “a”, “t”, “i”) in code. Bare Metal and GPU instance types are still deprioritized and only used if no other instance types are compatible with the node requirements. This means that, now, you will need to explicitly define the instance types, sizes or categories you want to allow in your Provisioner; otherwise, it is possible that you receive more exotic instance types.
 - As of v0.16.0 changed the default replicas from 1 to 2. See: https://github.com/aws/karpenter/blob/main/website/content/en/v0.16.1/troubleshooting.md
 
-Upgrade Notes: https://karpenter.sh/v0.27.0/upgrade-guide/#released-upgrade-notes
+Upgrade Notes: https://karpenter.sh/v0.27.2/upgrade-guide/#released-upgrade-notes
 
 ## Docs
 
@@ -26,7 +26,7 @@ Upgrade Notes: https://karpenter.sh/v0.27.0/upgrade-guide/#released-upgrade-note
 ```ts
 import { InstanceClass, InstanceSize, InstanceType, EbsDeviceVolumeType, Vpc } from 'aws-cdk-lib/aws-ec2';
 import { Cluster, KubernetesVersion, Nodegroup } from 'aws-cdk-lib/aws-eks';
-import { KubectlV24Layer } from '@aws-cdk/lambda-layer-kubectl-v24';
+import { KubectlV25Layer } from '@aws-cdk/lambda-layer-kubectl-v25';
 import { Karpenter, AMIFamily } from "cdk-karpenter";
 
 ...
@@ -35,7 +35,7 @@ const vpc = new Vpc(stack, 'Vpc', { natGateways: 1 });
 
 const cluster = new Cluster(stack, 'eks', {
   vpc,
-  version: KubernetesVersion.V1_24,
+  version: KubernetesVersion.V1_25,
   kubectlLayer: new KubectlV24Layer(stack, 'kubectl'),
   defaultCapacity: 1,
   defaultCapacityInstance: InstanceType.of(InstanceClass.T3A, InstanceSize.MEDIUM),
@@ -49,7 +49,7 @@ const karpenter = new Karpenter(stack, 'karpenter', {
 // default provisioner
 karpenter.addProvisioner('default');
 // Note: Default provisioner has no cpu/mem limits, nor will cleanup provisioned resources. Use with caution!!!
-// see: https://karpenter.sh/v0.27.0/concepts/deprovisioning/
+// see: https://karpenter.sh/v0.27.2/concepts/deprovisioning/
 
 // custom provisoner - kitchen sink
 karpenter.addProvisioner('custom', {
