@@ -16,8 +16,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
   },
   compat: true,
   stability: 'experimental',
-  cdkVersion: '2.74.0',
-  workflowNodeVersion: '^18.15.0',
+  cdkVersion: '2.80.0',
+  workflowNodeVersion: '^18.16.0',
   autoApproveOptions: {
     allowedUsernames: ['cdk-karpenter-automation'],
     secret: 'GITHUB_TOKEN',
