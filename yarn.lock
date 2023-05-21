@@ -11,9 +11,9 @@
     "@jridgewell/trace-mapping" "^0.3.9"
 
 "@aws-cdk/asset-awscli-v1@^2.2.177":
-  version "2.2.180"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.180.tgz#d765969cd3bb0639b0e4ca59e1378f75dcb80647"
-  integrity sha512-FOUVMdp0Ux1NPXMhFVbCmutfGvOALgro1M5omhtHmQ+VExdT0u9p9HuA+ohYlIDqScELNWvu3SlS892iN6XRhg==
+  version "2.2.181"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.181.tgz#cd90da722e3049bfc5aa64ce5a60ac08f9a0d931"
+  integrity sha512-4oeRr7OrxI4qTH3rN/VsEwUbQZ/cvy/fHGvb5ks2DYKCBGuCzg74ufYwBZU7+mIrjN3CIxhTiRUs7f6LRZzd5w==
 
 "@aws-cdk/asset-kubectl-v20@^2.1.1":
   version "2.1.1"
@@ -21,19 +21,19 @@
   integrity sha512-U1ntiX8XiMRRRH5J1IdC+1t5CE89015cwyt5U63Cpk0GnMlN5+h9WsWMlKlPXZR4rdq/m806JRlBMRpBUB2Dhw==
 
 "@aws-cdk/asset-node-proxy-agent-v5@^2.0.148":
-  version "2.0.151"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-node-proxy-agent-v5/-/asset-node-proxy-agent-v5-2.0.151.tgz#fcd1783e2ee063a3b93a8120566b5a948374f943"
-  integrity sha512-X7CjyphxMuAY1uNO2SMnTtQWxhnLf06ZAR9R4Ynm+8BOvyZfzqCrsmkT6O4nGRlhu5fGlRbNV//tCwU9e39yPQ==
+  version "2.0.152"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-node-proxy-agent-v5/-/asset-node-proxy-agent-v5-2.0.152.tgz#df7e1538e505e1de25819a58c8bb6ee91a6ce125"
+  integrity sha512-nkbcf50bBqovEayYLi1814HJxQoo5VZ4rSsCQ6U6FYO9yHFGYZQ0i8lnprx8R4kV2LteEEW8NUt687hTrh49SQ==
 
 "@aws-cdk/lambda-layer-kubectl-v23@^2.0.7":
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/@aws-cdk/lambda-layer-kubectl-v23/-/lambda-layer-kubectl-v23-2.0.7.tgz#9d15f4c9a74a3ae0a8e936b77dd45ee3fc8303b2"
   integrity sha512-YflWr+dw26oPHrtdw1U6nQ7dEVvs3g7DNQrwb9nep0ryOdDTHdnMfdI65oh6GYMZIxCaVaiRc1RXwHSs+Fc6Bg==
 
-"@aws-cdk/lambda-layer-kubectl-v24@^2.0.198":
-  version "2.0.198"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/lambda-layer-kubectl-v24/-/lambda-layer-kubectl-v24-2.0.198.tgz#b4b90e4f3881283a52e3ad3cce61af85bccff3a5"
-  integrity sha512-+7aYINtoEfDafCPGWnj4aWvXUn/Qyd3nUlMdZQujmoewv38pVWnzqRSrzOvVZ2+D+230bxRa8RaIdwSjYbpQOw==
+"@aws-cdk/lambda-layer-kubectl-v24@^2.0.199":
+  version "2.0.199"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/lambda-layer-kubectl-v24/-/lambda-layer-kubectl-v24-2.0.199.tgz#e02adec470e7eb987164e3ffead2c6177f4e35a7"
+  integrity sha512-fxSv21D0ACxa/r8Pl0bwlZ8l3IQQ+V6AVgFft9gc/w3mRgmspse0ZjgCrTQMNxicFJCrrdux4oaoRZEbz8rjzw==
 
 "@aws-cdk/lambda-layer-kubectl-v25@^2.0.3":
   version "2.0.3"
@@ -5195,10 +5195,10 @@ progress@^2.0.3:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-projen@^0.71.65:
-  version "0.71.65"
-  resolved "https://registry.yarnpkg.com/projen/-/projen-0.71.65.tgz#9677b424957103f36387d7b199df9677846ba47c"
-  integrity sha512-u0+UM7bcwqqAOx6CU6V51mkN4mNaH3Sb5akWL/SsLBvS7VyOvDmEJ0um+0P6uoKXxAtl+yHgHjDctzWV1U4hoA==
+projen@^0.71.66:
+  version "0.71.66"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.71.66.tgz#528a40f97bc5bdd2c3bda028070f69d6641985d5"
+  integrity sha512-nqdeBQ+6q8VtKwxVI771sZ+E2B8HCPJO1yIR6xMZUSApBASr8E3xIhrSBL+jUzLwyd2O94Jyq5Kr9XdjOK/n8g==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
