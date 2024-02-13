@@ -199,6 +199,11 @@ export enum AMIFamily {
   AL2='AL2',
 
   /**
+   * Amazon Linux 2023 AMI family
+   */
+  AL2023='AL2023',
+
+  /**
    * Bottlerocket AMI family
    */
   BOTTLEROCKET='Bottlerocket',
