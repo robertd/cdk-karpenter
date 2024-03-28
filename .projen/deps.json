@@ -23,30 +23,21 @@
     },
     {
       "name": "@types/node",
-      "version": "^16",
+      "version": "^16 <= 16.18.78",
       "type": "build"
     },
     {
       "name": "@typescript-eslint/eslint-plugin",
-      "version": "^5",
+      "version": "^6",
       "type": "build"
     },
     {
       "name": "@typescript-eslint/parser",
-      "version": "^5",
+      "version": "^6",
       "type": "build"
     },
     {
       "name": "aws-cdk-lib",
-      "type": "build"
-    },
-    {
-      "name": "constructs",
-      "version": "10.0.5",
-      "type": "build"
-    },
-    {
-      "name": "eslint-import-resolver-node",
       "type": "build"
     },
     {
@@ -85,13 +76,13 @@
       "type": "build"
     },
     {
-      "name": "jsii",
+      "name": "jsii-rosetta",
       "version": "1.x",
       "type": "build"
     },
     {
-      "name": "npm-check-updates",
-      "version": "^16",
+      "name": "jsii",
+      "version": "1.x",
       "type": "build"
     },
     {

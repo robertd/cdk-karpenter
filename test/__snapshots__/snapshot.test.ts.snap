@@ -36,7 +36,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "28739348edff6f1084f6a50d8d934e2d3fc2a3bb77442d8a9a1361d51ccd03c0.zip",
+          "S3Key": "70dc346d78f37c98f818c01173252d7441864d42268efd4ee44769cbd6f31d24.zip",
         },
         "Handler": "__entrypoint__.handler",
         "MemorySize": 128,
@@ -46,7 +46,7 @@ Object {
             "Arn",
           ],
         },
-        "Runtime": "nodejs16.x",
+        "Runtime": "nodejs18.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -111,6 +111,9 @@ Object {
         },
         "AttributesRevision": 2,
         "Config": Object {
+          "kubernetesNetworkConfig": Object {
+            "ipFamily": "ipv4",
+          },
           "resourcesVpcConfig": Object {
             "endpointPrivateAccess": true,
             "endpointPublicAccess": true,
@@ -608,7 +611,7 @@ Object {
         "ClientIDList": Array [
           "sts.amazonaws.com",
         ],
-        "CodeHash": "48e9fd6cee1d2c5f41da5c382b67d28876e6930ade034bffcfe0739f878fec68",
+        "CodeHash": "977fc1649d2dbcce16e23f6332faef6fa0f48aa74a0afe35f4a3467754e20cd8",
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomAWSCDKOpenIdConnectProviderCustomResourceProviderHandlerF2C543E0",
@@ -871,7 +874,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "48e9fd6cee1d2c5f41da5c382b67d28876e6930ade034bffcfe0739f878fec68.zip",
+          "S3Key": "977fc1649d2dbcce16e23f6332faef6fa0f48aa74a0afe35f4a3467754e20cd8.zip",
         },
         "Handler": "__entrypoint__.handler",
         "MemorySize": 128,
@@ -881,7 +884,7 @@ Object {
             "Arn",
           ],
         },
-        "Runtime": "nodejs16.x",
+        "Runtime": "nodejs18.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -939,7 +942,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "5fa1330271b8967d9254ba2d4a07144f8acefe8b77e6d6bba38261373a50d5f8.zip",
+          "S3Key": "4e26bf2d0a26f2097fb2b261f22bb51e3f6b4b52635777b1e54edbd8e2d58c35.zip",
         },
         "Handler": "index.handler",
         "Role": Object {
@@ -948,7 +951,8 @@ Object {
             "Arn",
           ],
         },
-        "Runtime": "nodejs16.x",
+        "Runtime": "nodejs18.x",
+        "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -1461,7 +1465,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/d53106401071458d3968fcdbed7ab66599bc19168c64eae504e4aaa13c811558.json",
+              "/5dedb5392b410b235974f7df860ae5213c9cb28c04d463d3a897e38530a31277.json",
             ],
           ],
         },
@@ -1512,7 +1516,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/ba845447f899aa2b9fe6be6cd643186b9966441d4361029b1c03cf355ac70737.json",
+              "/ad7b4424cef020372f0332109286b712e06a7dc523f31b8a5e83dbda726176f8.json",
             ],
           ],
         },
@@ -2296,7 +2300,7 @@ def on_delete(event):
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "8e3d635893ea17fa3158623489cd42c680fad925b38de1ef51cb10d84f6e245e.zip",
+          "S3Key": "3542be390685e0c8353d92ccb5796d343cd93ca946b6b0de798004206a199adc.zip",
         },
         "Description": "AWS CDK resource provider framework - onEvent (Stack/karpenter/TagSubnets/Provider)",
         "Environment": Object {
@@ -2316,7 +2320,7 @@ def on_delete(event):
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs18.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
