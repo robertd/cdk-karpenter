@@ -36,7 +36,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "28739348edff6f1084f6a50d8d934e2d3fc2a3bb77442d8a9a1361d51ccd03c0.zip",
+          "S3Key": "70dc346d78f37c98f818c01173252d7441864d42268efd4ee44769cbd6f31d24.zip",
         },
         "Handler": "__entrypoint__.handler",
         "MemorySize": 128,
@@ -46,7 +46,7 @@ Object {
             "Arn",
           ],
         },
-        "Runtime": "nodejs16.x",
+        "Runtime": "nodejs20.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -109,8 +109,12 @@ Object {
             "Arn",
           ],
         },
-        "AttributesRevision": 2,
+        "AttributesRevision": 3,
         "Config": Object {
+          "accessConfig": Object {},
+          "kubernetesNetworkConfig": Object {
+            "ipFamily": "ipv4",
+          },
           "resourcesVpcConfig": Object {
             "endpointPrivateAccess": true,
             "endpointPublicAccess": true,
@@ -608,7 +612,7 @@ Object {
         "ClientIDList": Array [
           "sts.amazonaws.com",
         ],
-        "CodeHash": "48e9fd6cee1d2c5f41da5c382b67d28876e6930ade034bffcfe0739f878fec68",
+        "CodeHash": "977fc1649d2dbcce16e23f6332faef6fa0f48aa74a0afe35f4a3467754e20cd8",
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomAWSCDKOpenIdConnectProviderCustomResourceProviderHandlerF2C543E0",
@@ -871,7 +875,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "48e9fd6cee1d2c5f41da5c382b67d28876e6930ade034bffcfe0739f878fec68.zip",
+          "S3Key": "977fc1649d2dbcce16e23f6332faef6fa0f48aa74a0afe35f4a3467754e20cd8.zip",
         },
         "Handler": "__entrypoint__.handler",
         "MemorySize": 128,
@@ -881,7 +885,7 @@ Object {
             "Arn",
           ],
         },
-        "Runtime": "nodejs16.x",
+        "Runtime": "nodejs20.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -939,7 +943,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "5fa1330271b8967d9254ba2d4a07144f8acefe8b77e6d6bba38261373a50d5f8.zip",
+          "S3Key": "4e26bf2d0a26f2097fb2b261f22bb51e3f6b4b52635777b1e54edbd8e2d58c35.zip",
         },
         "Handler": "index.handler",
         "Role": Object {
@@ -948,7 +952,8 @@ Object {
             "Arn",
           ],
         },
-        "Runtime": "nodejs16.x",
+        "Runtime": "nodejs20.x",
+        "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -1461,7 +1466,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/d53106401071458d3968fcdbed7ab66599bc19168c64eae504e4aaa13c811558.json",
+              "/09e19008ab202b79f22ce6060c2dc0e8e7a8680418da1c25fe2589da65ea3d25.json",
             ],
           ],
         },
@@ -1512,7 +1517,7 @@ Object {
               Object {
                 "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
               },
-              "/ba845447f899aa2b9fe6be6cd643186b9966441d4361029b1c03cf355ac70737.json",
+              "/4cfaab086af36d19a07fc400ff11c5f012890fbe13e5f947193442a1ecd56f52.json",
             ],
           ],
         },
@@ -2296,7 +2301,7 @@ def on_delete(event):
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-us-west-2",
           },
-          "S3Key": "8e3d635893ea17fa3158623489cd42c680fad925b38de1ef51cb10d84f6e245e.zip",
+          "S3Key": "d9861ea7a45affd23e47a614acb2fddc6e45c20a891284c958187dafbf9ee36b.zip",
         },
         "Description": "AWS CDK resource provider framework - onEvent (Stack/karpenter/TagSubnets/Provider)",
         "Environment": Object {
@@ -2316,7 +2321,7 @@ def on_delete(event):
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs20.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
